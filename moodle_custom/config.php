@@ -22,9 +22,27 @@ $CFG->dboptions = [
     'dbcollation' => 'utf8mb4_unicode_ci',
 ];
 
-// 2. Canonical URL & Reverse Proxy HTTPS (Caddy 2)
-$CFG->wwwroot  = getenv('MOODLE_WWWROOT') ?: 'https://moodle.lvh.me:8443';
-$CFG->sslproxy = str_starts_with($CFG->wwwroot, 'https://');
+// 2. Dual-Mode URL Support: Reverse Proxy HTTPS (:8443) + Standalone Direct HTTP (:8090)
+$defaultwwwroot = getenv('MOODLE_WWWROOT') ?: 'https://moodle.lvh.me:8443';
+if (PHP_SAPI !== 'cli' && !empty($_SERVER['HTTP_HOST'])) {
+    $rawhost = strtolower(trim((string)$_SERVER['HTTP_HOST']));
+    if (preg_match('/^(moodle\.lvh\.me|localhost|127\.0\.0\.1)(:\d{1,5})?$/', $rawhost)) {
+        $ishttps = ((!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+            || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'));
+        $CFG->wwwroot  = ($ishttps ? 'https://' : 'http://') . $rawhost;
+        $CFG->sslproxy = $ishttps && empty($_SERVER['HTTPS']);
+        if (!$ishttps) {
+            $CFG->cookiesecure  = false;
+            $CFG->sessioncookie = 'directhttp';
+        }
+    } else {
+        $CFG->wwwroot  = $defaultwwwroot;
+        $CFG->sslproxy = str_starts_with($CFG->wwwroot, 'https://');
+    }
+} else {
+    $CFG->wwwroot  = $defaultwwwroot;
+    $CFG->sslproxy = str_starts_with($CFG->wwwroot, 'https://');
+}
 
 // 3. Zero-Bottleneck Linux Named Volume & RAM (/tmp) I/O Isolation
 $CFG->dataroot      = '/var/moodledata';

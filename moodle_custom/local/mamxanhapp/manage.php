@@ -284,6 +284,9 @@ echo $OUTPUT->header();
                 </p>
             </div>
             <div class="d-flex flex-wrap" style="gap:10px;">
+                <a href="<?php echo (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false); ?>" id="mx-open-cloner-btn" class="btn btn-light" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:14px;font-weight:900;color:#1B4332;padding:0 20px;border:2px solid #D8F3DC;">
+                    🧬 <?php echo s(local_mamxanhapp_t('Nhân bản Khóa học Địa phương (1-Click)', '1-Click Local Course Cloner')); ?>
+                </a>
                 <a href="<?php echo $csvurl->out(false); ?>" id="mx-export-csv-btn" class="btn btn-warning" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:14px;font-weight:800;color:#1B4332;padding:0 20px;">
                     📥 <?php echo s(local_mamxanhapp_t('Xuất Báo cáo Excel (CSV UTF-8)', 'Export CSV Report (UTF-8 BOM)')); ?>
                 </a>
@@ -380,6 +383,26 @@ echo $OUTPUT->header();
                 </div>
                 <?php endforeach; ?>
             </div>
+        </div>
+    </section>
+
+    <!-- Quick 1-Click Master Course Cloner Banner -->
+    <section style="background:linear-gradient(135deg,#E8F5E9,#D8F3DC);border:2px solid #2E7D32;border-radius:22px;padding:20px;margin-bottom:20px;">
+        <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:14px;">
+            <div>
+                <h4 style="font-size:1.12rem;font-weight:900;color:#1B4332;margin-bottom:4px;">
+                    🧬 <?php echo s(local_mamxanhapp_t('Nhân bản Khóa học Mẫu theo Địa phương / Nhóm Nông dân (1-Click Course Cloner)', '1-Click Master Course Cloner for Local Cohorts')); ?>
+                </h4>
+                <p style="margin:0;color:#1B4332;font-size:0.9rem;font-weight:600;">
+                    <?php echo s(local_mamxanhapp_t(
+                        'Sao chép nguyên vẹn Khóa học Mẫu [MASTER-AGRITECH-TPL] (Video MP4, PDF xem trực tiếp, H5P, SCORM 1.2, Lộ trình tuần tự & Ngân hàng câu hỏi) cho từng xã/hợp tác xã mới.',
+                        'Duplicate [MASTER-AGRITECH-TPL] (HD Video, Inline PDF, H5P, SCORM 1.2, Sequential Path & Question Bank) for any local farming cohort in seconds.'
+                    )); ?>
+                </p>
+            </div>
+            <a href="<?php echo (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:14px;font-weight:900;background:#1B4332;border-color:#1B4332;padding:0 22px;">
+                🚀 <?php echo s(local_mamxanhapp_t('Mở Công cụ Nhân bản Khóa học →', 'Launch 1-Click Course Cloner →')); ?>
+            </a>
         </div>
     </section>
 

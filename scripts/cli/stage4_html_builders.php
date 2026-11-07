@@ -12,6 +12,22 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
     $uid = preg_replace('/[^a-z0-9]/i', '', $cfg['code']);
     $chaptersJson = json_encode($cfg['chapters'], JSON_UNESCAPED_UNICODE);
 
+    // Map course code to locally hosted real agricultural MP4 + WebM + Poster + Vietnamese WebVTT
+    $codeupper = strtoupper($cfg['code']);
+    if (strpos($codeupper, 'CHEBIEN') !== false || strpos($codeupper, 'SAURIENG') !== false) {
+        $vidslug = 'chebien_postharvest';
+    } else if (strpos($codeupper, 'IOT') !== false || strpos($codeupper, 'THUYCANH') !== false) {
+        $vidslug = 'nhamang_hydroponics';
+    } else if (strpos($codeupper, 'VISINH') !== false) {
+        $vidslug = 'visinh_compost';
+    } else {
+        $vidslug = 'chamsoc_fertigation';
+    }
+    $mp4url    = "/local/mamxanhapp/media/videos/{$vidslug}.mp4";
+    $webmurl   = "/local/mamxanhapp/media/videos/{$vidslug}.webm";
+    $posterurl = "/local/mamxanhapp/media/videos/{$vidslug}.jpg";
+    $vtturl    = "/local/mamxanhapp/media/videos/{$vidslug}.vtt";
+
     $cardsHtml = '';
     foreach ($cfg['infographic_cards'] as $card) {
         $cardsHtml .= '<div class="col-12 col-md-4 mb-3">'
@@ -38,37 +54,47 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
 
     return <<<HTML
 <div class="mx-digital-lesson" id="mx-vid-{$uid}">
-    <!-- Interactive HTML5 Animated Technical Video Module -->
+    <!-- Real Local HTML5 Video Player (MP4 + WebM + Vietnamese WebVTT Subtitles — Zero YouTube Block) -->
     <div style="background:linear-gradient(145deg,#102A1E,#1B4332);color:#FFFFFF;border-radius:24px;padding:22px;margin-bottom:24px;box-shadow:0 14px 32px rgba(20,40,29,0.22);">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:8px;">
             <span style="background:#2E7D32;color:#FFF;padding:5px 14px;border-radius:999px;font-weight:800;font-size:0.84rem;">
-                🎬 VIDEO HƯỚNG DẪN TRỰC QUAN HD • {$cfg['duration']}
+                🎬 VIDEO THỰC TẾ NÔNG NGHIỆP CNC (HTML5 MP4 + PHỤ ĐỀ VIỆT) • {$cfg['duration']}
             </span>
-            <span style="color:#B7E4C7;font-size:0.86rem;font-weight:700;">Chuẩn Kỹ thuật VietGAP & Nông nghiệp 4.0</span>
+            <span style="color:#B7E4C7;font-size:0.86rem;font-weight:700;">Phát Trực tiếp Mượt mà 100% (Không phụ thuộc YouTube)</span>
         </div>
 
         <h3 style="color:#FFFFFF;font-weight:800;font-size:1.35rem;margin-bottom:14px;">{$cfg['video_title']}</h3>
 
-        <!-- Visual Animated Stage -->
-        <div id="mx-stage-{$uid}" style="background:#0B1F16;border:2px solid #40916C;border-radius:18px;padding:22px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:14px;">
+        <!-- Native HTML5 Video Element with MP4, WebM & Default Vietnamese Subtitles -->
+        <div style="border-radius:18px;overflow:hidden;border:2px solid #52B788;background:#000000;margin-bottom:14px;">
+            <video id="mx-player-{$uid}" class="mx-real-html5-video" controls playsinline preload="metadata" poster="{$posterurl}" style="width:100%;max-height:460px;display:block;margin:0 auto;background:#000;">
+                <source src="{$mp4url}" type="video/mp4">
+                <source src="{$webmurl}" type="video/webm">
+                <track kind="subtitles" src="{$vtturl}" srclang="vi" label="Phụ đề Kỹ thuật Tiếng Việt" default>
+                Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
+            </video>
+        </div>
+
+        <!-- Synchronized Technical Chapter Summary Below Video -->
+        <div id="mx-stage-{$uid}" style="background:#0B1F16;border:2px solid #40916C;border-radius:18px;padding:18px;margin-bottom:14px;">
             <div class="d-flex align-items-center" style="gap:14px;">
-                <div id="mx-vicon-{$uid}" style="font-size:3rem;line-height:1;">{$cfg['chapters'][0]['icon']}</div>
+                <div id="mx-vicon-{$uid}" style="font-size:2.4rem;line-height:1;">{$cfg['chapters'][0]['icon']}</div>
                 <div>
-                    <div id="mx-vchap-{$uid}" style="color:#95D5B2;font-weight:800;font-size:0.88rem;text-transform:uppercase;">Phần 1 / 3 • {$cfg['chapters'][0]['time']}</div>
-                    <h4 id="mx-vhead-{$uid}" style="color:#FFFFFF;font-weight:800;font-size:1.2rem;margin:4px 0;">{$cfg['chapters'][0]['title']}</h4>
+                    <div id="mx-vchap-{$uid}" style="color:#95D5B2;font-weight:800;font-size:0.86rem;text-transform:uppercase;">📝 Tóm tắt Kỹ thuật Phần 1 / 3 • {$cfg['chapters'][0]['time']}</div>
+                    <h4 id="mx-vhead-{$uid}" style="color:#FFFFFF;font-weight:800;font-size:1.15rem;margin:4px 0;">{$cfg['chapters'][0]['title']}</h4>
                 </div>
             </div>
-            <p id="mx-vdesc-{$uid}" style="color:#E8F5E9;font-size:1rem;line-height:1.6;margin:12px 0;">{$cfg['chapters'][0]['desc']}</p>
+            <p id="mx-vdesc-{$uid}" style="color:#E8F5E9;font-size:0.98rem;line-height:1.6;margin:10px 0;">{$cfg['chapters'][0]['desc']}</p>
             <div style="height:8px;background:rgba(255,255,255,0.15);border-radius:999px;overflow:hidden;">
                 <div id="mx-vbar-{$uid}" style="width:33%;height:100%;background:#52B788;transition:width 0.4s ease;"></div>
             </div>
         </div>
 
-        <!-- Video Chapter Controls (>=48px WCAG AAA) -->
+        <!-- Video Chapter Seek Controls (>=48px WCAG AAA) -->
         <div class="d-flex flex-wrap" style="gap:10px;">
-            <button type="button" class="btn btn-success" style="min-height:48px;border-radius:12px;font-weight:800;background:#2E7D32;" onclick="mxPlayVideoChapter_{$uid}(0)">▶ Phần 1: {$cfg['chapters'][0]['short']}</button>
-            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(1)">▶ Phần 2: {$cfg['chapters'][1]['short']}</button>
-            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(2)">▶ Phần 3: {$cfg['chapters'][2]['short']}</button>
+            <button type="button" class="btn btn-success" style="min-height:48px;border-radius:12px;font-weight:800;background:#2E7D32;" onclick="mxPlayVideoChapter_{$uid}(0, 0)">▶ Phần 1: {$cfg['chapters'][0]['short']}</button>
+            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(1, 8)">▶ Phần 2: {$cfg['chapters'][1]['short']}</button>
+            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(2, 16)">▶ Phần 3: {$cfg['chapters'][2]['short']}</button>
         </div>
     </div>
 
@@ -89,15 +115,24 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
 </div>
 
 <script>
-function mxPlayVideoChapter_{$uid}(idx) {
+function mxPlayVideoChapter_{$uid}(idx, seekSec) {
     var chaps = {$chaptersJson};
     if (!chaps[idx]) return;
     var c = chaps[idx];
     document.getElementById('mx-vicon-{$uid}').textContent = c.icon;
-    document.getElementById('mx-vchap-{$uid}').textContent = 'Phần ' + (idx + 1) + ' / ' + chaps.length + ' • ' + c.time;
+    document.getElementById('mx-vchap-{$uid}').textContent = '📝 Tóm tắt Kỹ thuật Phần ' + (idx + 1) + ' / ' + chaps.length + ' • ' + c.time;
     document.getElementById('mx-vhead-{$uid}').textContent = c.title;
     document.getElementById('mx-vdesc-{$uid}').textContent = c.desc;
     document.getElementById('mx-vbar-{$uid}').style.width = Math.round(((idx + 1) / chaps.length) * 100) + '%';
+    var root = document.getElementById('mx-vid-{$uid}');
+    var vid = (root && (root.querySelector('video.vjs-tech') || root.querySelector('video'))) || document.querySelector('#region-main video');
+    if (vid) {
+        try {
+            vid.currentTime = seekSec || 0;
+            var p = vid.play();
+            if (p && typeof p.catch === 'function') p.catch(function(){});
+        } catch (e) {}
+    }
 }
 </script>
 HTML;

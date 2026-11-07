@@ -23,7 +23,10 @@ Khi bà con đang đứng ngoài vườn nắng chói hoặc tay đang bận ch�
 2. **Nghe đọc bài giảng không cần nhìn màn hình (`🔊 Đọc bài học`):**
    - Vào bất kỳ khóa học nào từ bảng **Khóa học của tôi** -> chạm nút lớn **"Vào học ngay"**.
    - Ngay đầu mỗi bài học luôn có hộp **Trợ lý Giọng đọc AI (`#mx-tts-player`)**: chỉ cần bấm **`▶️ Nghe bài giảng`**, điện thoại sẽ đọc to rõ ràng toàn bộ kiến thức kỹ thuật bằng giọng Tiếng Việt để bà con vừa làm vườn vừa nghe!
-3. Cuối bài học luôn có nút **`← Quay lại khóa học`** và thanh menu cố định dưới đáy màn hình giúp bà con chuyển trang bằng một ngón cái cực kỳ thuận tiện.
+3. **Đọc trực tiếp Sổ tay PDF & Học H5P / SCORM ngay trên Web (Không cần tải file):**
+   - Trong các bài **Tài liệu PDF Xem Trực tiếp**, bà con đọc thẳng trong khung `480px` trên điện thoại và bấm **`➕ Phóng to` / `➖ Thu nhỏ`** mà không tốn dung lượng tải file về máy.
+   - Ở đầu mỗi khóa học có **Sơ đồ Lộ trình (`Bước 1 → Bước 2 → Bước 3 → Bước 4`)** giúp bà con biết rõ mình đang ở bước nào để hoàn thành tuần tự từng chuyên đề (Video & PDF → H5P & SCORM 1.2 → Thực hành vườn → Kiểm tra cuối khóa).
+4. Cuối bài học luôn có nút **`← Quay lại khóa học`** và thanh menu cố định dưới đáy màn hình giúp bà con chuyển trang bằng một ngón cái cực kỳ thuận tiện.
 
 ---
 

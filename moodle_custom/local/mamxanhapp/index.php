@@ -55,13 +55,20 @@ $completedcoursescount = 0;
 $quizscores = [];
 
 $courseicons = [
-    'CHAMSOC01'    => '🌿',
-    'CHEBIEN01'    => '❄️',
-    'IOTNHAMANG01' => '📡',
-    'THUYCANH01'   => '💧',
-    'SAURIENG01'   => '🍈',
-    'PHANVISINH01' => '🦠',
+    'MASTER-AGRITECH-TPL' => '🏆',
+    'CHAMSOC01'           => '🌿',
+    'CHEBIEN01'           => '❄️',
+    'IOTNHAMANG01'        => '📡',
+    'THUYCANH01'          => '💧',
+    'SAURIENG01'          => '🍈',
+    'PHANVISINH01'        => '🦠',
 ];
+
+usort($courses, static function($a, $b) {
+    if ($a->shortname === 'MASTER-AGRITECH-TPL') return -1;
+    if ($b->shortname === 'MASTER-AGRITECH-TPL') return 1;
+    return ($a->id <=> $b->id);
+});
 
 foreach ($courses as $course) {
     if ((int)$course->id === SITEID) {

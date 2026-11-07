@@ -54,6 +54,8 @@ services:
         condition: service_healthy
       moodle_redis:
         condition: service_healthy
+    ports:
+      - "${DIRECT_HTTP_PORT:-8090}:80"
     environment:
       MOODLE_DB_HOST: moodle_db
       MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle_mamxanh}

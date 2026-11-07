@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
 import path from 'node:path';
+import http from 'node:http';
 import https from 'node:https';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +12,7 @@ const PROJECT_ROOT = path.resolve(__dirname, '../..');
 const SCREENSHOT_DIR = path.join(PROJECT_ROOT, 'docs', 'screenshots');
 const ARTIFACT_DIR = 'C:\\Users\\pho21\\.gemini\\antigravity\\brain\\84025476-35b6-4655-9f1f-0de62ae3b517';
 const BASE_URL = process.env.MOODLE_URL || 'https://moodle.lvh.me:8443';
+const DIRECT_HTTP_URL = process.env.MOODLE_DIRECT_HTTP_URL || 'http://localhost:8090';
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -57,12 +59,16 @@ async function saveShot(page, filename, copyToArtifact = true, fullPage = false)
 function measureSingleTtfb(urlStr, cookieHeader = '') {
   return new Promise((resolve, reject) => {
     const u = new URL(urlStr);
-    const agent = new https.Agent({ rejectUnauthorized: false, keepAlive: true });
+    const isHttps = u.protocol === 'https:';
+    const client = isHttps ? https : http;
+    const agent = isHttps
+      ? new https.Agent({ rejectUnauthorized: false, keepAlive: true })
+      : new http.Agent({ keepAlive: true });
     const start = performance.now();
-    const req = https.request(
+    const req = client.request(
       {
         hostname: u.hostname,
-        port: u.port || 443,
+        port: u.port || (isHttps ? 443 : 80),
         path: u.pathname + u.search,
         method: 'GET',
         agent,
@@ -116,6 +122,24 @@ async function checkNoHorizontalOverflow(page, label) {
   );
 }
 
+async function waitForFrameWithSelector(page, selector, timeoutMs = 20000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    for (const frame of page.frames()) {
+      try {
+        const el = await frame.$(selector);
+        if (el) {
+          return frame;
+        }
+      } catch (_err) {
+        // Ignore transient frame detach/navigation errors while polling
+      }
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`Timed out waiting ${timeoutMs}ms for iframe selector: ${selector}`);
+}
+
 async function runSuite() {
   console.log('===================================================================');
   console.log(' MAM XANH LMS 2.0 - PUPPETEER E2E MULTI-ROLE & BENCHMARK SUITE');
@@ -125,14 +149,19 @@ async function runSuite() {
     executablePath: CHROME_PATH,
     headless: true,
     acceptInsecureCerts: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--ignore-certificate-errors',
+      '--autoplay-policy=no-user-gesture-required',
+    ],
   });
 
   try {
     // =========================================================================
     // PART 1: LOGIN UI, BILINGUAL SWITCH & MOBILE/DESKTOP VIEWPORT CHECKS
     // =========================================================================
-    console.log('\n--- [1/5] Testing Login Card, Bilingual Switch & Mobile-First UI ---');
+    console.log('\n--- [1/6] Testing Login Card, Bilingual Switch & Mobile-First UI ---');
     const ctx1 = await browser.createBrowserContext();
     const page = await ctx1.newPage();
 
@@ -168,7 +197,7 @@ async function runSuite() {
     // =========================================================================
     // PART 2: FARMER ROLE (nd_rau_lamdong) - FULL JOURNEY, QUIZ, CERT & VIETGAP
     // =========================================================================
-    console.log('\n--- [2/5] Testing Farmer Role (nd_rau_lamdong) on Mobile 375x812 & Desktop 1440x900 ---');
+    console.log('\n--- [2/6] Testing Farmer Role (nd_rau_lamdong) on Mobile 375x812 & Desktop 1440x900 ---');
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
       page.click('#mx-1click-farmer'),
@@ -410,9 +439,10 @@ async function runSuite() {
     // =========================================================================
     // PART 3: FARMER RBAC 403 FORBIDDEN SECURITY CHECKS
     // =========================================================================
-    console.log('\n--- [3/5] Verifying Strict 403 Forbidden RBAC Boundaries ---');
+    console.log('\n--- [3/6] Verifying Strict 403 Forbidden RBAC Boundaries ---');
     for (const restrictedPath of [
       `/local/mamxanhapp/manage.php`,
+      `/local/mamxanhapp/clone_course.php`,
       `/mod/fieldpractice/grade.php?id=${fpCmId}`,
       `/local/mamxanhapp/admin_audit.php`,
     ]) {
@@ -425,7 +455,7 @@ async function runSuite() {
     // =========================================================================
     // PART 4: TECHNICAL OFFICER / CBKT (cbkt_pilot) - ANALYTICS, RUBRIC & CSV
     // =========================================================================
-    console.log('\n--- [4/5] Testing Technical Officer Role (cbkt_pilot): Analytics, Rubric -> Gradebook & CSV BOM ---');
+    console.log('\n--- [4/6] Testing Technical Officer Role (cbkt_pilot): Analytics, Rubric -> Gradebook & CSV BOM ---');
     const ctxCbkt = await browser.createBrowserContext();
     const cbktPage = await ctxCbkt.newPage();
     await cbktPage.setViewport({ width: 1440, height: 900 });
@@ -493,9 +523,403 @@ async function runSuite() {
     assertCheck('RBAC 403 Block: CBKT -> /local/mamxanhapp/admin_audit.php', cbktAdminRes.statusCode === 403, `HTTP ${cbktAdminRes.statusCode}`);
 
     // =========================================================================
-    // PART 5: ADMIN ROLE (admin) & WARM TTFB PERFORMANCE BENCHMARK
+    // PART 5: DEFENSE COMMITTEE 5 CORE UPGRADES (PDF EMBED, H5P, SCORM 1.2,
+    //         MASTER SEQUENTIAL TEMPLATE, 1-CLICK CLONER, REAL VIDEO & DIRECT HTTP)
     // =========================================================================
-    console.log('\n--- [5/5] Testing Admin Role (admin) & Measuring Warm TTFB Benchmarks ---');
+    console.log('\n--- [5/6] Testing Defense Committee 5 Core Upgrades (Inline PDF, H5P, SCORM 1.2, Master Template, 1-Click Cloner, HTML5 Video & Direct HTTP) ---');
+
+    // 5.1 Direct Standalone HTTP Port on moodle_app (http://localhost:8090, zero Reverse Proxy dependency)
+    const ctxDirect = await browser.createBrowserContext();
+    const directPage = await ctxDirect.newPage();
+    await directPage.setViewport({ width: 1440, height: 900 });
+    const directResp = await directPage.goto(`${DIRECT_HTTP_URL}/login/index.php?lang=vi`, { waitUntil: 'networkidle2' });
+    assertCheck(
+      `Standalone Direct HTTP moodle_app port (${DIRECT_HTTP_URL}) reachable without Reverse Proxy`,
+      Boolean(directResp && directResp.status() === 200),
+      `HTTP ${directResp ? directResp.status() : 'ERR'}`
+    );
+    await Promise.all([
+      directPage.waitForNavigation({ waitUntil: 'networkidle2' }),
+      directPage.click('#mx-1click-farmer'),
+    ]);
+    assertCheck(
+      `Direct HTTP 1-Click Farmer Login stays cleanly on ${DIRECT_HTTP_URL}`,
+      directPage.url().startsWith(`${DIRECT_HTTP_URL}/local/mamxanhapp/index.php`),
+      directPage.url()
+    );
+    await ctxDirect.close();
+
+    // Open fresh Farmer context (nd_saurieng_daklak) to test Real HTML5 Video, Inline PDF, H5P, SCORM 1.2 & Master Sequential Path
+    const ctxCouncilFarmer = await browser.createBrowserContext();
+    const cfPage = await ctxCouncilFarmer.newPage();
+    await cfPage.setViewport({ width: 1440, height: 900 });
+    await cfPage.goto(`${BASE_URL}/login/index.php?lang=vi`, { waitUntil: 'networkidle2' });
+    await cfPage.$eval('input[name="username"]', (el) => { el.value = 'nd_saurieng_daklak'; });
+    await cfPage.$eval('input[name="password"]', (el) => { el.value = 'MX!Rau2026'; });
+    await Promise.all([
+      cfPage.waitForNavigation({ waitUntil: 'networkidle2' }),
+      cfPage.$eval('#login', (f) => f.submit()),
+    ]);
+    assertCheck(
+      'Farmer nd_saurieng_daklak logged in for Defense Committee feature verification',
+      cfPage.url().includes('/local/mamxanhapp/index.php'),
+      cfPage.url()
+    );
+
+    // Inspect CHAMSOC01 (/course/view.php?id=2) to collect Video, Inline PDF, H5P & SCORM 1.2 URLs
+    await cfPage.goto(`${BASE_URL}/course/view.php?id=2`, { waitUntil: 'networkidle2' });
+    const chamsocLinks = await cfPage.evaluate(() => ({
+      hasStepper: Boolean(document.getElementById('mx-learning-path-stepper')),
+      videoUrl: document.querySelector('a[href*="/mod/page/view.php"]')?.href || '',
+      pdfUrl: document.querySelector('a[href*="/mod/resource/view.php"]')?.href || '',
+      h5pUrl: document.querySelector('a[href*="/mod/h5pactivity/view.php"]')?.href || '',
+      scormUrl: document.querySelector('a[href*="/mod/scorm/view.php"]')?.href || '',
+    }));
+    assertCheck(
+      'CHAMSOC01 displays Stepper + Video + Inline PDF (mod_resource) + H5P (mod_h5pactivity) + SCORM 1.2 (mod_scorm)',
+      chamsocLinks.hasStepper && Boolean(chamsocLinks.videoUrl && chamsocLinks.pdfUrl && chamsocLinks.h5pUrl && chamsocLinks.scormUrl)
+    );
+
+    // 5.2 Smooth Local HTML5 <video> Playback + Vietnamese Subtitles + Chapter Seek (Cô Lương's requirement)
+    await cfPage.goto(chamsocLinks.videoUrl, { waitUntil: 'networkidle2' });
+    await cfPage.waitForFunction(
+      () => {
+        const v =
+          document.querySelector('#region-main video.vjs-tech') ||
+          document.querySelector('#region-main .mx-real-html5-video video') ||
+          document.querySelector('#region-main video');
+        if (!v) return false;
+        if (!v.dataset.mxTriggeredLoad && v.readyState === 0) {
+          v.dataset.mxTriggeredLoad = '1';
+          v.preload = 'auto';
+          v.load();
+        }
+        return v.readyState >= 1 && v.duration > 3 && v.videoWidth > 0;
+      },
+      { timeout: 25000 }
+    );
+    const videoAudit = await cfPage.evaluate(async () => {
+      const v =
+        document.querySelector('#region-main video.vjs-tech') ||
+        document.querySelector('#region-main .mx-real-html5-video video') ||
+        document.querySelector('#region-main video');
+      const noYoutube = !document.querySelector('#region-main iframe[src*="youtube.com"], #region-main iframe[src*="youtu.be"]');
+      const currentSrc = v.currentSrc || v.src || '';
+      const hasMp4OrWebm =
+        currentSrc.includes('.mp4') ||
+        currentSrc.includes('.webm') ||
+        Boolean(document.querySelector('#region-main source[type="video/mp4"], #region-main source[type="video/webm"]'));
+      const hasViTrack =
+        (v.textTracks && v.textTracks.length > 0) ||
+        Boolean(
+          document.querySelector(
+            '#region-main track[kind="subtitles"], #region-main .vjs-subs-caps-button, #region-main .vjs-text-track-display'
+          )
+        );
+      await new Promise((resolve) => {
+        const done = () => {
+          v.removeEventListener('seeked', done);
+          resolve();
+        };
+        v.addEventListener('seeked', done);
+        v.currentTime = Math.min(4.0, v.duration / 2);
+        setTimeout(done, 1500);
+      });
+      return {
+        noYoutube,
+        hasMp4OrWebm,
+        hasViTrack,
+        duration: Number(v.duration.toFixed(2)),
+        width: v.videoWidth,
+        height: v.videoHeight,
+        currentTime: Number(v.currentTime.toFixed(2)),
+        currentSrc,
+      };
+    });
+    assertCheck(
+      'Real Local HTML5 <video> plays smoothly (MP4/WebM + VI subtitles, zero YouTube embed block)',
+      videoAudit.noYoutube && videoAudit.hasMp4OrWebm && videoAudit.hasViTrack && videoAudit.duration > 3 && videoAudit.width > 0,
+      `${videoAudit.width}x${videoAudit.height}, duration=${videoAudit.duration}s, seek=${videoAudit.currentTime}s, mp4=${videoAudit.hasMp4OrWebm}, sub=${videoAudit.hasViTrack}`
+    );
+    await cfPage.evaluate(() => {
+      document.querySelector('.mx-digital-lesson')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      window.scrollBy(0, -68);
+    });
+    await saveShot(cfPage, '23_real_html5_video_lesson.png');
+
+    // 5.3 Inline Embedded PDF Viewer without Downloading (mod_resource RESOURCELIB_DISPLAY_EMBED = 1, 650px Desktop / 480px Mobile)
+    await cfPage.setViewport({ width: 1440, height: 900 });
+    await cfPage.goto(chamsocLinks.pdfUrl, { waitUntil: 'networkidle2' });
+    await cfPage.waitForSelector('#mx-inline-pdf-viewer[data-pdf-rendered="true"]', { timeout: 25000 });
+
+    // Click Zoom In (+20% -> 120%) and wait for re-render
+    await cfPage.evaluate(() => {
+      document.getElementById('mx-inline-pdf-viewer')?.removeAttribute('data-pdf-rendered');
+      document.getElementById('mx-pdf-zoom-in')?.click();
+    });
+    await cfPage.waitForSelector('#mx-inline-pdf-viewer[data-pdf-rendered="true"]', { timeout: 15000 });
+
+    const pdfDesktopAudit = await cfPage.evaluate(() => {
+      const vp = document.getElementById('mx-pdf-viewport');
+      const canvases = document.querySelectorAll('canvas.mx-pdf-page-canvas');
+      const zoomPct = document.getElementById('mx-pdf-zoom-pct')?.textContent.trim() || '';
+      return {
+        stayedOnLessonPage: window.location.pathname.includes('/mod/resource/view.php'),
+        viewportHeight: vp ? Math.round(vp.getBoundingClientRect().height) : 0,
+        canvasCount: canvases.length,
+        firstCanvasWidth: canvases[0] ? canvases[0].width : 0,
+        zoomPct,
+      };
+    });
+    assertCheck(
+      'Inline Embedded PDF Viewer (Desktop 650px, multi-page canvas, Zoom + to 120%, ZERO download)',
+      pdfDesktopAudit.stayedOnLessonPage &&
+        Math.abs(pdfDesktopAudit.viewportHeight - 650) <= 2 &&
+        pdfDesktopAudit.canvasCount >= 2 &&
+        pdfDesktopAudit.firstCanvasWidth > 400 &&
+        pdfDesktopAudit.zoomPct === '120%',
+      `height=${pdfDesktopAudit.viewportHeight}px, pages=${pdfDesktopAudit.canvasCount}, zoom=${pdfDesktopAudit.zoomPct}`
+    );
+    await cfPage.evaluate(() => {
+      document.getElementById('mx-inline-pdf-viewer')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      window.scrollBy(0, -115);
+    });
+    await saveShot(cfPage, '24a_inline_pdf_viewer_desktop.png');
+
+    // Verify Mobile 375x812 Inline PDF Viewer (480px viewport height + zero horizontal overflow)
+    await cfPage.setViewport({ width: 375, height: 812, isMobile: true, hasTouch: true });
+    await cfPage.reload({ waitUntil: 'networkidle2' });
+    await cfPage.waitForSelector('#mx-inline-pdf-viewer[data-pdf-rendered="true"]', { timeout: 25000 });
+    const pdfMobileHeight = await cfPage.$eval('#mx-pdf-viewport', (el) => Math.round(el.getBoundingClientRect().height));
+    assertCheck(
+      'Inline Embedded PDF Viewer (Mobile 375x812 -> 480px viewport height)',
+      Math.abs(pdfMobileHeight - 480) <= 2,
+      `height=${pdfMobileHeight}px`
+    );
+    await checkNoHorizontalOverflow(cfPage, 'Inline PDF Viewer Mobile 375x812');
+    await cfPage.evaluate(() => {
+      document.getElementById('mx-inline-pdf-viewer')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      window.scrollBy(0, -64);
+    });
+    await saveShot(cfPage, '24b_inline_pdf_viewer_mobile.png');
+
+    // 5.4a Authentic H5P Activity (mod_h5pactivity QuestionSet -> xAPI Gradebook Sync)
+    await cfPage.setViewport({ width: 1440, height: 920 });
+    await cfPage.goto(chamsocLinks.h5pUrl, { waitUntil: 'networkidle2' });
+    const h5pFrame = await waitForFrameWithSelector(cfPage, '.h5p-alternative-container, .h5p-question-content', 25000);
+    const h5pAnswered = await h5pFrame.evaluate(async () => {
+      const firstAlt = document.querySelector('.h5p-alternative-container');
+      if (firstAlt) firstAlt.click();
+      await new Promise((r) => setTimeout(r, 250));
+      const checkBtn = document.querySelector('.h5p-question-check-answer');
+      if (checkBtn) checkBtn.click();
+      await new Promise((r) => setTimeout(r, 500));
+      return {
+        text: document.body.innerText.slice(0, 300),
+        hasQuestion: Boolean(document.querySelector('.h5p-question-content')),
+      };
+    });
+    assertCheck(
+      'Authentic H5P Activity (mod_h5pactivity H5P.QuestionSet) rendered & interactive',
+      h5pAnswered.hasQuestion && h5pAnswered.text.includes('5.8'),
+      'H5P Question 1 checked live'
+    );
+    await cfPage.evaluate(() => {
+      document.querySelector('iframe.h5p-player')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      window.scrollBy(0, -140);
+    });
+    await saveShot(cfPage, '25a_h5p_interactive_activity.png');
+
+    // Finish remaining H5P questions so xAPI pushes completion/score to Moodle Gradebook
+    await h5pFrame.evaluate(async () => {
+      for (let step = 0; step < 3; step++) {
+        const nextBtn = document.querySelector('.h5p-question-next');
+        if (nextBtn && nextBtn.offsetParent !== null) {
+          nextBtn.click();
+          await new Promise((r) => setTimeout(r, 350));
+        }
+        const visibleQ = [...document.querySelectorAll('.question-container')].find((q) => q.offsetParent !== null) || document;
+        const alt = visibleQ.querySelector('.h5p-alternative-container');
+        if (alt) alt.click();
+        await new Promise((r) => setTimeout(r, 200));
+        const chk = visibleQ.querySelector('.h5p-question-check-answer');
+        if (chk && chk.offsetParent !== null) chk.click();
+        await new Promise((r) => setTimeout(r, 350));
+        const fin = visibleQ.querySelector('.h5p-question-finish');
+        if (fin && fin.offsetParent !== null) {
+          fin.click();
+          await new Promise((r) => setTimeout(r, 600));
+        }
+      }
+    });
+
+    // 5.4b Authentic ADL SCORM 1.2 Package (mod_scorm -> LMSInitialize / LMSSetValue / LMSCommit / LMSFinish)
+    await cfPage.setViewport({ width: 1440, height: 960 });
+    await cfPage.goto(chamsocLinks.scormUrl, { waitUntil: 'networkidle2' });
+    await Promise.all([
+      cfPage.waitForNavigation({ waitUntil: 'networkidle2' }),
+      cfPage.$eval('#scormviewform', (f) => f.submit()),
+    ]);
+    const scormFrame = await waitForFrameWithSelector(cfPage, '#scorm-quiz-form', 25000);
+    await scormFrame.waitForFunction(
+      () => {
+        const b = document.getElementById('scorm-conn-badge');
+        return Boolean(b && b.textContent.includes('LMSInitialize OK'));
+      },
+      { timeout: 10000 }
+    );
+    const scormOutcome = await scormFrame.evaluate(() => {
+      ['sq1', 'sq2', 'sq3', 'sq4'].forEach((name) => {
+        const r = document.querySelector(`input[name="${name}"][value="1"]`);
+        if (r) r.click();
+      });
+      document.getElementById('scorm-submit-btn')?.click();
+      const banner = document.getElementById('scorm-result-banner');
+      banner?.scrollIntoView({ behavior: 'instant', block: 'end' });
+      return {
+        connBadge: document.getElementById('scorm-conn-badge')?.textContent.trim() || '',
+        bannerText: banner ? banner.innerText : '',
+      };
+    });
+    assertCheck(
+      'Authentic SCORM 1.2 SCO connected to Moodle SCORM API & synced 100/100 COMPLETED',
+      scormOutcome.connBadge.includes('LMSInitialize OK') &&
+        scormOutcome.bannerText.includes('100/100') &&
+        scormOutcome.bannerText.includes('COMPLETED'),
+      scormOutcome.connBadge
+    );
+    await new Promise((r) => setTimeout(r, 800));
+    await saveShot(cfPage, '25b_scorm12_vietgap_player.png');
+
+    // Return to /mod/scorm/view.php and verify Moodle recorded score 100
+    await cfPage.goto(chamsocLinks.scormUrl, { waitUntil: 'networkidle2' });
+    const scormSummaryText = await cfPage.evaluate(() => document.body.innerText);
+    assertCheck(
+      'Moodle SCORM 1.2 summary confirms persisted score 100 in LMS',
+      scormSummaryText.includes('100'),
+      'Score 100 verified on /mod/scorm/view.php'
+    );
+
+    // 5.5 Master Course Template [MASTER-AGRITECH-TPL] Sequential 4-Step Learning Path & Restrict Access
+    await cfPage.setViewport({ width: 1440, height: 920 });
+    await cfPage.goto(`${BASE_URL}/course/view.php?id=8`, { waitUntil: 'networkidle2' });
+    const masterInitial = await cfPage.evaluate(() => {
+      const stepper = document.getElementById('mx-learning-path-stepper');
+      const stepNodes = document.querySelectorAll('#mx-learning-path-stepper .mx-stepper-node');
+      const sec1 = document.getElementById('mx-sec-1');
+      const sec2 = document.getElementById('mx-sec-2');
+      const sec3 = document.getElementById('mx-sec-3');
+      const sec4 = document.getElementById('mx-sec-4');
+      const sec1Links = sec1 ? [...sec1.querySelectorAll('a.mx-tile-action-btn')].map((a) => a.href) : [];
+      return {
+        hasStepper: Boolean(stepper),
+        stepCount: stepNodes.length,
+        sec1Open: Boolean(sec1 && !sec1.classList.contains('mx-sec-is-locked')),
+        sec2Locked: Boolean(sec2 && sec2.classList.contains('mx-sec-is-locked')),
+        sec3Locked: Boolean(sec3 && sec3.classList.contains('mx-sec-is-locked')),
+        sec4Locked: Boolean(sec4 && sec4.classList.contains('mx-sec-is-locked')),
+        sec1Links,
+      };
+    });
+    assertCheck(
+      'MASTER-AGRITECH-TPL displays 5-node Roadmap Stepper + Step 1 open + Steps 3 & 4 restricted',
+      masterInitial.hasStepper &&
+        masterInitial.stepCount >= 5 &&
+        masterInitial.sec1Open &&
+        masterInitial.sec3Locked &&
+        masterInitial.sec4Locked &&
+        masterInitial.sec1Links.length >= 2,
+      `steps=${masterInitial.stepCount}, sec2Locked=${masterInitial.sec2Locked}, sec3Locked=${masterInitial.sec3Locked}`
+    );
+    await saveShot(cfPage, '26a_master_template_learning_path_locked.png', true, true);
+
+    // Complete Step 1 (Video + Inline PDF) in MASTER-AGRITECH-TPL -> verify Step 2 (H5P + SCORM 1.2) unlocks automatically!
+    for (const step1Url of masterInitial.sec1Links) {
+      await cfPage.goto(step1Url, { waitUntil: 'networkidle2' });
+    }
+    await cfPage.goto(`${BASE_URL}/course/view.php?id=8`, { waitUntil: 'networkidle2' });
+    const masterAfterStep1 = await cfPage.evaluate(() => {
+      const sec2 = document.getElementById('mx-sec-2');
+      const sec3 = document.getElementById('mx-sec-3');
+      const sec2Btns = sec2 ? sec2.querySelectorAll('a.mx-tile-action-btn').length : 0;
+      return {
+        sec2Unlocked: Boolean(sec2 && !sec2.classList.contains('mx-sec-is-locked') && sec2Btns >= 2),
+        sec3StillLocked: Boolean(sec3 && sec3.classList.contains('mx-sec-is-locked')),
+      };
+    });
+    assertCheck(
+      'Completing Step 1 (Video + PDF) in MASTER-AGRITECH-TPL automatically unlocks Step 2 (H5P & SCORM 1.2)',
+      masterAfterStep1.sec2Unlocked && masterAfterStep1.sec3StillLocked,
+      'Step 2 unlocked, Step 3 still restricted'
+    );
+    await saveShot(cfPage, '26b_master_template_step2_unlocked.png', true, true);
+    await ctxCouncilFarmer.close();
+
+    // 5.6 1-Click Local Course Cloner (/local/mamxanhapp/clone_course.php as CBKT cbkt_pilot)
+    await cbktPage.setViewport({ width: 1440, height: 920 });
+    await cbktPage.goto(`${BASE_URL}/local/mamxanhapp/clone_course.php?lang=vi`, { waitUntil: 'networkidle2' });
+    const clonerFormReady = await cbktPage.evaluate(() => {
+      const sel = document.getElementById('mx-clone-source');
+      const fn = document.getElementById('mx-clone-fullname');
+      const coh = document.getElementById('mx-clone-cohort');
+      const btn = document.getElementById('mx-clone-submit-btn');
+      if (coh) {
+        const ldOpt = [...coh.options].find((o) => o.text.includes('Lâm Đồng'));
+        if (ldOpt) coh.value = ldOpt.value;
+      }
+      return Boolean(sel && fn && btn && sel.options[0]?.text.includes('MASTER-AGRITECH-TPL'));
+    });
+    assertCheck('CBKT 1-Click Course Cloner page loaded with MASTER-AGRITECH-TPL prioritized', clonerFormReady);
+    await saveShot(cbktPage, '27a_course_cloner_form.png');
+
+    // Submit 1-Click Clone -> Moodle Backup & Restore Controller creates regional course
+    await Promise.all([
+      cbktPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 90000 }),
+      cbktPage.click('#mx-clone-submit-btn'),
+    ]);
+    const cloneSuccessInfo = await cbktPage.evaluate(() => {
+      const card = document.getElementById('mx-clone-success-card');
+      const openBtn = document.getElementById('mx-open-cloned-course-btn');
+      return {
+        hasSuccess: Boolean(card && card.innerText.includes('100%')),
+        cardText: card ? card.innerText.replace(/\s+/g, ' ').slice(0, 180) : '',
+        newCourseUrl: openBtn ? openBtn.href : '',
+      };
+    });
+    assertCheck(
+      '1-Click Course Cloner executed Moodle backup_controller & restore_controller cleanly',
+      cloneSuccessInfo.hasSuccess && cloneSuccessInfo.newCourseUrl.includes('/course/view.php?id='),
+      cloneSuccessInfo.newCourseUrl
+    );
+    await saveShot(cbktPage, '27b_course_cloner_result.png');
+
+    // Open the newly cloned local course and verify 100% preserved Stepper, PDF, H5P, SCORM, FieldPractice & Quiz
+    await cbktPage.goto(cloneSuccessInfo.newCourseUrl, { waitUntil: 'networkidle2' });
+    const clonedCourseAudit = await cbktPage.evaluate(() => ({
+      title: document.body.innerText.includes('Đơn Dương'),
+      hasStepper: Boolean(document.getElementById('mx-learning-path-stepper')),
+      hasPdf: Boolean(document.querySelector('a[href*="/mod/resource/view.php"]')),
+      hasH5p: Boolean(document.querySelector('a[href*="/mod/h5pactivity/view.php"]')),
+      hasScorm: Boolean(document.querySelector('a[href*="/mod/scorm/view.php"]')),
+      hasFp: Boolean(document.querySelector('a[href*="/mod/fieldpractice/view.php"]')),
+      hasQuiz: Boolean(document.querySelector('a[href*="/mod/quiz/view.php"]')),
+    }));
+    assertCheck(
+      'Cloned regional course preserves 100% of Stepper, PDF, H5P, SCORM 1.2, FieldPractice & Quiz',
+      clonedCourseAudit.title &&
+        clonedCourseAudit.hasStepper &&
+        clonedCourseAudit.hasPdf &&
+        clonedCourseAudit.hasH5p &&
+        clonedCourseAudit.hasScorm &&
+        clonedCourseAudit.hasFp &&
+        clonedCourseAudit.hasQuiz
+    );
+    await saveShot(cbktPage, '27c_cloned_local_course_view.png', true, true);
+
+    // =========================================================================
+    // PART 6: ADMIN ROLE (admin) & WARM TTFB PERFORMANCE BENCHMARK
+    // =========================================================================
+    console.log('\n--- [6/6] Testing Admin Role (admin) & Measuring Warm TTFB Benchmarks ---');
     const ctxAdmin = await browser.createBrowserContext();
     const adminPage = await ctxAdmin.newPage();
     await adminPage.setViewport({ width: 1440, height: 900 });
@@ -514,12 +938,15 @@ async function runSuite() {
 
     // Warm TTFB Benchmarks (5 runs per endpoint after OPcache JIT + Redis MUC warmup)
     const benchmarkTargets = [
-      { name: 'Login Page (/login/index.php)', url: `${BASE_URL}/login/index.php`, cookie: '' },
+      { name: 'Login Page HTTPS Proxy (/login/index.php)', url: `${BASE_URL}/login/index.php`, cookie: '' },
+      { name: 'Login Page Direct HTTP moodle_app (http://localhost:8090/login/index.php)', url: `${DIRECT_HTTP_URL}/login/index.php`, cookie: '' },
       { name: 'Public QR Certificate Verify (/local/mamxanhcert/verify.php)', url: `${BASE_URL}/local/mamxanhcert/verify.php?code=${encodeURIComponent(unlockedCertCode)}`, cookie: '' },
       { name: 'Public VietGAP Traceability (/local/agriops/trace.php)', url: `${BASE_URL}/local/agriops/trace.php?code=${encodeURIComponent(createdBatchCode)}`, cookie: '' },
       { name: 'CBKT Analytics Hub (/local/mamxanhapp/manage.php)', url: `${BASE_URL}/local/mamxanhapp/manage.php`, cookie: cbktCookie },
+      { name: '1-Click Course Cloner (/local/mamxanhapp/clone_course.php)', url: `${BASE_URL}/local/mamxanhapp/clone_course.php`, cookie: cbktCookie },
       { name: 'Smart AgTech Calculator (/local/mamxanhapp/calculator.php)', url: `${BASE_URL}/local/mamxanhapp/calculator.php`, cookie: cbktCookie },
       { name: 'Course Tiles View CHAMSOC01 (/course/view.php?id=2)', url: `${BASE_URL}/course/view.php?id=2`, cookie: cbktCookie },
+      { name: 'Master Course Template (/course/view.php?id=8)', url: `${BASE_URL}/course/view.php?id=8`, cookie: cbktCookie },
       { name: 'Admin System Audit (/local/mamxanhapp/admin_audit.php)', url: `${BASE_URL}/local/mamxanhapp/admin_audit.php`, cookie: adminCookie },
     ];
 

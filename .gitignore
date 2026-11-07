@@ -10,3 +10,6 @@ Thumbs.db
 
 # Keep sample backups tracked or ignore timestamped temp dumps if needed
 backups/mamxanh_lms_db_*.sql
+
+# Upstream H5P base seed cache (final generated .h5p/.zip/.pdf packages in assets/packages & assets/pdfs are tracked)
+moodle_custom/local/mamxanhapp/assets/h5p_base/

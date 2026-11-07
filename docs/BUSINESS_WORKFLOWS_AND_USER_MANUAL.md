@@ -205,3 +205,19 @@ stateDiagram-v2
 18. **Xác thực QR Công khai Không cần Đăng nhập:**
     - Tra cứu Chứng nhận số QR: `/local/mamxanhcert/verify.php?code=MXCERT-2026-CHEBIEN01-0043`
     - Tra cứu Hộ chiếu Lô nông sản VietGAP: `/local/agriops/trace.php?code=VG-LD-202611-0016`
+
+### Nhóm E — 5 Tính năng Cốt lõi Bổ sung Theo Yêu cầu Hội đồng Bảo vệ (Cô Lương & Thầy Dũng)
+19. **Xem Trực tiếp Sổ tay PDF Kỹ thuật Không Cần Tải Về (`mod_resource` `RESOURCELIB_DISPLAY_EMBED`):**
+    - Trong khóa `CHAMSOC01`, `CHEBIEN01` và `MASTER-AGRITECH-TPL`, bấm nút `📖 Xem trực tiếp PDF (Không tải về)`.
+    - Tài liệu mở trực tiếp trong khung đọc `#mx-inline-pdf-viewer` (cao `650px` trên máy tính / `480px` trên điện thoại) kèm các nút `➖ Thu nhỏ`, `➕ Phóng to`, `↔️ Vừa khung` và `🖥️ Toàn màn hình`.
+20. **Học liệu Tương tác H5P (`mod_h5pactivity`) & Chuẩn Quốc tế SCORM 1.2 (`mod_scorm`):**
+    - Mở hoạt động **H5P** (`Question Set` / `Course Presentation` / `Accordion`) để trả lời trực tiếp câu hỏi tương tác và lưu điểm xAPI vào Sổ điểm Moodle Gradebook.
+    - Mở gói bài giảng **SCORM 1.2** (*Quy trình Thực hành Nông nghiệp Tốt VietGAP & Kiểm soát Mối nguy*), trả lời 4 câu hỏi và bấm nộp để gọi `LMSInitialize`, `LMSSetValue("cmi.core.score.raw", 100)`, `LMSSetValue("cmi.core.lesson_status", "completed")` và `LMSFinish` đồng bộ thẳng về Moodle.
+21. **Học theo Lộ trình Tuần tự 4 Bước trên Khóa học Mẫu (`MASTER-AGRITECH-TPL`):**
+    - Đầu trang khóa học hiển thị sơ đồ **Stepper (`Bước 1 → Bước 2 → Bước 3 → Bước 4 → Chứng nhận Số QR`)**.
+    - Hoàn thành **Bước 1** (Video MP4 thực tế + Đọc PDF trực tiếp) → hệ thống tự động mở khóa **Bước 2** (H5P + SCORM 1.2) → mở khóa **Bước 3** (`mod_fieldpractice`) → mở khóa **Bước 4** (Quiz 12 câu, đạt $\ge 70\%$ mở Chứng nhận Số QR).
+22. **Nhân bản Khóa học Mẫu 1-Chạm theo Địa phương (`/local/mamxanhapp/clone_course.php`):**
+    - Đăng nhập `cbkt_pilot` -> Từ Dashboard CBKT bấm `🧬 Nhân bản Khóa học Mẫu (1-Click Cloner)`.
+    - Chọn khóa gốc (`MASTER-AGRITECH-TPL` hoặc `CHAMSOC01`), nhập tên lớp địa phương mới (VD: *Tập huấn Nông dân Đơn Dương - Lâm Đồng Đợt 2*), chọn nhóm nông dân (`Cohort`) và bấm `🧬 Nhân bản ngay` -> Hệ thống chạy `\backup_controller` & `\restore_controller` tạo khóa mới nguyên vẹn 100% lộ trình tuần tự, PDF, H5P, SCORM 1.2 và ngân hàng câu hỏi chỉ trong vài giây!
+23. **Truy cập Độc lập qua Cổng HTTP Trực tiếp (`http://localhost:8090`):**
+    - Ngoài cổng Reverse Proxy HTTPS (`https://moodle.lvh.me:8443`), hệ thống mở sẵn cổng HTTP độc lập trực tiếp vào container `moodle_app` tại `http://localhost:8090` để trình diễn nhanh không phụ thuộc Reverse Proxy.

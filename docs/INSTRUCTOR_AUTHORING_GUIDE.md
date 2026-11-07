@@ -61,3 +61,18 @@ Tại buổi tập huấn thực địa ở vườn mẫu hoặc nhà màng:
      4. **Chất lượng Thành phẩm & Ghi chép Nhật ký (0–25đ):** Kết quả đạt yêu cầu thực tế và cập nhật đầy đủ nhật ký lô sản xuất.
    - Nhập nhận xét chuyên môn và nhấn **"💾 Lưu Điểm Rubric -> Gradebook"**.
    - Điểm tổng kết và nhận xét được **đẩy tức thì vào Sổ điểm Moodle Gradebook (`mdl_grade_grades`)**, đồng thời tự động đánh dấu **Hoàn thành Hoạt động** cho nông dân!
+
+---
+
+## 4. Sử dụng Khóa học Mẫu Chuẩn (`MASTER-AGRITECH-TPL`) & Công cụ Nhân bản 1-Chạm (`clone_course.php`)
+
+Theo chuẩn hóa chương trình tập huấn địa phương:
+1. **Khóa học Mẫu Chuẩn (`MASTER-AGRITECH-TPL`):** Đã tích hợp sẵn **Lộ trình Học tập Tuần tự 4 Bước (`Restrict Access`)** cùng thanh tiến độ **Stepper (`Bước 1 → Bước 2 → Bước 3 → Bước 4 → Chứng nhận Số QR`)**:
+   - **Bước 1:** Video thực tế HTML5 `<video>` (có phụ đề `.vtt` tiếng Việt) + Sổ tay PDF nhúng trực tiếp (`mod_resource`, `display = RESOURCELIB_DISPLAY_EMBED = 1`, khung xem `650px` Desktop / `480px` Mobile kèm nút phóng to/thu nhỏ không cần tải về).
+   - **Bước 2 (Tự mở khi xong Bước 1):** Hoạt động tương tác **H5P (`mod_h5pactivity`)** + Gói bài giảng chuẩn **SCORM 1.2 (`mod_scorm`)** tự động đồng bộ điểm về Gradebook.
+   - **Bước 3 (Tự mở khi xong Bước 2):** Thực hành hiện trường tại vườn (`mod_fieldpractice`).
+   - **Bước 4 (Tự mở khi xong Bước 3):** Bài kiểm tra Quiz 12 câu — đạt $\ge 70\%$ tự động mở khóa Chứng nhận Số QR.
+2. **Nhân bản Khóa học theo Địa phương / Nhóm Nông dân (`/local/mamxanhapp/clone_course.php`):**
+   - Từ Dashboard CBKT (`/local/mamxanhapp/manage.php`), nhấn nút **`🧬 Nhân bản Khóa học Mẫu (1-Click Cloner)`**.
+   - Chọn khóa học gốc (`MASTER-AGRITECH-TPL`, `CHAMSOC01`, `CHEBIEN01`...), nhập **Tên lớp tập huấn địa phương mới** (ví dụ: *Tập huấn Nông dân Đơn Dương - Lâm Đồng Đợt 2*) và chọn **Nhóm nông dân (`Cohort`)**.
+   - Nhấn **`🧬 Nhân bản ngay (Clone)`**: hệ thống gọi trực tiếp `\backup_controller` & `\restore_controller` để nhân bản 100% lộ trình tuần tự, PDF nhúng, H5P, SCORM 1.2, Thực hành vườn và Ngân hàng câu hỏi chỉ trong vài giây!

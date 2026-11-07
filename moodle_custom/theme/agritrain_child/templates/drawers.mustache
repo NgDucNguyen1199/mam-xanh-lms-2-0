@@ -352,6 +352,155 @@ document.addEventListener('DOMContentLoaded', function() {
         var inp = document.getElementById('mx-bot-input');
         if (inp) inp.placeholder = 'Ask about pH, thrips, Trichoderma, cold chain...';
     }
+
+    // 5. Inline Embedded PDF Reader (650px Desktop / 480px Mobile + Zoom +/- Controls, Zero Download)
+    var pdfBox = document.querySelector('.resourcecontent.resourcepdf');
+    var pdfIframe = document.getElementById('resourceobject');
+    if (pdfBox && pdfIframe && pdfIframe.src) {
+        var pdfUrl = pdfIframe.src;
+        var shell = document.createElement('div');
+        shell.className = 'mx-pdf-viewer-shell';
+        shell.id = 'mx-inline-pdf-viewer';
+
+        var toolbar = document.createElement('div');
+        toolbar.className = 'mx-pdf-toolbar';
+        toolbar.innerHTML =
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+                '<span style="background:#D8F3DC;color:#1B4332;padding:4px 10px;border-radius:999px;font-weight:900;font-size:0.78rem;">' +
+                    (isEn ? '📄 INLINE PDF READER (NO DOWNLOAD)' : '📄 XEM TRỰC TIẾP TRÊN WEB (KHÔNG CẦN TẢI VỀ)') +
+                '</span>' +
+                '<span id="mx-pdf-page-count" style="font-size:0.85rem;font-weight:800;color:#E8F5E9;"></span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                '<button type="button" class="mx-pdf-zoom-btn" id="mx-pdf-zoom-out" title="Zoom Out">➖ ' + (isEn ? 'Zoom Out' : 'Thu nhỏ') + '</button>' +
+                '<span id="mx-pdf-zoom-pct" style="font-weight:900;min-width:52px;text-align:center;font-size:0.9rem;">100%</span>' +
+                '<button type="button" class="mx-pdf-zoom-btn" id="mx-pdf-zoom-in" title="Zoom In">➕ ' + (isEn ? 'Zoom In' : 'Phóng to') + '</button>' +
+                '<button type="button" class="mx-pdf-zoom-btn" id="mx-pdf-zoom-fit" title="Reset Zoom">↔️ ' + (isEn ? 'Fit' : 'Vừa khung') + '</button>' +
+                '<button type="button" class="mx-pdf-zoom-btn" id="mx-pdf-fullscreen" title="Fullscreen">🖥️ ' + (isEn ? 'Fullscreen' : 'Toàn màn hình') + '</button>' +
+            '</div>';
+
+        var viewport = document.createElement('div');
+        viewport.className = 'mx-pdf-viewport';
+        viewport.id = 'mx-pdf-viewport';
+
+        var canvasList = document.createElement('div');
+        canvasList.id = 'mx-pdf-canvas-list';
+        viewport.appendChild(canvasList);
+
+        pdfBox.parentNode.insertBefore(shell, pdfBox);
+        shell.appendChild(toolbar);
+        shell.appendChild(viewport);
+        pdfIframe.style.display = 'none';
+        viewport.appendChild(pdfIframe);
+        pdfBox.remove();
+
+        var currentZoom = 1.0;
+        var loadedPdfDoc = null;
+
+        function renderAllPdfPages() {
+            if (!loadedPdfDoc) return;
+            canvasList.innerHTML = '';
+            var vw = Math.max(300, viewport.clientWidth - 36);
+            var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+            var chain = Promise.resolve();
+            for (var p = 1; p <= loadedPdfDoc.numPages; p++) {
+                (function(pageNum) {
+                    chain = chain.then(function() {
+                        return loadedPdfDoc.getPage(pageNum).then(function(page) {
+                            var baseVp = page.getViewport({ scale: 1.0 });
+                            var fitScale = Math.min(1.35, vw / baseVp.width);
+                            var finalScale = fitScale * currentZoom;
+                            var vp = page.getViewport({ scale: finalScale });
+
+                            var wrap = document.createElement('div');
+                            wrap.className = 'mx-pdf-page-wrap';
+
+                            var lbl = document.createElement('div');
+                            lbl.className = 'mx-pdf-page-label';
+                            lbl.textContent = (isEn ? 'Page ' : 'Trang ') + pageNum + ' / ' + loadedPdfDoc.numPages;
+
+                            var canvas = document.createElement('canvas');
+                            canvas.className = 'mx-pdf-page-canvas';
+                            canvas.width = Math.floor(vp.width * dpr);
+                            canvas.height = Math.floor(vp.height * dpr);
+                            canvas.style.width = Math.floor(vp.width) + 'px';
+                            canvas.style.height = Math.floor(vp.height) + 'px';
+
+                            wrap.appendChild(lbl);
+                            wrap.appendChild(canvas);
+                            canvasList.appendChild(wrap);
+
+                            var ctx = canvas.getContext('2d');
+                            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                            return page.render({ canvasContext: ctx, viewport: vp }).promise;
+                        });
+                    });
+                })(p);
+            }
+            chain.then(function() {
+                shell.setAttribute('data-pdf-rendered', 'true');
+            });
+        }
+
+        function updateZoom(newZoom) {
+            currentZoom = Math.max(0.6, Math.min(2.2, Math.round(newZoom * 100) / 100));
+            var pctEl = document.getElementById('mx-pdf-zoom-pct');
+            if (pctEl) pctEl.textContent = Math.round(currentZoom * 100) + '%';
+            if (loadedPdfDoc) {
+                renderAllPdfPages();
+            } else {
+                pdfIframe.style.transform = 'scale(' + currentZoom + ')';
+                pdfIframe.style.transformOrigin = 'top center';
+            }
+        }
+
+        document.getElementById('mx-pdf-zoom-in').addEventListener('click', function() { updateZoom(currentZoom + 0.2); });
+        document.getElementById('mx-pdf-zoom-out').addEventListener('click', function() { updateZoom(currentZoom - 0.2); });
+        document.getElementById('mx-pdf-zoom-fit').addEventListener('click', function() { updateZoom(1.0); });
+        document.getElementById('mx-pdf-fullscreen').addEventListener('click', function() {
+            if (shell.requestFullscreen) {
+                if (!document.fullscreenElement) shell.requestFullscreen();
+                else document.exitFullscreen();
+            }
+        });
+
+        function initPdfJsViewer(pdfLib) {
+            if (!pdfLib) {
+                pdfIframe.style.display = 'block';
+                return;
+            }
+            pdfLib.GlobalWorkerOptions.workerSrc = '/local/mamxanhapp/assets/pdfjs/pdf.worker.min.js';
+            pdfLib.getDocument({ url: pdfUrl, withCredentials: true }).promise.then(function(pdfDoc) {
+                loadedPdfDoc = pdfDoc;
+                var cnt = document.getElementById('mx-pdf-page-count');
+                if (cnt) cnt.textContent = '📑 ' + pdfDoc.numPages + (isEn ? ' pages' : ' trang kỹ thuật');
+                renderAllPdfPages();
+            }).catch(function() {
+                pdfIframe.style.display = 'block';
+            });
+        }
+
+        var s = document.createElement('script');
+        s.src = '/local/mamxanhapp/assets/pdfjs/pdf.min.js';
+        s.onload = function() {
+            if (window.pdfjsLib) {
+                initPdfJsViewer(window.pdfjsLib);
+            } else if (typeof window.require === 'function') {
+                window.require(['pdfjs-dist/build/pdf'], function(lib) {
+                    initPdfJsViewer(lib || window.pdfjsLib);
+                }, function() {
+                    pdfIframe.style.display = 'block';
+                });
+            } else {
+                pdfIframe.style.display = 'block';
+            }
+        };
+        s.onerror = function() {
+            pdfIframe.style.display = 'block';
+        };
+        document.head.appendChild(s);
+    }
 });
 
 if ('serviceWorker' in navigator) {

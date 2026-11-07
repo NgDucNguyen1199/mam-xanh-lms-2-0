@@ -1,18 +1,19 @@
 # 🌱 Hệ thống Tập huấn Kỹ thuật Canh tác Nông nghiệp Công nghệ cao — Mầm Xanh LMS 2.0
 
-> **Phiên bản:** `2.0 Production LTS` (Moodle 4.5 LTS · PHP 8.3 OPcache JIT · MariaDB 10.11 · Redis 7 · Caddy 2 TLS/Zstd)  
-> **Định hướng:** Mobile-First (`375x812`) & Desktop (`1440x900`) · Song ngữ Việt–Anh (`🇻🇳 VI | 🇬🇧 EN`) · 100% Học liệu Tương tác HTML5 · Chứng nhận Số QR `HMAC-SHA256` & Truy xuất Nguồn gốc VietGAP
+> **Phiên bản:** `2.0 Production LTS` (Moodle 4.5 LTS · PHP 8.3 OPcache JIT · MariaDB 10.11 · Redis 7 · Caddy 2 TLS/Zstd + Direct HTTP `:8090`)  
+> **Định hướng:** Mobile-First (`375x812`) & Desktop (`1440x900`) · Song ngữ Việt–Anh (`🇻🇳 VI | 🇬🇧 EN`) · Video Thực tế HTML5 `<video>` · Xem Trực tiếp PDF Không Cần Tải Về · Gói H5P & SCORM 1.2 Chuẩn Quốc tế · Khóa học Mẫu Tuần tự & 1-Click Course Cloner · Chứng nhận Số QR `HMAC-SHA256` & Truy xuất VietGAP
 
 ---
 
 ## 1. Tổng quan Kiến trúc Hệ thống (Turbo Docker Architecture)
 
-**Mầm Xanh LMS 2.0** được thiết kế chuyên biệt cho chương trình chuyển đổi số nông nghiệp và đào tạo nông dân thực địa tại các vùng chuyên canh trọng điểm (**Lâm Đồng**, **Đắk Lắk**, **Đồng Nai**). Toàn bộ hệ thống vận hành trên 5 container hiệu năng cao, cô lập hoàn toàn I/O nghẽn cổ chai trên Docker Windows thông qua Linux Named Volumes và `tmpfs` RAM:
+**Mầm Xanh LMS 2.0** được thiết kế chuyên biệt cho chương trình chuyển đổi số nông nghiệp và đào tạo nông dân thực địa tại các vùng chuyên canh trọng điểm (**Lâm Đồng**, **Đắk Lắk**, **Đồng Nai**). Toàn bộ hệ thống vận hành trên 5 container hiệu năng cao, hỗ trợ song song cả **HTTPS Reverse Proxy (`:8443`)** lẫn **HTTP Trực tiếp Độc lập (`:8090`)** trên `moodle_app`, cô lập hoàn toàn I/O nghẽn cổ chai trên Docker Windows thông qua Linux Named Volumes và `tmpfs` RAM:
 
 ```mermaid
 flowchart LR
     Farmer["📱 Nông dân / CBKT / Admin<br/>(PWA Mobile & Desktop)"] -->|HTTPS :8443 / Zstd+Gzip| Caddy["🛡️ moodle_proxy<br/>(Caddy 2 Alpine TLS)"]
-    Caddy -->|HTTP Internal :80| App["⚡ moodle_app<br/>(PHP 8.3 + Apache + OPcache JIT 1255)"]
+    Farmer -->|Direct HTTP :8090| App["⚡ moodle_app<br/>(PHP 8.3 + Apache + OPcache JIT 1255)"]
+    Caddy -->|HTTP Internal :80| App
     Cron["⏱️ moodle_cron<br/>(Chu kỳ 60s)"] --> App
     App -->|Session & MUC Cache| Redis["🚀 moodle_redis<br/>(Redis 7 Alpine RAM)"]
     App -->|SQL utf8mb4_unicode_ci| DB["🗄️ moodle_db<br/>(MariaDB 10.11 - Buffer 512MB)"]
@@ -25,7 +26,7 @@ flowchart LR
    - Mã nguồn lõi Moodle 4.5 LTS nằm trên phân vùng Linux Ext4 nội bộ container; `$CFG->dataroot` và `$CFG->cachedir` lưu trên Linux Named Volume; `$CFG->localcachedir` và `$CFG->tempdir` chạy trực tiếp trên RAM (`tmpfs` `/tmp`).
    - Lưu trữ toàn bộ **Session** và **Moodle Universal Cache (MUC Application Cache)** trên **Redis 7 Alpine**.
 2. **Hệ sinh thái 5 Custom Plugins Nông nghiệp Chuẩn Moodle API:**
-   - `local_mamxanhapp`: Trung tâm điều hướng thông minh theo vai trò — Dashboard Nông dân (`/local/mamxanhapp/index.php`), Trung tâm Quản lý & Xuất Báo cáo CSV cho Cán bộ kỹ thuật (`/local/mamxanhapp/manage.php`), Trung tâm Công cụ Nông nghiệp (`/local/mamxanhapp/calculator.php`), và Trang Kiểm toán Hệ thống Admin (`/local/mamxanhapp/admin_audit.php`).
+   - `local_mamxanhapp`: Trung tâm điều hướng thông minh theo vai trò — Dashboard Nông dân (`/local/mamxanhapp/index.php`), Trung tâm Quản lý & Xuất Báo cáo CSV cho Cán bộ kỹ thuật (`/local/mamxanhapp/manage.php`), **Công cụ Nhân bản Khóa học Mẫu 1-Chạm theo Địa phương (`/local/mamxanhapp/clone_course.php` dùng `\backup_controller` & `\restore_controller`)**, Trung tâm Công cụ Nông nghiệp (`/local/mamxanhapp/calculator.php`), và Trang Kiểm toán Hệ thống Admin (`/local/mamxanhapp/admin_audit.php`).
    - `local_farmerprofile`: Quản lý hồ sơ nông hộ (diện tích $\text{m}^2$, cây trồng chủ lực, vùng trồng Lâm Đồng / Đắk Lắk / Đồng Nai, tọa độ GPS) và tự động đồng bộ vào **System Cohort** theo vùng.
    - `local_agriops`: Quản lý lô sản xuất **VietGAP/GlobalGAP**, ghi nhật ký canh tác rảnh tay bằng giọng nói (**Web Speech API `vi-VN`**) và phát hành mã QR truy xuất nguồn gốc công khai (`/local/agriops/trace.php`).
    - `mod_fieldpractice`: Hoạt động **Thực hành tại vườn** tích hợp mã QR xoay vòng 5 phút + định vị GPS hiện trường + chấm điểm **Rubric 4 tiêu chí (thang 100 điểm)** đồng bộ thẳng vào **Moodle Gradebook** và hỗ trợ sao lưu `.mbz` chuẩn Moodle2.
@@ -59,7 +60,9 @@ docker compose exec -T -u www-data moodle_app php /var/www/html/admin/cli/build_
 docker compose exec -T -u www-data moodle_app php /var/www/html/admin/cli/purge_caches.php
 ```
 
-Truy cập ngay trên trình duyệt: **`https://moodle.lvh.me:8443`** (hoặc HTTP dự phòng tại `http://localhost:8088`).
+Truy cập ngay trên trình duyệt:
+- **HTTPS chuẩn Production (qua Caddy 2 Reverse Proxy):** **`https://moodle.lvh.me:8443`** (hoặc `http://localhost:8088`)
+- **HTTP Trực tiếp Độc lập vào `moodle_app` (không phụ thuộc Reverse Proxy):** **`http://localhost:8090`**
 
 ---
 
@@ -77,16 +80,17 @@ Truy cập ngay trên trình duyệt: **`https://moodle.lvh.me:8443`** (hoặc H
 
 ---
 
-## 4. Danh mục 6 Khóa học Nông nghiệp Công nghệ cao (100% Tương tác, Không PDF Tĩnh)
+## 4. Danh mục Khóa học Mẫu Chuẩn & 6 Khóa học Nông nghiệp Công nghệ cao
 
-| Mã khóa | Tên khóa học | Nội dung số hóa (4 Chuyên đề/khóa) |
+| Mã khóa | Tên khóa học | Nội dung số hóa (Video HTML5, PDF Embed, H5P, SCORM 1.2, Thực hành Vườn & Quiz) |
 | :--- | :--- | :--- |
-| **`CHAMSOC01`** *(Cốt lõi)* | Kỹ thuật Chăm sóc Cây trồng Công nghệ cao & Tưới Tiết kiệm | Video SVG + Infographic pH/EC, Slide Deck 7 trang tưới Fertigation, Thẻ lật IPM 4 sâu bệnh, Thực hành vườn GPS/QR & Quiz 12 câu |
-| **`CHEBIEN01`** *(Cốt lõi)* | Công nghệ Sơ chế, Chế biến Sâu & Bảo quản Nông sản Sau Thu hoạch | Video Pre-cooling + Infographic chuỗi lạnh, Slide Deck 7 trang sấy lạnh & khí quyển biến đổi MAP/CA, Thẻ lật truy xuất QR VietGAP, Thực hành vườn & Quiz 12 câu |
-| **`IOTNHAMANG01`** | Vận hành Nhà màng Thông minh & Cảm biến Nông nghiệp IoT | Điều khiển vi khí hậu VPD, cảm biến bức xạ/độ ẩm giá thể, tự động hóa rèm cắt nắng & Quiz 12 câu |
-| **`THUYCANH01`** | Kỹ thuật Thủy canh Hồi lưu NFT & Kiểm soát Dinh dưỡng A-B | Pha dung dịch mẹ A-B tránh kết tủa Ca–P/S, kiểm soát oxy hòa tan DO, nhiệt độ bồn rễ & Quiz 12 câu |
-| **`SAURIENG01`** | Quy trình Canh tác Sầu riêng Xuất khẩu Chuẩn Mã số Vùng trồng | Tạo cơi đọt, xiết nước phân hóa mầm hoa, thụ phấn bổ sung, quản lý *Phytophthora* & hồ sơ mã vùng xuất khẩu |
-| **`PHANVISINH01`** | Sản xuất Phân Hữu cơ Vi sinh Tuần hoàn & Nấm đối kháng *Trichoderma* | Nhân sinh khối *Trichoderma* & IMO bản địa, ủ nhiệt hiếu khí C/N 25–30:1 tiêu diệt hạt cỏ & mầm bệnh |
+| **`MASTER-AGRITECH-TPL`** *(Mẫu Chuẩn)* | **[MẪU CHUẨN] Khung Chương trình Tập huấn Nông nghiệp Công nghệ cao (Master Template)** | **Lộ trình tuần tự 4 bước (Restrict Access):** Bước 1 (Video MP4 + Xem trực tiếp PDF) → Bước 2 (H5P Question Set + SCORM 1.2) → Bước 3 (Thực hành vườn QR/GPS + Rubric) → Bước 4 (Quiz 12 câu $\ge 70\%$ mở Chứng nhận Số QR). Nhân bản 1-Chạm tại `/local/mamxanhapp/clone_course.php` |
+| **`CHAMSOC01`** *(Cốt lõi)* | Kỹ thuật Chăm sóc Cây trồng Công nghệ cao & Tưới Tiết kiệm | Video MP4 thực tế + Phụ đề `.vtt`, **Sổ tay PDF nhúng trực tiếp (`650px`/`480px` + Zoom)**, **H5P Question Set & H5P Accordion**, **SCORM 1.2 VietGAP**, Slide Deck 7 trang, Thẻ lật IPM, Thực hành vườn & Quiz 12 câu |
+| **`CHEBIEN01`** *(Cốt lõi)* | Công nghệ Sơ chế, Chế biến Sâu & Bảo quản Nông sản Sau Thu hoạch | Video MP4 thực tế Pre-cooling + Phụ đề `.vtt`, **Quy trình PDF nhúng trực tiếp**, **H5P Course Presentation**, **SCORM 1.2 VietGAP**, Slide Deck 7 trang sấy lạnh & MAP/CA, Thẻ lật QR VietGAP, Thực hành vườn & Quiz 12 câu |
+| **`IOTNHAMANG01`** | Vận hành Nhà màng Thông minh & Cảm biến Nông nghiệp IoT | Video MP4 thực tế nhà màng + Phụ đề `.vtt`, điều khiển vi khí hậu VPD, cảm biến bức xạ/độ ẩm giá thể, tự động hóa rèm cắt nắng & Quiz 12 câu |
+| **`THUYCANH01`** | Kỹ thuật Thủy canh Hồi lưu NFT & Kiểm soát Dinh dưỡng A-B | Video MP4 thực tế thủy canh + Phụ đề `.vtt`, pha dung dịch mẹ A-B tránh kết tủa Ca–P/S, kiểm soát oxy hòa tan DO, nhiệt độ bồn rễ & Quiz 12 câu |
+| **`SAURIENG01`** | Quy trình Canh tác Sầu riêng Xuất khẩu Chuẩn Mã số Vùng trồng | Video MP4 thực tế tưới nhỏ giọt + Phụ đề `.vtt`, tạo cơi đọt, xiết nước phân hóa mầm hoa, quản lý *Phytophthora* & hồ sơ mã vùng xuất khẩu |
+| **`PHANVISINH01`** | Sản xuất Phân Hữu cơ Vi sinh Tuần hoàn & Nấm đối kháng *Trichoderma* | Video MP4 thực tế ủ phân vi sinh + Phụ đề `.vtt`, nhân sinh khối *Trichoderma* & IMO bản địa, ủ nhiệt hiếu khí C/N 25–30:1 & Quiz 12 câu |
 
 ---
 

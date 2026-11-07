@@ -456,3 +456,361 @@ body.mx-outdoor-mode .mx-outdoor-btn {
     color: #ffffff !important;
     border: 3px solid #000000 !important;
 }
+
+// ===================================================================
+// SEQUENTIAL LEARNING PATH STEPPER (Bước 1 -> Bước 2 -> Bước 3 -> Bước 4)
+// ===================================================================
+.mx-roadmap-card {
+    background: linear-gradient(135deg, #f4fbf6 0%, #e8f5e9 100%);
+    border: 2.5px solid #2e7d32;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 26px rgba(27, 67, 50, 0.08);
+}
+
+.mx-roadmap-heading {
+    color: #1b4332;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+
+.mx-roadmap-sub {
+    color: #37474f;
+    font-size: 0.9rem;
+}
+
+.mx-roadmap-pct-box {
+    background: #1b4332;
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+}
+
+.mx-roadmap-bar {
+    height: 12px;
+    background: #ffffff;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1.5px solid #a5d6a7;
+}
+
+.mx-roadmap-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1b4332, #43a047);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.mx-stepper-track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.mx-stepper-node {
+    flex: 1 1 180px;
+    background: #ffffff;
+    border: 2px solid #c8e6c9;
+    border-radius: 16px;
+    padding: 12px 14px;
+    text-decoration: none !important;
+    color: #14281d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 82px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mx-stepper-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 67, 50, 0.12);
+}
+
+.mx-stepper-node.mx-step-done {
+    background: #d8f3dc;
+    border-color: #1b4332;
+}
+
+.mx-stepper-node.mx-step-current {
+    background: #ffffff;
+    border: 3px solid #2e7d32;
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+}
+
+.mx-stepper-node.mx-step-locked {
+    background: #f5f7f6;
+    border: 2px dashed #90a4ae;
+    color: #546e7a;
+}
+
+.mx-stepper-node.mx-step-cert {
+    background: #fff8e1;
+    border: 2px solid #f9a825;
+}
+
+.mx-step-num {
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1b4332;
+}
+
+.mx-step-badge {
+    font-size: 0.74rem;
+    font-weight: 800;
+    background: rgba(27, 67, 50, 0.1);
+    color: #1b4332;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.mx-step-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.35;
+    color: #14281d;
+}
+
+.mx-stepper-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: #2e7d32;
+    font-size: 1.15rem;
+    padding: 0 2px;
+}
+
+@media (max-width: 767.98px) {
+    .mx-stepper-arrow {
+        display: none;
+    }
+    .mx-stepper-node {
+        flex: 1 1 100%;
+    }
+}
+
+// Locked Section & Locked Activity Cards
+.mx-sec-is-locked {
+    background: #f8faf9;
+    border: 2px dashed #90a4ae;
+}
+
+.mx-sec-lock-banner {
+    background: #fff8e1;
+    border: 1.5px solid #ffb300;
+    color: #5d4037;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+}
+
+.mx-sec-unlock-banner {
+    background: #e8f5e9;
+    border: 1.5px solid #66bb6a;
+    color: #1b4332;
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+}
+
+.mx-sec-prog-pill {
+    background: #e8f5e9;
+    color: #1b4332;
+    border: 1.5px solid #a5d6a7;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.mx-tile-locked {
+    background: #f4f6f5 !important;
+    border: 2px dashed #b0bec5 !important;
+}
+
+.mx-badge-locked {
+    background: #ffecb3;
+    color: #e65100;
+}
+
+.mx-avail-lock-note {
+    background: #fff3e0;
+    border-left: 4px solid #fb8c00;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: #4e342e;
+    font-weight: 600;
+}
+
+.mx-avail-open-note {
+    background: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #1b4332;
+    font-weight: 700;
+}
+
+.mx-tile-locked-btn {
+    min-height: 50px !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    font-size: 0.92rem !important;
+}
+
+.mx-std-chip {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.mx-chip-pdf {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.mx-chip-h5p {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #90caf9;
+}
+
+.mx-chip-scorm {
+    background: #fff8e1;
+    color: #e65100;
+    border: 1px solid #ffe082;
+}
+
+.mx-chip-video {
+    background: #e8f5e9;
+    color: #1b4332;
+    border: 1px solid #a5d6a7;
+}
+
+// ===================================================================
+// INLINE EMBEDDED PDF VIEWER (mod_resource RESOURCELIB_DISPLAY_EMBED)
+// Desktop height: 650px | Mobile height: 480px | Zoom +/- Controls
+// ===================================================================
+.mx-pdf-viewer-shell {
+    border: 2.5px solid #1b4332;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #3c4043;
+    box-shadow: 0 12px 30px rgba(20, 40, 29, 0.16);
+    margin: 12px 0 20px;
+}
+
+.mx-pdf-toolbar {
+    background: linear-gradient(135deg, #1b4332, #2e7d32);
+    color: #ffffff;
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 2px solid #40916c;
+}
+
+.mx-pdf-zoom-btn {
+    min-height: 40px;
+    min-width: 44px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.86rem;
+    padding: 4px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.mx-pdf-zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.mx-pdf-viewport {
+    height: 650px !important;
+    max-height: 650px !important;
+    overflow: auto;
+    background: #525659;
+    padding: 18px 12px;
+    text-align: center;
+    position: relative;
+}
+
+@media (max-width: 767.98px) {
+    .mx-pdf-viewport {
+        height: 480px !important;
+        max-height: 480px !important;
+        padding: 10px 6px;
+    }
+}
+
+.resourcecontent.resourcepdf iframe#resourceobject {
+    width: 100% !important;
+    height: 650px !important;
+    border: none !important;
+}
+
+@media (max-width: 767.98px) {
+    .resourcecontent.resourcepdf iframe#resourceobject {
+        height: 480px !important;
+    }
+}
+
+.mx-pdf-page-wrap {
+    margin: 0 auto 18px;
+    display: inline-block;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.mx-pdf-page-label {
+    background: #e8f5e9;
+    color: #1b4332;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    text-align: right;
+    border-bottom: 1px solid #c8e6c9;
+}
+
+// Ensure H5P Player & SCORM Player iframes always render spaciously on Desktop & Mobile
+iframe.h5p-player,
+iframe.h5p-iframe {
+    width: 100% !important;
+    min-height: 560px !important;
+    border: 2px solid #c8e6c9 !important;
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+@media (max-width: 767.98px) {
+    iframe.h5p-player,
+    iframe.h5p-iframe {
+        min-height: 480px !important;
+    }
+}

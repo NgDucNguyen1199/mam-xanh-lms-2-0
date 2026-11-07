@@ -9,7 +9,7 @@ Tài liệu này dành cho **Quản trị viên Hệ thống (System Administrat
 ### 1.1. Danh sách 5 Dịch vụ Container (`docker-compose.yml`)
 | Dịch vụ | Image / Build | Vai trò kỹ thuật | Cấu hình tối ưu trọng tâm |
 | :--- | :--- | :--- | :--- |
-| `moodle_app` | `mamxanh-moodle:2.0` (`php:8.3-apache`) | Máy chủ ứng dụng Moodle 4.5 LTS | Cài đủ `gd`, `intl`, `zip`, `soap`, `mysqli`, `pdo_mysql`, `opcache`, `redis`, `exif`, `sodium`, `git`; `tmpfs` `/tmp` 256MB |
+| `moodle_app` | `mamxanh-moodle:2.0` (`php:8.3-apache`) | Máy chủ ứng dụng Moodle 4.5 LTS (mở trực tiếp cổng độc lập `8090:80`) | Cài đủ `gd`, `intl`, `zip`, `soap`, `mysqli`, `pdo_mysql`, `opcache`, `redis`, `exif`, `sodium`, `git`; `tmpfs` `/tmp` 512MB; hỗ trợ HTTP trực tiếp `http://localhost:8090` không cần Reverse Proxy |
 | `moodle_db` | `mariadb:10.11` | Cơ sở dữ liệu quan hệ chuẩn `utf8mb4_unicode_ci` | `--innodb-buffer-pool-size=512M --innodb-flush-log-at-trx-commit=2 --skip-name-resolve` |
 | `moodle_redis` | `redis:7-alpine` | Lưu trữ Session & Application Cache trong RAM | `maxmemory 256mb`, chính sách `allkeys-lru` |
 | `moodle_proxy` | `caddy:2-alpine` | Cổng HTTPS TLS nội bộ & nén băng thông di động | Hỗ trợ `https://moodle.lvh.me:8443`, bật nén `encode zstd gzip` |
@@ -43,6 +43,7 @@ docker compose exec -T -u www-data moodle_app php /var/www/html/admin/cli/upgrad
 docker compose exec -T -u www-data moodle_app php /opt/mamxanh/scripts/cli/stage2_setup_rbac.php
 docker compose exec -T -u www-data moodle_app php /opt/mamxanh/scripts/cli/stage4_create_courses.php
 docker compose exec -T -u www-data moodle_app php /opt/mamxanh/scripts/cli/stage5_seed_simulation.php
+docker compose exec -T -u www-data moodle_app php /opt/mamxanh/scripts/cli/stage7_council_upgrades.php
 
 # Bước 5: Biên dịch sẵn CSS Theme & làm sạch Cache
 docker compose exec -T -u www-data moodle_app php /var/www/html/admin/cli/build_theme_css.php --themes=agritrain_child
@@ -65,6 +66,7 @@ Hệ thống kiểm soát truy cập chặt chẽ ở tầng Moodle Capability (
 | Điểm danh GPS/QR Thực hành vườn (`/mod/fieldpractice/view.php`) | ✅ Điểm danh & Xem điểm | ✅ Phát mã QR xoay vòng | ✅ Toàn quyền |
 | **Chấm điểm Rubric 4 tiêu chí** (`/mod/fieldpractice/grade.php`) | ⛔ **Chặn 403** | ✅ Chấm điểm -> Gradebook | ✅ Toàn quyền |
 | **Thống kê Vùng trồng & Xuất CSV** (`/local/mamxanhapp/manage.php`) | ⛔ **Chặn 403** | ✅ Xem biểu đồ & Xuất CSV | ✅ Toàn quyền |
+| **Nhân bản Khóa học Mẫu 1-Chạm** (`/local/mamxanhapp/clone_course.php`) | ⛔ **Chặn 403** | ✅ Nhân bản & Gán Cohort | ✅ Toàn quyền |
 | **Kiểm toán Bảo mật & Hạ tầng** (`/local/mamxanhapp/admin_audit.php`) | ⛔ **Chặn 403** | ⛔ **Chặn 403** | ✅ **Chỉ Admin (200)** |
 | Xác thực Chứng nhận QR & VietGAP (`verify.php`, `trace.php`) | 🌐 Công khai | 🌐 Công khai | 🌐 Công khai |
 
