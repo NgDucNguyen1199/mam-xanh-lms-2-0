@@ -1,0 +1,458 @@
+// ===================================================================
+// AgriTrain Child (Mầm Xanh LMS 2.0) - Post-SCSS Mobile-First & AgTech UI
+// ===================================================================
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+    scroll-padding-bottom: 110px;
+}
+
+body:not(#page-login-index) {
+    padding-bottom: 104px !important;
+}
+
+#page.drawers {
+    padding-bottom: 104px !important;
+}
+
+// Top Navbar refinement
+.navbar.fixed-top {
+    background: #1b4332 !important;
+    border-bottom: 2px solid #2e7d32 !important;
+    color: #ffffff !important;
+}
+
+.navbar.fixed-top .navbar-brand,
+.navbar.fixed-top .nav-link,
+.navbar.fixed-top .btn,
+.navbar.fixed-top .usermenu .login,
+.navbar.fixed-top .userbutton {
+    color: #ffffff !important;
+}
+
+.navbar.fixed-top .moremenu .nav-link.active {
+    border-bottom-color: #95d5b2 !important;
+    color: #d8f3dc !important;
+}
+
+// Top Utility Smart AgTech Strip
+.mx-smart-utility-bar {
+    background: #e8f5e9;
+    border-bottom: 1.5px solid #c8e6c9;
+    padding: 8px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.mx-lang-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #1b4332;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.mx-lang-pill a {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: #1b4332;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.mx-lang-pill a.active {
+    background: #1b4332;
+    color: #ffffff;
+}
+
+.mx-outdoor-btn {
+    min-height: 40px;
+    border-radius: 999px;
+    border: 2px solid #1b4332;
+    background: #ffffff;
+    color: #1b4332;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 4px 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+// ===================================================================
+// LOGIN PAGE - Modern 24px Card & 1-Click Instant Role Login
+// ===================================================================
+#page-login-index {
+    background: linear-gradient(145deg, #1b4332 0%, #2e7d32 55%, #40916c 100%) !important;
+    min-height: 100vh;
+}
+
+#page-login-index #page {
+    background: transparent !important;
+    padding-top: 1.5rem !important;
+}
+
+#page-login-index #region-main {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#page-login-index .login-container {
+    background: #ffffff !important;
+    border-radius: 24px !important;
+    padding: 28px 24px !important;
+    max-width: 480px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    box-shadow: 0 24px 56px rgba(10, 32, 20, 0.35) !important;
+    border: 2px solid rgba(216, 243, 220, 0.9) !important;
+}
+
+#page-login-index .login-form-forgotpassword,
+#page-login-index #guestlogin,
+#page-login-index .login-instructions,
+#page-login-index .login-signup,
+#page-login-index #page-footer {
+    display: none !important;
+}
+
+.mx-instant-login-box {
+    background: #f4fbf6;
+    border: 2px solid #b7e4c7;
+    border-radius: 18px;
+    padding: 16px;
+    margin-top: 18px;
+}
+
+.mx-instant-btn {
+    width: 100%;
+    min-height: 50px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.96rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+    text-align: left;
+}
+
+.mx-instant-btn:last-child {
+    margin-bottom: 0;
+}
+
+.mx-instant-btn:active {
+    transform: scale(0.99);
+}
+
+// ===================================================================
+// COURSE TILES / LESSON CARDS UI (WCAG AAA >= 48px Touch Targets)
+// ===================================================================
+.mx-course-section-block {
+    background: #ffffff;
+    border: 2px solid #dceee0;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(27, 67, 50, 0.05);
+}
+
+.mx-sec-title {
+    color: #1b4332;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+}
+
+.mx-sec-summary {
+    color: #4e6358;
+    font-size: 0.94rem;
+    margin-bottom: 14px;
+}
+
+.mx-lesson-tile-card {
+    background: #f9fdf9;
+    border: 2px solid #c8e6c9;
+    border-radius: 18px;
+    padding: 18px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.mx-lesson-tile-card:hover {
+    border-color: #2e7d32;
+    box-shadow: 0 8px 20px rgba(27, 67, 50, 0.1);
+}
+
+.mx-tile-type-pill {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #1b4332;
+    background: #e8f5e9;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.mx-tile-status-badge {
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.mx-badge-done {
+    background: #d8f3dc;
+    color: #1b4332;
+}
+
+.mx-badge-todo {
+    background: #eceff1;
+    color: #37474f;
+}
+
+.mx-tile-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 8px 0 0;
+}
+
+.mx-tile-title a {
+    color: #14281d;
+    text-decoration: none;
+}
+
+.mx-tile-action-btn {
+    min-height: 50px !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    font-size: 0.98rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #1b4332 !important;
+    border-color: #1b4332 !important;
+}
+
+// Hide default verbose Moodle course list when custom Tiles Grid is active (non-editing mode)
+body.mx-has-course-tiles:not(.editing) #region-main .course-content {
+    display: none;
+}
+
+// ===================================================================
+// VOICE READER BAR (#mx-tts-player) & LESSON BACK BUTTONS
+// ===================================================================
+#mx-tts-player {
+    background: linear-gradient(135deg, #e8f5e9, #d8f3dc);
+    border: 2px solid #2e7d32;
+    border-radius: 18px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.mx-tts-btn {
+    min-height: 48px;
+    border-radius: 12px;
+    font-weight: 800;
+    padding: 0 16px;
+    border: 2px solid #1b4332;
+    background: #1b4332;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.mx-tts-btn.secondary {
+    background: #ffffff;
+    color: #1b4332;
+}
+
+.mx-back-nav-bar {
+    margin: 10px 0 16px;
+}
+
+.mx-back-nav-btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 18px;
+    border-radius: 14px;
+    border: 2px solid #1b4332;
+    background: #ffffff;
+    color: #1b4332;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+// ===================================================================
+// FIXED BOTTOM NAVIGATION BAR (bottom-nav-bar)
+// ===================================================================
+.bottom-nav-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 72px;
+    background: #ffffff;
+    border-top: 2px solid #b7e4c7;
+    box-shadow: 0 -6px 24px rgba(27, 67, 50, 0.12);
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    z-index: 1040;
+    padding: 4px 6px;
+}
+
+.bottom-nav-bar a {
+    flex: 1;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #37474f;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 12px;
+    line-height: 1.15;
+}
+
+.bottom-nav-bar a .mx-bnav-icon {
+    font-size: 1.28rem;
+    margin-bottom: 2px;
+}
+
+.bottom-nav-bar a.active,
+.bottom-nav-bar a:hover {
+    color: #1b4332;
+    background: #e8f5e9;
+}
+
+// ===================================================================
+// FLOATING AI CHATBOT "🌱 Bác sĩ Cây trồng 24/7"
+// ===================================================================
+#mx-crop-doctor-fab {
+    position: fixed;
+    right: 16px;
+    bottom: 84px;
+    z-index: 1050;
+    min-height: 54px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #1b4332, #2e7d32);
+    color: #ffffff;
+    border: 2px solid #d8f3dc;
+    box-shadow: 0 10px 28px rgba(27, 67, 50, 0.32);
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#mx-crop-doctor-panel {
+    position: fixed;
+    right: 16px;
+    bottom: 146px;
+    width: min(390px, calc(100vw - 24px));
+    max-height: calc(100vh - 210px);
+    background: #ffffff;
+    border: 3px solid #1b4332;
+    border-radius: 22px;
+    box-shadow: 0 18px 48px rgba(20, 40, 29, 0.28);
+    z-index: 1055;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#mx-crop-doctor-panel.open {
+    display: flex;
+}
+
+// ===================================================================
+// RESPONSIVE TABLES SAFEGUARD (.table-responsive)
+// ===================================================================
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+// ===================================================================
+// OUTDOOR HARSH SUNLIGHT MODE (☀️ Ngoài trời: #FFF, #000, 115%, 3px)
+// ===================================================================
+html.mx-outdoor-html {
+    font-size: 115% !important;
+}
+
+body.mx-outdoor-mode,
+body.mx-outdoor-mode #page,
+body.mx-outdoor-mode #region-main,
+body.mx-outdoor-mode .card,
+body.mx-outdoor-mode .mx-course-tile,
+body.mx-outdoor-mode .mx-lesson-tile-card,
+body.mx-outdoor-mode .mx-kpi-card,
+body.mx-outdoor-mode .mx-course-section-block,
+body.mx-outdoor-mode .mx-smart-utility-bar,
+body.mx-outdoor-mode .bottom-nav-bar {
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+body.mx-outdoor-mode .mx-course-tile,
+body.mx-outdoor-mode .mx-lesson-tile-card,
+body.mx-outdoor-mode .mx-kpi-card,
+body.mx-outdoor-mode .mx-course-section-block,
+body.mx-outdoor-mode .mx-quick-tile,
+body.mx-outdoor-mode .form-control,
+body.mx-outdoor-mode .btn,
+body.mx-outdoor-mode #mx-tts-player,
+body.mx-outdoor-mode .bottom-nav-bar {
+    border: 3px solid #000000 !important;
+    box-shadow: none !important;
+}
+
+body.mx-outdoor-mode h1,
+body.mx-outdoor-mode h2,
+body.mx-outdoor-mode h3,
+body.mx-outdoor-mode h4,
+body.mx-outdoor-mode p,
+body.mx-outdoor-mode td,
+body.mx-outdoor-mode th,
+body.mx-outdoor-mode label,
+body.mx-outdoor-mode a:not(.btn) {
+    color: #000000 !important;
+}
+
+body.mx-outdoor-mode .btn-success,
+body.mx-outdoor-mode .mx-tile-action-btn,
+body.mx-outdoor-mode .mx-outdoor-btn {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border: 3px solid #000000 !important;
+}

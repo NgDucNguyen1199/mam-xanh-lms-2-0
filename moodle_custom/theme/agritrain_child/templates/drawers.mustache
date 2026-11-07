@@ -1,0 +1,372 @@
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{> theme_boost/navbar }}
+    {{#courseindex}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-courseindex{{/id}}
+            {{$drawerheadercontent}}
+                {{> theme_boost/courseindexdrawercontrols}}
+            {{/drawerheadercontent}}
+            {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                {{{courseindex}}}
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+            {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/courseindex}}
+    {{#hasblocks}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-blocks{{/id}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                <div class="d-print-none">
+                    {{{ addblockbutton }}}
+                    {{{ sidepreblocks }}}
+                </div>
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+            {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
+            {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/hasblocks}}
+
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+        <div id="topofscroll" class="main-inner">
+
+            <!-- Smart AgTech Utility Bar: Bilingual [VI | EN] + Outdoor Sunlight Mode -->
+            <div class="mx-smart-utility-bar d-print-none" role="region" aria-label="Smart AgTech Controls">
+                <div class="mx-lang-pill" id="mx-lang-switcher">
+                    <a href="{{{ langviurl }}}" class="{{#isvi}}active{{/isvi}}" id="mx-switch-vi">🇻🇳 VI</a>
+                    <a href="{{{ langenurl }}}" class="{{#isen}}active{{/isen}}" id="mx-switch-en">🇬🇧 EN</a>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <button type="button" id="mx-outdoor-toggle" class="mx-outdoor-btn" onclick="mxToggleOutdoorMode()">
+                        {{ lbl_outdoor }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="drawer-toggles d-flex">
+                {{#courseindex}}
+                    <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-courseindex"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerindex, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
+                            {{#pix}} t/index_drawer, moodle {{/pix}}
+                        </button>
+                    </div>
+                {{/courseindex}}
+                {{#hasblocks}}
+                    <div class="drawer-toggler drawer-right-toggle ms-auto d-print-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-blocks"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerblocks, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
+                            <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
+                        </button>
+                    </div>
+                {{/hasblocks}}
+            </div>
+
+            {{{ output.full_header }}}
+
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation d-print-none">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
+
+            <div id="page-content" class="pb-3 d-print-block">
+                <div id="region-main-box">
+                    {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div> {{{ regionmainsettingsmenu }}} </div>
+                    </div>
+                    {{/hasregionmainsettingsmenu}}
+                    <div id="region-main">
+                        {{#hasregionmainsettingsmenu}}
+                            <div class="region_main_settings_menu_proxy"></div>
+                        {{/hasregionmainsettingsmenu}}
+
+                        <!-- Top Lesson/Course Back Button -->
+                        {{#mxhasback}}
+                        <div class="mx-back-nav-bar d-print-none">
+                            <a href="{{{ mxbackurl }}}" class="mx-back-nav-btn">{{ mxbacklabel }}</a>
+                        </div>
+                        {{/mxhasback}}
+
+                        <!-- Hands-Free Lesson Voice Reader (#mx-tts-player) -->
+                        {{#mxshowtts}}
+                        <div id="mx-tts-player" class="d-print-none" role="region" aria-label="Text to Speech Reader">
+                            <div style="font-weight:800;color:#1B4332;font-size:0.95rem;">
+                                {{ lbl_tts_title }}
+                            </div>
+                            <div class="d-flex flex-wrap align-items-center" style="gap:8px;">
+                                <button type="button" class="mx-tts-btn" id="mx-tts-play-btn" onclick="mxSpeakLesson()">
+                                    {{ lbl_tts_play }}
+                                </button>
+                                <button type="button" class="mx-tts-btn secondary" id="mx-tts-stop-btn" onclick="mxStopSpeech()">
+                                    {{ lbl_tts_stop }}
+                                </button>
+                                <select id="mx-tts-rate" class="form-select" style="width:auto;min-height:48px;border-radius:12px;font-weight:700;border:2px solid #1B4332;">
+                                    <option value="1.0">1.0x</option>
+                                    <option value="0.85">0.85x (Chậm rõ)</option>
+                                    <option value="1.15">1.15x</option>
+                                </select>
+                            </div>
+                        </div>
+                        {{/mxshowtts}}
+
+                        {{{ output.course_content_header }}}
+                        {{#headercontent}}
+                            {{> core/activity_header }}
+                        {{/headercontent}}
+                        {{#overflow}}
+                            <div class="container-fluid tertiary-navigation">
+                                <div class="navitem">
+                                    {{> core/url_select}}
+                                </div>
+                            </div>
+                        {{/overflow}}
+
+                        <!-- Custom Course Cards/Tiles UI (when viewing course) -->
+                        {{{ mxcoursetileshtml }}}
+
+                        {{{ output.main_content }}}
+                        {{{ output.activity_navigation }}}
+                        {{{ output.course_content_footer }}}
+
+                        <!-- Bottom Lesson/Course Back Button -->
+                        {{#mxhasback}}
+                        <div class="mx-back-nav-bar mt-4 d-print-none">
+                            <a href="{{{ mxbackurl }}}" class="mx-back-nav-btn">{{ mxbacklabel }}</a>
+                        </div>
+                        {{/mxhasback}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{> theme_boost/footer }}
+    </div>
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+<!-- Fixed Mobile-First Bottom Navigation Bar (bottom-nav-bar) -->
+<nav class="bottom-nav-bar d-print-none" aria-label="Bottom Navigation">
+    <a href="{{{ mxdashboardurl }}}" class="{{#navhomeactive}}active{{/navhomeactive}}">
+        <span class="mx-bnav-icon">🏠</span>
+        <span>{{ lbl_nav_home }}</span>
+    </a>
+    <a href="{{{ mxagriopsurl }}}" class="{{#navagriactive}}active{{/navagriactive}}">
+        <span class="mx-bnav-icon">📒</span>
+        <span>{{ lbl_nav_agri }}</span>
+    </a>
+    <a href="{{{ mxcalcurl }}}" class="{{#navcalcactive}}active{{/navcalcactive}}">
+        <span class="mx-bnav-icon">🧮</span>
+        <span>{{ lbl_nav_calc }}</span>
+    </a>
+    <a href="{{{ mxcerturl }}}" class="{{#navcertactive}}active{{/navcertactive}}">
+        <span class="mx-bnav-icon">🎓</span>
+        <span>{{ lbl_nav_cert }}</span>
+    </a>
+    <a href="{{{ mxprofileurl }}}" class="{{#navprofactive}}active{{/navprofactive}}">
+        <span class="mx-bnav-icon">🏡</span>
+        <span>{{ lbl_nav_prof }}</span>
+    </a>
+</nav>
+
+<!-- Floating 24/7 AI Crop Doctor Chatbot ("🌱 Bác sĩ Cây trồng 24/7") -->
+<button type="button" id="mx-crop-doctor-fab" class="d-print-none" onclick="mxToggleCropDoctor()">
+    {{ lbl_bot_fab }}
+</button>
+
+<aside id="mx-crop-doctor-panel" class="d-print-none" aria-label="AI Crop Doctor 24/7">
+    <div style="background:linear-gradient(135deg,#1B4332,#2E7D32);color:#FFF;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+            <div style="font-weight:900;font-size:1rem;">{{ lbl_bot_fab }}</div>
+            <div style="font-size:0.76rem;color:#D8F3DC;" id="mx-bot-sub">Tư vấn pH/EC • IPM Sinh học • Kho lạnh VietGAP</div>
+        </div>
+        <button type="button" onclick="mxToggleCropDoctor()" style="background:rgba(255,255,255,0.2);border:none;color:#FFF;border-radius:10px;width:38px;height:38px;font-weight:900;cursor:pointer;">✕</button>
+    </div>
+
+    <div id="mx-bot-messages" style="padding:14px;overflow-y:auto;max-height:270px;background:#F8FCF9;font-size:0.9rem;line-height:1.5;">
+        <div style="background:#E8F5E9;color:#14281D;padding:10px 12px;border-radius:14px;margin-bottom:10px;border:1px solid #C8E6C9;" id="mx-bot-welcome">
+            🌱 Xin chào bà con! Tôi là <strong>Bác sĩ Cây trồng 24/7</strong>. Hãy chạm nhanh chủ đề bên dưới hoặc nhập triệu chứng cây trồng cần tra cứu:
+        </div>
+    </div>
+
+    <!-- 1-Touch Question Chips -->
+    <div style="padding:8px 12px;background:#FFF;border-top:1px solid #E0F2F1;display:flex;flex-wrap:wrap;gap:6px;">
+        <button type="button" class="btn btn-sm btn-outline-success" style="border-radius:999px;font-weight:700;font-size:0.78rem;" onclick="mxAskCropDoctor('pH EC')">🧪 pH / EC</button>
+        <button type="button" class="btn btn-sm btn-outline-success" style="border-radius:999px;font-weight:700;font-size:0.78rem;" onclick="mxAskCropDoctor('IPM bọ trĩ rệp sáp')">🐞 Sâu bệnh IPM</button>
+        <button type="button" class="btn btn-sm btn-outline-success" style="border-radius:999px;font-weight:700;font-size:0.78rem;" onclick="mxAskCropDoctor('Trichoderma')">🍄 Nấm Trichoderma</button>
+        <button type="button" class="btn btn-sm btn-outline-success" style="border-radius:999px;font-weight:700;font-size:0.78rem;" onclick="mxAskCropDoctor('Kho lạnh Pre-cooling')">❄️ Kho lạnh</button>
+    </div>
+
+    <form onsubmit="event.preventDefault(); mxSubmitBotInput();" style="display:flex;gap:6px;padding:10px 12px;background:#FFF;border-top:1px solid #E0F2F1;">
+        <input type="text" id="mx-bot-input" class="form-control" style="min-height:44px;border-radius:12px;font-size:0.9rem;" placeholder="Nhập câu hỏi (pH, bọ trĩ, kho lạnh...)">
+        <button type="submit" class="btn btn-success" style="min-height:44px;border-radius:12px;font-weight:800;background:#1B4332;padding:0 16px;">➤</button>
+    </form>
+</aside>
+
+<script>
+// 1. Outdoor Harsh Sunlight High-Contrast Mode
+function mxApplyOutdoorState(active) {
+    if (active) {
+        document.documentElement.classList.add('mx-outdoor-html');
+        document.body.classList.add('mx-outdoor-mode');
+    } else {
+        document.documentElement.classList.remove('mx-outdoor-html');
+        document.body.classList.remove('mx-outdoor-mode');
+    }
+}
+function mxToggleOutdoorMode() {
+    var next = !document.body.classList.contains('mx-outdoor-mode');
+    try { localStorage.setItem('mx_outdoor_mode', next ? '1' : '0'); } catch (e) {}
+    mxApplyOutdoorState(next);
+}
+try {
+    if (localStorage.getItem('mx_outdoor_mode') === '1') {
+        mxApplyOutdoorState(true);
+    }
+} catch (e) {}
+
+// 2. Hands-Free TTS Voice Reader (#mx-tts-player)
+function mxSpeakLesson() {
+    if (!('speechSynthesis' in window)) {
+        return;
+    }
+    window.speechSynthesis.cancel();
+    var mainEl = document.getElementById('region-main');
+    if (!mainEl) return;
+    var clone = mainEl.cloneNode(true);
+    var ttsBar = clone.querySelector('#mx-tts-player');
+    if (ttsBar) ttsBar.remove();
+    var text = (clone.innerText || clone.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 3500);
+    if (!text) return;
+
+    var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
+    var utter = new SpeechSynthesisUtterance(text);
+    utter.lang = isEn ? 'en-US' : 'vi-VN';
+    var rateEl = document.getElementById('mx-tts-rate');
+    utter.rate = rateEl ? (parseFloat(rateEl.value) || 1.0) : 1.0;
+    window.speechSynthesis.speak(utter);
+}
+function mxStopSpeech() {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+}
+
+// 3. Floating AI Crop Doctor 24/7 Chatbot (Bilingual VI / EN)
+function mxToggleCropDoctor() {
+    var panel = document.getElementById('mx-crop-doctor-panel');
+    if (panel) panel.classList.toggle('open');
+}
+function mxSubmitBotInput() {
+    var inp = document.getElementById('mx-bot-input');
+    if (!inp || !inp.value.trim()) return;
+    mxAskCropDoctor(inp.value.trim());
+    inp.value = '';
+}
+function mxAskCropDoctor(query) {
+    var box = document.getElementById('mx-bot-messages');
+    if (!box) return;
+    var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
+
+    var userDiv = document.createElement('div');
+    userDiv.style.cssText = 'background:#1B4332;color:#FFF;padding:8px 12px;border-radius:14px;margin-bottom:8px;margin-left:36px;text-align:right;font-weight:700;';
+    userDiv.textContent = query;
+    box.appendChild(userDiv);
+
+    var q = query.toLowerCase();
+    var reply = '';
+    if (q.indexOf('ph') !== -1 || q.indexOf('ec') !== -1 || q.indexOf('phân') !== -1 || q.indexOf('fert') !== -1) {
+        reply = isEn
+            ? '🧪 <strong>pH & EC Standard Protocol:</strong><br>• Leafy greens NFT: pH <code>5.8–6.2</code>, EC <code>1.2–1.8 mS/cm</code>.<br>• Greenhouse Melon/Tomato: pH <code>5.8–6.5</code>, EC <code>2.0–2.8 mS/cm</code>.<br>• Dissolve Stock A first, stir 3 mins, then add Stock B (never mix concentrated A+B).'
+            : '🧪 <strong>Phác đồ pH & EC Chuẩn:</strong><br>• Rau ăn lá thủy canh: pH <code>5.8–6.2</code>, EC <code>1.2–1.8 mS/cm</code>.<br>• Dưa lưới / Cà chua nhà màng: pH <code>5.8–6.5</code>, EC <code>2.0–2.8 mS/cm</code>.<br>• Hòa loãng Bồn A trước, khuấy đều 3 phút rồi mới châm Bồn B để tránh kết tủa tắc béc.';
+    } else if (q.indexOf('trichoderma') !== -1 || q.indexOf('rễ') !== -1 || q.indexOf('nấm') !== -1) {
+        reply = isEn
+            ? '🍄 <strong>Trichoderma Bio-Fungicide Protocol:</strong><br>• Mix 1kg Trichoderma + 500kg composted manure + Humic acid (55% moisture) for 15–25 days.<br>• Root drench <code>50g/tree</code> around Durian/Fruit drip ring at pH 5.8–6.2 to suppress <em>Phytophthora</em> & <em>Fusarium</em>. Do NOT mix with chemical copper/lime within 10 days.'
+            : '🍄 <strong>Phác đồ Nấm đối kháng Trichoderma:</strong><br>• Ủ 1kg Trichoderma với 500kg phân chuồng/vỏ cà phê + Humic (ẩm độ 55–60%) trong 20 ngày.<br>• Tưới gốc <code>50g/gốc</code> quanh tán Sầu riêng/Cây ăn quả (pH đất 5.8–6.2) ngừa thối rễ <em>Phytophthora</em>. Cách ly vôi/thuốc gốc đồng ít nhất 10 ngày.';
+    } else if (q.indexOf('kho lạnh') !== -1 || q.indexOf('cooling') !== -1 || q.indexOf('bảo quản') !== -1 || q.indexOf('map') !== -1) {
+        reply = isEn
+            ? '❄️ <strong>Pre-Cooling & Cold Chain Protocol:</strong><br>• Pre-cool within <strong>2 hours</strong> post-harvest to remove field heat.<br>• Leafy greens: <code>2–5°C</code>, RH <code>90–95%</code>.<br>• Tropical fruit (Durian pulp IQF): <code>-35°C</code> blast freeze, store at <code>-18°C</code>; whole fruit cool chain <code>13–15°C</code> with MAP packaging.'
+            : '❄️ <strong>Phác đồ Hạ nhiệt Sơ bộ (Pre-cooling) & Kho lạnh:</strong><br>• Hạ nhiệt đồng ruộng trong vòng <strong>2 giờ đầu</strong> sau thu hoạch.<br>• Rau ăn lá: Kho mát <code>2–5°C</code>, ẩm độ <code>90–95%</code> + bao bì khí quyển biến đổi MAP.<br>• Sầu riêng xuất khẩu: Cấp đông múi IQF <code>-35°C</code>, trữ đông <code>-18°C</code>; trái tươi bảo quản mát <code>13–15°C</code> tránh tổn thương lạnh.';
+    } else {
+        reply = isEn
+            ? '🐞 <strong>Biological IPM Pest Protocol:</strong><br>• <strong>Thrips:</strong> Blue/yellow sticky traps (40/1000m²) + <em>Beauveria bassiana</em> + Neem oil.<br>• <strong>Mealybugs:</strong> 0.3% Horticultural Mineral Oil + ant barrier.<br>• <strong>Spider Mites:</strong> Release predatory mites + bio-Abamectin under leaves. Pre-Harvest Interval (PHI): 0 days.'
+            : '🐞 <strong>Phác đồ Phòng trừ Tổng hợp IPM Sinh học:</strong><br>• <strong>Bọ trĩ:</strong> Treo bẫy dính xanh/vàng (40 bẫy/1000m²) + phun nấm <em>Beauveria</em> + dầu Neem chiều mát.<br>• <strong>Rệp sáp:</strong> Dầu khoáng sinh học 0.3% phá lớp sáp + chặn kiến đen cộng sinh.<br>• <strong>Nhện đỏ:</strong> Phun ướt mặt dưới lá bằng Matrine/Abamectin sinh học, thả nhện thiên địch. Cách ly PHI: 0 ngày.';
+    }
+
+    var botDiv = document.createElement('div');
+    botDiv.style.cssText = 'background:#E8F5E9;color:#14281D;padding:10px 12px;border-radius:14px;margin-bottom:10px;border:1px solid #A5D6A7;';
+    botDiv.innerHTML = reply;
+    box.appendChild(botDiv);
+    box.scrollTop = box.scrollHeight;
+}
+
+// 4. Automatic .table-responsive Wrapper & Bilingual Chatbot Init & PWA Registration
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#region-main table').forEach(function(tbl) {
+        if (!tbl.closest('.table-responsive')) {
+            var wrap = document.createElement('div');
+            wrap.className = 'table-responsive';
+            tbl.parentNode.insertBefore(wrap, tbl);
+            wrap.appendChild(tbl);
+        }
+    });
+
+    var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
+    if (isEn) {
+        var sub = document.getElementById('mx-bot-sub');
+        if (sub) sub.textContent = 'pH/EC Advisory • Bio-IPM • Cold Chain VietGAP';
+        var wel = document.getElementById('mx-bot-welcome');
+        if (wel) wel.innerHTML = '🌱 Hello! I am your <strong>24/7 AI Crop Doctor</strong>. Tap a quick topic chip below or type your crop symptom:';
+        var inp = document.getElementById('mx-bot-input');
+        if (inp) inp.placeholder = 'Ask about pH, thrips, Trichoderma, cold chain...';
+    }
+});
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(function() {});
+    });
+}
+</script>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

@@ -1,0 +1,12 @@
+# Node / E2E Artifacts
+tests/e2e/node_modules/
+tests/e2e/package-lock.json
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Keep sample backups tracked or ignore timestamped temp dumps if needed
+backups/mamxanh_lms_db_*.sql

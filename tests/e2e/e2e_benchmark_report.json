@@ -1,0 +1,288 @@
+{
+  "timestamp": "2026-11-07T06:11:42.989Z",
+  "baseUrl": "https://moodle.lvh.me:8443",
+  "passed": 34,
+  "failed": 0,
+  "assertions": [
+    {
+      "name": "Login 1-Click Role Buttons + CSRF logintoken present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "1-Click Language Switch to English on Login",
+      "passed": true,
+      "detail": "High-Tech Agriculture Training LMS"
+    },
+    {
+      "name": "Responsive overflow guard (Login Mobile 375x812)",
+      "passed": true,
+      "detail": "scrollWidth=375px <= viewport=375px"
+    },
+    {
+      "name": "WCAG AAA >= 48px touch target on Login 1-Click button",
+      "passed": true,
+      "detail": "height=93px"
+    },
+    {
+      "name": "Farmer post-login smart auto-redirect to /local/mamxanhapp/index.php",
+      "passed": true,
+      "detail": "https://moodle.lvh.me:8443/local/mamxanhapp/index.php"
+    },
+    {
+      "name": "Responsive overflow guard (Farmer Dashboard Mobile 375x812)",
+      "passed": true,
+      "detail": "scrollWidth=375px <= viewport=375px"
+    },
+    {
+      "name": "Outdoor Sunlight High-Contrast Mode (#FFF bg, #000 text, 115%)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "24/7 AI Crop Doctor Chatbot 1-touch chip consultation",
+      "passed": true,
+      "detail": "pH/EC protocol returned"
+    },
+    {
+      "name": "Smart AgTech Calculator & Micro-climate Weather Hub loaded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Course Tiles UI rendered with Page, FieldPractice & Quiz activities",
+      "passed": true,
+      "detail": "pages=3"
+    },
+    {
+      "name": "Responsive overflow guard (Course Tiles Mobile 375x812)",
+      "passed": true,
+      "detail": "scrollWidth=375px <= viewport=375px"
+    },
+    {
+      "name": "Hands-Free Voice Reader (#mx-tts-player) + Top/Bottom Back Buttons + Bottom Nav",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Farmer Rotating QR + GPS Garden Check-In (mod_fieldpractice)",
+      "passed": true,
+      "detail": "cmid=11"
+    },
+    {
+      "name": "Moodle Quiz Start Attempt button triggered",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Moodle Quiz Attempt Page opened",
+      "passed": true,
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/attempt.php?attempt=80&cmid=12"
+    },
+    {
+      "name": "Answered all 12 real Moodle Quiz multichoice questions",
+      "passed": true,
+      "detail": "answered=12/12"
+    },
+    {
+      "name": "Moodle Quiz Summary Page reached",
+      "passed": true,
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/summary.php?attempt=80&cmid=12"
+    },
+    {
+      "name": "Moodle Quiz graded cleanly with ZERO null grade_category errors",
+      "passed": true,
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/review.php?attempt=80&cmid=12"
+    },
+    {
+      "name": "Moodle Quiz Review displays passing score (100% / 10.00)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HMAC-SHA256 QR Certificate auto-unlocked upon Quiz >= 70%",
+      "passed": true,
+      "detail": "MXCERT-2026-CHEBIEN01-0043"
+    },
+    {
+      "name": "Digital Certificate signed PDF generation (TCPDF %PDF)",
+      "passed": true,
+      "detail": "HTTP 200, magic=%PDF-, size=151362 bytes"
+    },
+    {
+      "name": "Public QR Certificate Cryptographic Verification (HMAC-SHA256 VERIFIED)",
+      "passed": true,
+      "detail": "MXCERT-2026-CHEBIEN01-0043"
+    },
+    {
+      "name": "Farmer created new VietGAP Batch with QR Trace Code",
+      "passed": true,
+      "detail": "VG-LD-202611-0016"
+    },
+    {
+      "name": "Public VietGAP QR Traceability Passport verified",
+      "passed": true,
+      "detail": "VG-LD-202611-0016"
+    },
+    {
+      "name": "RBAC 403 Block: Farmer -> /local/mamxanhapp/manage.php",
+      "passed": true,
+      "detail": "HTTP 403"
+    },
+    {
+      "name": "RBAC 403 Block: Farmer -> /mod/fieldpractice/grade.php?id=11",
+      "passed": true,
+      "detail": "HTTP 403"
+    },
+    {
+      "name": "RBAC 403 Block: Farmer -> /local/mamxanhapp/admin_audit.php",
+      "passed": true,
+      "detail": "HTTP 403"
+    },
+    {
+      "name": "CBKT post-login smart auto-redirect to /local/mamxanhapp/manage.php",
+      "passed": true,
+      "detail": "https://moodle.lvh.me:8443/local/mamxanhapp/manage.php"
+    },
+    {
+      "name": "Responsive overflow guard (CBKT Analytics Mobile 375x812)",
+      "passed": true,
+      "detail": "scrollWidth=375px <= viewport=375px"
+    },
+    {
+      "name": "CBKT graded 4-Criteria Field Rubric & pushed to Moodle Gradebook",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CSV Export (VI) UTF-8 BOM (\\xEF\\xBB\\xBF) + 15 Farmer Rows",
+      "passed": true,
+      "detail": "lines=16, header=\"\"Mã tài khoản\",\"Họ và tên Nông dân\",\"Tên Nông hộ\",\"Vùng...\""
+    },
+    {
+      "name": "CSV Export (EN) Bilingual Sync + UTF-8 BOM",
+      "passed": true,
+      "detail": "header=\"Username,\"Farmer Full Name\",\"Farm Household\",\"Growing R...\""
+    },
+    {
+      "name": "RBAC 403 Block: CBKT -> /local/mamxanhapp/admin_audit.php",
+      "passed": true,
+      "detail": "HTTP 403"
+    },
+    {
+      "name": "RBAC 200 Allow: Admin -> /local/mamxanhapp/admin_audit.php",
+      "passed": true,
+      "detail": "HTTP 200"
+    }
+  ],
+  "rbacMatrix": [
+    {
+      "role": "Farmer (nd_rau_lamdong)",
+      "endpoint": "/local/mamxanhapp/manage.php",
+      "status": 403
+    },
+    {
+      "role": "Farmer (nd_rau_lamdong)",
+      "endpoint": "/mod/fieldpractice/grade.php?id=11",
+      "status": 403
+    },
+    {
+      "role": "Farmer (nd_rau_lamdong)",
+      "endpoint": "/local/mamxanhapp/admin_audit.php",
+      "status": 403
+    },
+    {
+      "role": "CBKT (cbkt_pilot)",
+      "endpoint": "/local/mamxanhapp/admin_audit.php",
+      "status": 403
+    },
+    {
+      "role": "Admin (admin)",
+      "endpoint": "/local/mamxanhapp/admin_audit.php",
+      "status": 200
+    }
+  ],
+  "screenshots": [
+    "01_login_desktop_vi.png",
+    "02_login_mobile_vi.png",
+    "03_farmer_dashboard_mobile.png",
+    "04_farmer_dashboard_desktop.png",
+    "05_farmer_outdoor_sunlight_mode.png",
+    "06_crop_doctor_chatbot_247.png",
+    "07a_smart_fertigation_calculator.png",
+    "07b_microclimate_weather_advisory.png",
+    "08_course_tiles_chebien01_desktop.png",
+    "09_course_tiles_chebien01_mobile.png",
+    "10_interactive_slide_deck_and_tts.png",
+    "11_ipm_flashcards_lesson.png",
+    "12_fieldpractice_qr_gps_checkin.png",
+    "13_quiz_12_questions_attempt.png",
+    "14_quiz_graded_review_100pct.png",
+    "15_farmer_digital_certificates.png",
+    "16_public_qr_cert_verification.png",
+    "17_vietgap_batch_and_voice_diary.png",
+    "18_public_vietgap_qr_passport.png",
+    "19_cbkt_analytics_dashboard_desktop.png",
+    "20_cbkt_analytics_dashboard_mobile.png",
+    "21_cbkt_field_rubric_grading.png",
+    "22_admin_infrastructure_audit.png"
+  ],
+  "ttfbBenchmarks": [
+    {
+      "endpoint": "Login Page (/login/index.php)",
+      "minMs": 38.63,
+      "medianMs": 40.46,
+      "avgMs": 41.09,
+      "maxMs": 44.28,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "Public QR Certificate Verify (/local/mamxanhcert/verify.php)",
+      "minMs": 61.78,
+      "medianMs": 62.87,
+      "avgMs": 64.03,
+      "maxMs": 68.44,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "Public VietGAP Traceability (/local/agriops/trace.php)",
+      "minMs": 63.16,
+      "medianMs": 65.3,
+      "avgMs": 66.36,
+      "maxMs": 72.28,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "CBKT Analytics Hub (/local/mamxanhapp/manage.php)",
+      "minMs": 127.51,
+      "medianMs": 132.44,
+      "avgMs": 137.46,
+      "maxMs": 161.77,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "Smart AgTech Calculator (/local/mamxanhapp/calculator.php)",
+      "minMs": 112.79,
+      "medianMs": 117.32,
+      "avgMs": 133.95,
+      "maxMs": 163.15,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "Course Tiles View CHAMSOC01 (/course/view.php?id=2)",
+      "minMs": 207.32,
+      "medianMs": 218.1,
+      "avgMs": 229.07,
+      "maxMs": 272.58,
+      "encoding": "gzip"
+    },
+    {
+      "endpoint": "Admin System Audit (/local/mamxanhapp/admin_audit.php)",
+      "minMs": 115.29,
+      "medianMs": 123.13,
+      "avgMs": 132.53,
+      "maxMs": 161.89,
+      "encoding": "gzip"
+    }
+  ]
+}
