@@ -122,6 +122,7 @@ Moodle 4.0/
 ---
 
 ## 6. Bộ Tài liệu Hướng dẫn Chi tiết
+- 🗺️ [Sơ đồ Nghiệp vụ Toàn diện & Hướng dẫn Thực hiện 18 Chức năng Hệ thống](docs/BUSINESS_WORKFLOWS_AND_USER_MANUAL.md)
 - 📘 [Hướng dẫn Cài đặt, Phân quyền & Sao lưu dành cho Quản trị viên](docs/ADMIN_DEPLOYMENT_GUIDE.md)
 - 📗 [Hướng dẫn Biên soạn Khóa học Tương tác & Chấm điểm Thực hành cho Cán bộ Kỹ thuật](docs/INSTRUCTOR_AUTHORING_GUIDE.md)
 - 📙 [Cẩm nang 6 Bước Học tập & Ghi Nhật ký Nông vụ trên Điện thoại dành cho Nông dân](docs/FARMER_USER_GUIDE.md)
