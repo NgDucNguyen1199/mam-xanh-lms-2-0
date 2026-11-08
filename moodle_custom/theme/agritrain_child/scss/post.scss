@@ -79,17 +79,24 @@ body:not(#page-login-index) {
     transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease !important;
 }
 
-// Hover and Focus states: Translucent highlight, NEVER white-on-white!
+// Hover, Focus and Active states: Translucent highlight, NEVER white-on-white!
 .navbar.fixed-top .primary-navigation .nav-link:hover,
 .navbar.fixed-top .primary-navigation .nav-link:focus,
+.navbar.fixed-top .primary-navigation .nav-link:active,
 .navbar.fixed-top .moremenu .nav-link:hover,
 .navbar.fixed-top .moremenu .nav-link:focus,
+.navbar.fixed-top .moremenu .nav-link:active,
 .navbar.fixed-top .navbar-nav .nav-link:hover,
 .navbar.fixed-top .navbar-nav .nav-link:focus,
+.navbar.fixed-top .navbar-nav .nav-link:active,
 .navbar.fixed-top a.nav-link:hover,
 .navbar.fixed-top a.nav-link:focus,
+.navbar.fixed-top a.nav-link:active,
 .navbar.fixed-top .nav-item .nav-link:hover,
 .navbar.fixed-top .nav-item .nav-link:focus,
+.navbar.fixed-top .nav-item .nav-link:active,
+.navbar.fixed-top .nav-item.active .nav-link,
+.navbar.fixed-top .dropdown.show .nav-link,
 .navbar.fixed-top .primary-navigation .navigation .nav-link:hover,
 .navbar.fixed-top .primary-navigation .navigation .nav-link:focus {
     background: rgba(255, 255, 255, 0.18) !important;
@@ -836,11 +843,11 @@ body.mx-outdoor-mode .mx-outdoor-btn {
 // Desktop height: 650px | Mobile height: 480px | Zoom +/- Controls
 // ===================================================================
 .mx-pdf-viewer-shell {
-    border: 2.5px solid #1b4332;
-    border-radius: 20px;
+    border: 2px solid #1b4332;
+    border-radius: 14px;
     overflow: hidden;
-    background: #3c4043;
-    box-shadow: 0 12px 30px rgba(20, 40, 29, 0.16);
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(27, 67, 50, 0.16);
     margin: 12px 0 20px;
 }
 
@@ -871,6 +878,7 @@ body.mx-outdoor-mode .mx-outdoor-btn {
     align-items: center;
     justify-content: center;
     gap: 4px;
+    transition: background-color 0.15s ease;
 }
 
 .mx-pdf-zoom-btn:hover {
@@ -880,21 +888,80 @@ body.mx-outdoor-mode .mx-outdoor-btn {
 .mx-pdf-viewport {
     height: 650px !important;
     max-height: 650px !important;
-    overflow: auto;
-    background: #525659;
-    padding: 18px 12px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: #f1f5f9 !important; /* Clean light modern reader backdrop */
+    padding: 22px 14px;
     text-align: center;
     position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.mx-pdf-viewport::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.mx-pdf-viewport::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.mx-pdf-viewport::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+}
+
+.mx-pdf-viewport::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
 }
 
 @media (max-width: 767.98px) {
     .mx-pdf-viewport {
         height: 480px !important;
         max-height: 480px !important;
-        padding: 10px 6px;
+        padding: 12px 8px;
     }
 }
 
+#mx-pdf-canvas-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.mx-pdf-page-wrap {
+    margin: 0 auto 20px;
+    display: inline-block;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.12);
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.mx-pdf-page-wrap:last-child {
+    margin-bottom: 2px !important;
+}
+
+.mx-pdf-page-label {
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 5px 14px;
+    text-align: right;
+    border-bottom: 1px solid #bbf7d0;
+}
+
+// Fallback container / native iframe protection
+#mx-pdf-fallback {
+    background: #ffffff;
+}
+
+#mx-pdf-fallback iframe#resourceobject,
 .resourcecontent.resourcepdf iframe#resourceobject {
     width: 100% !important;
     height: 650px !important;
@@ -902,29 +969,10 @@ body.mx-outdoor-mode .mx-outdoor-btn {
 }
 
 @media (max-width: 767.98px) {
+    #mx-pdf-fallback iframe#resourceobject,
     .resourcecontent.resourcepdf iframe#resourceobject {
         height: 480px !important;
     }
-}
-
-.mx-pdf-page-wrap {
-    margin: 0 auto 18px;
-    display: inline-block;
-    background: #ffffff;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-    border-radius: 6px;
-    overflow: hidden;
-    max-width: 100%;
-}
-
-.mx-pdf-page-label {
-    background: #e8f5e9;
-    color: #1b4332;
-    font-size: 0.78rem;
-    font-weight: 800;
-    padding: 4px 12px;
-    text-align: right;
-    border-bottom: 1px solid #c8e6c9;
 }
 
 // Ensure H5P Player & SCORM Player iframes always render spaciously on Desktop & Mobile

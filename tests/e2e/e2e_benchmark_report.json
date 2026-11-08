@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-08T12:53:46.792Z",
+  "timestamp": "2026-11-08T13:44:31.874Z",
   "baseUrl": "https://moodle.lvh.me:8443",
   "passed": 51,
   "failed": 0,
@@ -77,7 +77,7 @@
     {
       "name": "Moodle Quiz Attempt Page opened",
       "passed": true,
-      "detail": "https://moodle.lvh.me:8443/mod/quiz/attempt.php?attempt=89&cmid=12"
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/attempt.php?attempt=91&cmid=12"
     },
     {
       "name": "Answered all 12 real Moodle Quiz multichoice questions",
@@ -87,12 +87,12 @@
     {
       "name": "Moodle Quiz Summary Page reached",
       "passed": true,
-      "detail": "https://moodle.lvh.me:8443/mod/quiz/summary.php?attempt=89&cmid=12"
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/summary.php?attempt=91&cmid=12"
     },
     {
       "name": "Moodle Quiz graded cleanly with ZERO null grade_category errors",
       "passed": true,
-      "detail": "https://moodle.lvh.me:8443/mod/quiz/review.php?attempt=89&cmid=12"
+      "detail": "https://moodle.lvh.me:8443/mod/quiz/review.php?attempt=91&cmid=12"
     },
     {
       "name": "Moodle Quiz Review displays passing score (100% / 10.00)",
@@ -117,12 +117,12 @@
     {
       "name": "Farmer created new VietGAP Batch with QR Trace Code",
       "passed": true,
-      "detail": "VG-LD-202611-0025"
+      "detail": "VG-LD-202611-0026"
     },
     {
       "name": "Public VietGAP QR Traceability Passport verified",
       "passed": true,
-      "detail": "VG-LD-202611-0025"
+      "detail": "VG-LD-202611-0026"
     },
     {
       "name": "RBAC 403 Block: Farmer -> /local/mamxanhapp/manage.php",
@@ -247,7 +247,7 @@
     {
       "name": "1-Click Course Cloner executed Moodle backup_controller & restore_controller cleanly",
       "passed": true,
-      "detail": "https://moodle.lvh.me:8443/course/view.php?id=14"
+      "detail": "https://moodle.lvh.me:8443/course/view.php?id=15"
     },
     {
       "name": "Cloned regional course preserves 100% of Stepper, PDF, H5P, SCORM 1.2, FieldPractice & Quiz",
@@ -330,82 +330,82 @@
   "ttfbBenchmarks": [
     {
       "endpoint": "Login Page HTTPS Proxy (/login/index.php)",
-      "minMs": 51.07,
-      "medianMs": 54.19,
-      "avgMs": 54.89,
-      "maxMs": 58.59,
+      "minMs": 37.91,
+      "medianMs": 38.57,
+      "avgMs": 40.95,
+      "maxMs": 48.89,
       "encoding": "gzip"
     },
     {
       "endpoint": "Login Page Direct HTTP moodle_app (http://localhost:8090/login/index.php)",
-      "minMs": 54.07,
-      "medianMs": 55.81,
-      "avgMs": 58.01,
-      "maxMs": 62.8,
+      "minMs": 33.5,
+      "medianMs": 35.23,
+      "avgMs": 38.28,
+      "maxMs": 50.32,
       "encoding": "gzip"
     },
     {
       "endpoint": "Public QR Certificate Verify (/local/mamxanhcert/verify.php)",
-      "minMs": 67.95,
-      "medianMs": 68.99,
-      "avgMs": 74.75,
-      "maxMs": 87.69,
+      "minMs": 54.47,
+      "medianMs": 57.29,
+      "avgMs": 58.81,
+      "maxMs": 66.92,
       "encoding": "gzip"
     },
     {
       "endpoint": "Public VietGAP Traceability (/local/agriops/trace.php)",
-      "minMs": 62.32,
-      "medianMs": 68.61,
-      "avgMs": 70.89,
-      "maxMs": 84.86,
+      "minMs": 52.09,
+      "medianMs": 53.3,
+      "avgMs": 53.8,
+      "maxMs": 55.95,
       "encoding": "gzip"
     },
     {
       "endpoint": "CBKT Analytics Hub (/local/mamxanhapp/manage.php)",
-      "minMs": 191.34,
-      "medianMs": 205.82,
-      "avgMs": 233.88,
-      "maxMs": 325.2,
+      "minMs": 114.23,
+      "medianMs": 114.86,
+      "avgMs": 115.28,
+      "maxMs": 116.62,
       "encoding": "gzip"
     },
     {
       "endpoint": "1-Click Course Cloner (/local/mamxanhapp/clone_course.php)",
-      "minMs": 128.95,
-      "medianMs": 148.36,
-      "avgMs": 161.74,
-      "maxMs": 226.2,
+      "minMs": 97.47,
+      "medianMs": 102.6,
+      "avgMs": 109.67,
+      "maxMs": 139.39,
       "encoding": "gzip"
     },
     {
       "endpoint": "Smart AgTech Calculator (/local/mamxanhapp/calculator.php)",
-      "minMs": 133.52,
-      "medianMs": 159.67,
-      "avgMs": 164.77,
-      "maxMs": 211.01,
+      "minMs": 93.51,
+      "medianMs": 102.5,
+      "avgMs": 102.17,
+      "maxMs": 110.22,
       "encoding": "gzip"
     },
     {
       "endpoint": "Course Tiles View CHAMSOC01 (/course/view.php?id=2)",
-      "minMs": 236.08,
-      "medianMs": 311.56,
-      "avgMs": 312.06,
-      "maxMs": 382.69,
+      "minMs": 187.55,
+      "medianMs": 197.34,
+      "avgMs": 202.17,
+      "maxMs": 216.95,
       "encoding": "gzip"
     },
     {
       "endpoint": "Master Course Template (/course/view.php?id=8)",
-      "minMs": 252.3,
-      "medianMs": 305.74,
-      "avgMs": 303.25,
-      "maxMs": 334.01,
+      "minMs": 187.66,
+      "medianMs": 207.61,
+      "avgMs": 231.43,
+      "maxMs": 307.7,
       "encoding": "gzip"
     },
     {
       "endpoint": "Admin System Audit (/local/mamxanhapp/admin_audit.php)",
-      "minMs": 117.81,
-      "medianMs": 138.51,
-      "avgMs": 140.6,
-      "maxMs": 162.11,
+      "minMs": 102.69,
+      "medianMs": 104.39,
+      "avgMs": 105.58,
+      "maxMs": 109.57,
       "encoding": "gzip"
     }
   ]

@@ -390,11 +390,20 @@ document.addEventListener('DOMContentLoaded', function() {
         canvasList.id = 'mx-pdf-canvas-list';
         viewport.appendChild(canvasList);
 
+        // Detached fallback container for native iframe (kept out of viewport)
+        var fallbackContainer = document.createElement('div');
+        fallbackContainer.id = 'mx-pdf-fallback';
+        fallbackContainer.style.display = 'none';
+        fallbackContainer.style.width = '100%';
+        fallbackContainer.style.height = '650px';
+
         pdfBox.parentNode.insertBefore(shell, pdfBox);
         shell.appendChild(toolbar);
         shell.appendChild(viewport);
+        shell.appendChild(fallbackContainer);
+
         pdfIframe.style.display = 'none';
-        viewport.appendChild(pdfIframe);
+        fallbackContainer.appendChild(pdfIframe);
         pdfBox.remove();
 
         var currentZoom = 1.0;
@@ -452,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pctEl) pctEl.textContent = Math.round(currentZoom * 100) + '%';
             if (loadedPdfDoc) {
                 renderAllPdfPages();
-            } else {
+            } else if (pdfIframe) {
                 pdfIframe.style.transform = 'scale(' + currentZoom + ')';
                 pdfIframe.style.transformOrigin = 'top center';
             }
@@ -468,9 +477,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        function activateFallback() {
+            if (viewport && viewport.parentNode) viewport.style.display = 'none';
+            if (fallbackContainer) fallbackContainer.style.display = 'block';
+            if (pdfIframe) {
+                pdfIframe.style.display = 'block';
+                pdfIframe.style.width = '100%';
+                pdfIframe.style.height = '650px';
+            }
+        }
+
         function initPdfJsViewer(pdfLib) {
             if (!pdfLib) {
-                pdfIframe.style.display = 'block';
+                activateFallback();
                 return;
             }
             pdfLib.GlobalWorkerOptions.workerSrc = '/local/mamxanhapp/assets/pdfjs/pdf.worker.min.js';
@@ -478,9 +497,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadedPdfDoc = pdfDoc;
                 var cnt = document.getElementById('mx-pdf-page-count');
                 if (cnt) cnt.textContent = '📑 ' + pdfDoc.numPages + (isEn ? ' pages' : ' trang kỹ thuật');
+                // PDF.js successfully rendered document -> permanently destroy fallback iframe to prevent duplicate/gray bottom box
+                if (pdfIframe && pdfIframe.parentNode) {
+                    pdfIframe.remove();
+                }
+                if (fallbackContainer && fallbackContainer.parentNode) {
+                    fallbackContainer.remove();
+                }
                 renderAllPdfPages();
             }).catch(function() {
-                pdfIframe.style.display = 'block';
+                activateFallback();
             });
         }
 
@@ -493,14 +519,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.require(['pdfjs-dist/build/pdf'], function(lib) {
                     initPdfJsViewer(lib || window.pdfjsLib);
                 }, function() {
-                    pdfIframe.style.display = 'block';
+                    activateFallback();
                 });
             } else {
-                pdfIframe.style.display = 'block';
+                activateFallback();
             }
         };
         s.onerror = function() {
-            pdfIframe.style.display = 'block';
+            activateFallback();
         };
         document.head.appendChild(s);
     }
