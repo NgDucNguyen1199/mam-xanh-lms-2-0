@@ -530,6 +530,94 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         document.head.appendChild(s);
     }
+
+    // 6. H5P Navigation Buttons Auto-Fix (Supplies clear context, text labels & icons to empty navigation buttons)
+    function initH5pButtonsEnhancer() {
+        var isEn = (document.documentElement.lang || '').toLowerCase().indexOf('en') === 0;
+
+        function enhanceDoc(doc) {
+            if (!doc) return;
+            var btns = doc.querySelectorAll('button, .h5p-theme-button, .h5p-joubelui-button');
+            for (var i = 0; i < btns.length; i++) {
+                var b = btns[i];
+                var aria = (b.getAttribute('aria-label') || b.getAttribute('title') || '').trim();
+                var txt = (b.textContent || '').trim();
+
+                if (txt === '' && aria !== '') {
+                    var labelText = '';
+                    var isPrev = aria.indexOf('trước') !== -1 || aria.indexOf('Previous') !== -1 || aria.indexOf('Back') !== -1;
+                    var isNext = aria.indexOf('tiếp') !== -1 || aria.indexOf('Next') !== -1;
+                    var isFinish = aria.indexOf('thành') !== -1 || aria.indexOf('Finish') !== -1 || aria.indexOf('kết quả') !== -1 || aria.indexOf('Summary') !== -1 || aria.indexOf('Results') !== -1;
+
+                    if (isPrev) {
+                        labelText = isEn ? '⬅ Previous' : '⬅ Câu trước';
+                        b.style.setProperty('background-color', '#475569', 'important');
+                    } else if (isFinish) {
+                        labelText = isEn ? 'Finish ➔' : 'Hoàn thành ➔';
+                        b.style.setProperty('background-color', '#15803d', 'important');
+                    } else if (isNext) {
+                        labelText = isEn ? 'Next Question ➔' : 'Câu tiếp theo ➔';
+                        b.style.setProperty('background-color', '#16a34a', 'important');
+                    } else {
+                        labelText = aria;
+                        b.style.setProperty('background-color', '#006fbf', 'important');
+                    }
+
+                    b.innerHTML = '<span class="h5p-theme-label" style="font-weight:700;letter-spacing:0.2px;display:inline-flex;align-items:center;gap:6px;">' + labelText + '</span>';
+                    b.style.setProperty('display', 'inline-flex', 'important');
+                    b.style.setProperty('align-items', 'center', 'important');
+                    b.style.setProperty('justify-content', 'center', 'important');
+                    b.style.setProperty('padding', '8px 18px', 'important');
+                    b.style.setProperty('min-height', '40px', 'important');
+                    b.style.setProperty('color', '#ffffff', 'important');
+                    b.style.setProperty('border-radius', '8px', 'important');
+                    b.style.setProperty('cursor', 'pointer', 'important');
+                    b.style.setProperty('box-shadow', '0 2px 8px rgba(0,0,0,0.15)', 'important');
+                }
+            }
+        }
+
+        function checkAllIframes() {
+            var iframes = document.querySelectorAll('iframe');
+            for (var i = 0; i < iframes.length; i++) {
+                var f = iframes[i];
+                try {
+                    var doc = f.contentDocument || (f.contentWindow && f.contentWindow.document);
+                    if (doc) {
+                        enhanceDoc(doc);
+                        if (doc.body && !doc.body.__mxObserved) {
+                            doc.body.__mxObserved = true;
+                            doc.addEventListener('click', function() { setTimeout(checkAllIframes, 60); setTimeout(checkAllIframes, 300); });
+                            var obs = new MutationObserver(function() { enhanceDoc(doc); });
+                            obs.observe(doc.body, { childList: true, subtree: true });
+                        }
+
+                        var subIframes = doc.querySelectorAll('iframe');
+                        for (var j = 0; j < subIframes.length; j++) {
+                            var sf = subIframes[j];
+                            try {
+                                var sdoc = sf.contentDocument || (sf.contentWindow && sf.contentWindow.document);
+                                if (sdoc) {
+                                    enhanceDoc(sdoc);
+                                    if (sdoc.body && !sdoc.body.__mxObserved) {
+                                        sdoc.body.__mxObserved = true;
+                                        sdoc.addEventListener('click', function() { setTimeout(checkAllIframes, 60); setTimeout(checkAllIframes, 300); });
+                                        var sobs = new MutationObserver(function() { enhanceDoc(sdoc); });
+                                        sobs.observe(sdoc.body, { childList: true, subtree: true });
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+
+        checkAllIframes();
+        var timer = setInterval(checkAllIframes, 400);
+        setTimeout(function() { clearInterval(timer); }, 600000);
+    }
+    initH5pButtonsEnhancer();
 });
 
 if ('serviceWorker' in navigator) {
