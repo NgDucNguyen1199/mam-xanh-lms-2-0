@@ -185,6 +185,8 @@ if ($dbman->table_exists('local_agriops_batch')) {
 $avgquiz = !empty($quizscores) ? round(array_sum($quizscores) / count($quizscores), 1) . '%' : '--';
 
 $roletype = local_mamxanhapp_user_role_type();
+$langviurl = (new moodle_url('/local/mamxanhapp/index.php', ['lang' => 'vi']))->out(false);
+$langenurl = (new moodle_url('/local/mamxanhapp/index.php', ['lang' => 'en']))->out(false);
 
 echo $OUTPUT->header();
 ?>
@@ -195,20 +197,31 @@ echo $OUTPUT->header();
     <!-- ============================================================= -->
     <section class="mx-hero-banner">
         <div class="mx-hero-main">
-            <div class="mx-hero-farmchip">
-                <span>🏡 <?php echo s($farmname); ?></span>
-                <span>•</span>
-                <span>📍 <?php echo s($region); ?> (<?php echo number_format($aream2); ?> m²)</span>
-                <span>•</span>
-                <span>🌿 VietGAP Active</span>
+            <div class="mx-hero-top-row">
+                <div class="mx-hero-farmchip">
+                    <span>🏡 <?php echo s($farmname); ?></span>
+                    <span>•</span>
+                    <span>📍 <?php echo s($region); ?> (<?php echo number_format($aream2); ?> m²)</span>
+                    <span>•</span>
+                    <span>🌿 VietGAP Active</span>
+                </div>
+                <div class="mx-hero-quick-actions">
+                    <div class="mx-lang-pill" id="mx-lang-switcher">
+                        <a href="<?php echo $langviurl; ?>" class="<?php echo !$en ? 'active' : ''; ?>" id="mx-switch-vi">🇻🇳 VI</a>
+                        <a href="<?php echo $langenurl; ?>" class="<?php echo $en ? 'active' : ''; ?>" id="mx-switch-en">🇬🇧 EN</a>
+                    </div>
+                    <button type="button" id="mx-outdoor-toggle" class="mx-outdoor-btn" onclick="mxToggleOutdoorMode()">
+                        <?php echo $en ? '☀️ Outdoor' : '☀️ Ngoài trời'; ?>
+                    </button>
+                </div>
             </div>
             <h1 class="mx-hero-title">
                 <?php echo s(local_mamxanhapp_t('Xin chào bà con, ', 'Welcome back, ') . fullname($USER) . '!'); ?>
             </h1>
             <p class="mx-hero-lead">
                 <?php echo s(local_mamxanhapp_t(
-                    'Hệ thống Tập huấn Kỹ thuật Canh tác Nông nghiệp Công nghệ cao — Học trực quan bằng Video/PDF/H5P/SCORM 1.2, ghi nhật ký giọng nói VietGAP và nhận Chứng nhận số QR bảo mật.',
-                    'High-Tech Agriculture Digital Training Platform — Visual learning with Video/PDF/H5P/SCORM 1.2, hands-free VietGAP voice diary, and HMAC-SHA256 secured QR certificates.'
+                    'Hệ thống Tập huấn Kỹ thuật Canh tác Nông nghiệp Công nghệ cao — Video/PDF/H5P/SCORM 1.2, ghi nhật ký giọng nói & Chứng nhận số QR.',
+                    'High-Tech Agriculture Training Platform — Video/PDF/H5P/SCORM 1.2, voice diary & secure QR certificates.'
                 )); ?>
             </p>
 

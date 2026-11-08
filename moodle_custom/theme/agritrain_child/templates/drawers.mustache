@@ -45,7 +45,8 @@
     <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
         <div id="topofscroll" class="main-inner">
 
-            <!-- Smart AgTech Utility Bar: Bilingual [VI | EN] + Outdoor Sunlight Mode -->
+            <!-- Smart AgTech Utility Bar: Bilingual [VI | EN] + Outdoor Sunlight Mode (hidden on dashboard since integrated in Hero) -->
+            {{^isdashboard}}
             <div class="mx-smart-utility-bar d-print-none" role="region" aria-label="Smart AgTech Controls">
                 <div class="mx-lang-pill" id="mx-lang-switcher">
                     <a href="{{{ langviurl }}}" class="{{#isvi}}active{{/isvi}}" id="mx-switch-vi">🇻🇳 VI</a>
@@ -57,6 +58,7 @@
                     </button>
                 </div>
             </div>
+            {{/isdashboard}}
 
             <div class="drawer-toggles d-flex">
                 {{#courseindex}}
@@ -94,7 +96,9 @@
                 {{/hasblocks}}
             </div>
 
+            {{^isdashboard}}
             {{{ output.full_header }}}
+            {{/isdashboard}}
 
             {{#secondarymoremenu}}
                 <div class="secondary-navigation d-print-none">
@@ -199,12 +203,11 @@
         <span class="mx-bnav-icon">🏡</span>
         <span>{{ lbl_nav_prof }}</span>
     </a>
+    <a href="javascript:void(0)" id="mx-crop-doctor-fab" class="mx-bnav-ai" onclick="mxToggleCropDoctor()" role="button" aria-label="{{ lbl_bot_fab }}">
+        <span class="mx-bnav-icon">🌱</span>
+        <span>{{ lbl_nav_ai }}</span>
+    </a>
 </nav>
-
-<!-- Floating 24/7 AI Crop Doctor Chatbot ("🌱 Bác sĩ Cây trồng 24/7") -->
-<button type="button" id="mx-crop-doctor-fab" class="d-print-none" onclick="mxToggleCropDoctor()">
-    {{ lbl_bot_fab }}
-</button>
 
 <aside id="mx-crop-doctor-panel" class="d-print-none" aria-label="AI Crop Doctor 24/7">
     <div style="background:linear-gradient(135deg,#1B4332,#2E7D32);color:#FFF;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">

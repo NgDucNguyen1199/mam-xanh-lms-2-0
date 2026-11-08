@@ -156,6 +156,7 @@ $templatecontext = [
     'addblockbutton'            => $addblockbutton,
 
     // AgTech Smart UI Context
+    'isdashboard'               => (strpos($curpath, '/local/mamxanhapp/index.php') !== false),
     'isen'                      => $isen,
     'isvi'                      => !$isen,
     'langviurl'                 => $viurl->out(false),
@@ -184,6 +185,7 @@ $templatecontext = [
     'lbl_nav_calc'              => $isen ? 'Tools' : 'Công cụ',
     'lbl_nav_cert'              => $isen ? 'Certs' : 'Chứng nhận',
     'lbl_nav_prof'              => $isen ? 'Farm' : 'Nông hộ',
+    'lbl_nav_ai'                => $isen ? 'AI Doctor' : 'Bác sĩ AI',
     'lbl_bot_fab'               => $isen ? '🌱 Crop Doctor 24/7' : '🌱 Bác sĩ Cây trồng 24/7',
 ];
 
