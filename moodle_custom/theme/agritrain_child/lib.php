@@ -143,8 +143,8 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
 
             if ($cm->modname === 'resource') {
                 $icon = '📄';
-                $typetag = $en ? 'Inline PDF Handbook (No Download)' : 'Tài liệu PDF Xem Trực tiếp';
-                $btnlabel = $en ? '📖 Read Inline PDF Now' : '📖 Xem trực tiếp PDF (Không tải về)';
+                $typetag = $en ? 'Inline PDF Handbook' : 'Tài liệu PDF Xem Trực tiếp';
+                $btnlabel = $en ? '📖 Read Inline PDF Now' : '📖 Xem trực tiếp PDF';
                 $stdpill = '<span class="mx-std-chip mx-chip-pdf">PDF EMBED</span>';
             } else if ($cm->modname === 'h5pactivity') {
                 $icon = '🧩';
