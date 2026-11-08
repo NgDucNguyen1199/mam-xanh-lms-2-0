@@ -66,6 +66,8 @@ $CFG->session_redis_lock_expire          = 7200;
 $CFG->yuicomboloading     = 1;
 $CFG->cachejs             = true;
 $CFG->langstringcache     = true;
+// Version-controlled Vietnamese string overrides (see theme/agritrain_child/langlocal/vi_local/).
+$CFG->langlocalroot       = __DIR__ . '/theme/agritrain_child/langlocal';
 $CFG->slasharguments      = 1;
 $CFG->noemailever         = true;
 $CFG->additionalhtmlhead  = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1B4332"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';

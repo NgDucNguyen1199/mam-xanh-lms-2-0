@@ -873,6 +873,7 @@ async function runSuite() {
     await saveShot(cbktPage, '27a_course_cloner_form.png');
 
     // Submit 1-Click Clone -> Moodle Backup & Restore Controller creates regional course
+    await cbktPage.$eval('#mx-clone-submit-btn', (el) => el.scrollIntoView({ block: 'center' }));
     await Promise.all([
       cbktPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 90000 }),
       cbktPage.click('#mx-clone-submit-btn'),

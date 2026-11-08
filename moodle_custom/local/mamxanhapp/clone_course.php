@@ -303,7 +303,7 @@ $PAGE->set_heading(local_mamxanhapp_t('🧬 Công cụ Nhân bản Khóa học M
 echo $OUTPUT->header();
 ?>
 
-<div class="mx-cloner-wrapper">
+<div class="mx-cloner-wrapper" style="padding-bottom: 60px;">
     <!-- Top Header Banner -->
     <section style="background:linear-gradient(135deg,#1B4332 0%,#2E7D32 100%);color:#FFF;border-radius:24px;padding:24px;margin-bottom:22px;box-shadow:0 12px 28px rgba(27,67,50,0.16);">
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:16px;">
