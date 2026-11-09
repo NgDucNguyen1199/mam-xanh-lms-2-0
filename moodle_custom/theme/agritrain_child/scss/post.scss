@@ -1,40 +1,39 @@
 // ===================================================================
-// AgriTrain Child (Mầm Xanh LMS 2.0) - Post-SCSS Mobile-First & AgTech UI
+// AgriTrain Child (Mầm Xanh LMS 2.0) - Minimalist & Elegant Academic UI
+// Designed for High Readability, Whitespace & Off-White Color Palette
 // ===================================================================
 
 html,
 body {
     max-width: 100%;
     overflow-x: hidden;
-    scroll-padding-bottom: 110px;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-body:not(#page-login-index) {
-    padding-bottom: 104px !important;
-}
-
-#page.drawers {
-    padding-bottom: 104px !important;
-}
-
-// Top Navbar refinement
+// -------------------------------------------------------------------
+// 1. TOP NAVBAR - Clean Academic White with Dark Slate Typography
+// -------------------------------------------------------------------
 .navbar.fixed-top {
-    background: #1b4332 !important;
-    border-bottom: 2px solid #2e7d32 !important;
-    color: #ffffff !important;
-    height: 60px !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    height: 58px !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
 }
 
-.navbar.fixed-top .navbar-brand,
-.navbar.fixed-top .btn,
-.navbar.fixed-top .usermenu .login,
-.navbar.fixed-top .userbutton {
-    color: #ffffff !important;
+.navbar.fixed-top .navbar-brand {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    font-size: 1.08rem !important;
+    letter-spacing: -0.2px !important;
 }
 
-// Preserve height: 100% and margin: 0 so Boost moremenu.js never miscalculates height
 .navbar.fixed-top .primary-navigation {
     height: 100% !important;
     flex: 1 1 auto !important;
@@ -55,7 +54,6 @@ body:not(#page-login-index) {
     margin: 0 !important;
 }
 
-// Navbar links: Ensure transparent background & high contrast text (NEVER white on white)
 .navbar.fixed-top .primary-navigation .nav-link,
 .navbar.fixed-top .moremenu .nav-link,
 .navbar.fixed-top .navbar-nav .nav-link,
@@ -68,45 +66,33 @@ body:not(#page-login-index) {
     padding: 0 16px !important;
     background: transparent !important;
     background-color: transparent !important;
-    color: rgba(255, 255, 255, 0.92) !important;
+    color: #334155 !important;
     border: none !important;
-    border-bottom: 3px solid transparent !important;
+    border-bottom: 2px solid transparent !important;
     border-radius: 0 !important;
     font-weight: 600 !important;
-    font-size: 0.94rem !important;
+    font-size: 0.92rem !important;
     text-shadow: none !important;
     box-shadow: none !important;
-    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease !important;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease !important;
 }
 
-// Hover, Focus and Active states: Translucent highlight, NEVER white-on-white!
 .navbar.fixed-top .primary-navigation .nav-link:hover,
 .navbar.fixed-top .primary-navigation .nav-link:focus,
-.navbar.fixed-top .primary-navigation .nav-link:active,
 .navbar.fixed-top .moremenu .nav-link:hover,
 .navbar.fixed-top .moremenu .nav-link:focus,
-.navbar.fixed-top .moremenu .nav-link:active,
 .navbar.fixed-top .navbar-nav .nav-link:hover,
 .navbar.fixed-top .navbar-nav .nav-link:focus,
-.navbar.fixed-top .navbar-nav .nav-link:active,
 .navbar.fixed-top a.nav-link:hover,
 .navbar.fixed-top a.nav-link:focus,
-.navbar.fixed-top a.nav-link:active,
 .navbar.fixed-top .nav-item .nav-link:hover,
-.navbar.fixed-top .nav-item .nav-link:focus,
-.navbar.fixed-top .nav-item .nav-link:active,
-.navbar.fixed-top .nav-item.active .nav-link,
-.navbar.fixed-top .dropdown.show .nav-link,
-.navbar.fixed-top .primary-navigation .navigation .nav-link:hover,
-.navbar.fixed-top .primary-navigation .navigation .nav-link:focus {
-    background: rgba(255, 255, 255, 0.18) !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
-    color: #ffffff !important;
-    border-bottom: 3px solid rgba(255, 255, 255, 0.7) !important;
-    box-shadow: none !important;
+.navbar.fixed-top .nav-item .nav-link:focus {
+    background: #f1f5f9 !important;
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-bottom: 2px solid #94a3b8 !important;
 }
 
-// Active link state
 .navbar.fixed-top .primary-navigation .nav-link.active,
 .navbar.fixed-top .primary-navigation .nav-link[aria-current="true"],
 .navbar.fixed-top .moremenu .nav-link.active,
@@ -114,788 +100,774 @@ body:not(#page-login-index) {
 .navbar.fixed-top .navbar-nav .nav-link.active,
 .navbar.fixed-top a.nav-link.active,
 .navbar.fixed-top a.nav-link[aria-current="true"],
-.navbar.fixed-top .primary-navigation .navigation .nav-link.active {
-    background: rgba(255, 255, 255, 0.22) !important;
-    background-color: rgba(255, 255, 255, 0.22) !important;
-    color: #ffffff !important;
-    border-bottom: 3px solid #95d5b2 !important;
-}
-
-// Disable Boost pseudo-elements that might overlay white pills
-.navbar.fixed-top .primary-navigation .navigation .nav-link::before,
-.navbar.fixed-top .primary-navigation .navigation .nav-link::after,
-.navbar.fixed-top .moremenu .nav-link::before,
-.navbar.fixed-top .moremenu .nav-link::after {
-    display: none !important;
-}
-
-// Top Utility Smart AgTech Strip
-.mx-smart-utility-bar {
-    background: #e8f5e9;
-    border-bottom: 1.5px solid #c8e6c9;
-    padding: 8px 14px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.mx-lang-pill {
-    display: inline-flex;
-    align-items: center;
-    background: #ffffff;
-    border: 2px solid #1b4332;
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.mx-lang-pill a {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    font-weight: 800;
-    text-decoration: none;
-    color: #1b4332;
-    min-height: 38px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.mx-lang-pill a.active {
-    background: #1b4332;
-    color: #ffffff;
-}
-
-.mx-outdoor-btn {
-    min-height: 40px;
-    border-radius: 999px;
-    border: 2px solid #1b4332;
-    background: #ffffff;
-    color: #1b4332;
-    font-weight: 800;
-    font-size: 0.85rem;
-    padding: 4px 14px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-// ===================================================================
-// LOGIN PAGE - Modern 24px Card & 1-Click Instant Role Login
-// ===================================================================
-#page-login-index {
-    background: linear-gradient(145deg, #1b4332 0%, #2e7d32 55%, #40916c 100%) !important;
-    min-height: 100vh;
-}
-
-#page-login-index #page {
+.navbar.fixed-top .nav-item.active .nav-link {
     background: transparent !important;
-    padding-top: 1.5rem !important;
+    background-color: transparent !important;
+    color: #1e3a2f !important;
+    border-bottom: 2px solid #1e3a2f !important;
+    font-weight: 700 !important;
 }
 
-#page-login-index #region-main {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+// User menu & icons
+.navbar.fixed-top .usermenu .login,
+.navbar.fixed-top .userbutton,
+.navbar.fixed-top .btn {
+    color: #0f172a !important;
 }
 
-#page-login-index .login-container {
+.navbar.fixed-top .usermenu .dropdown-toggle::after {
+    color: #64748b !important;
+}
+
+.navbar.fixed-top .popover-region-toggle {
+    color: #334155 !important;
+}
+
+// -------------------------------------------------------------------
+// 2. NOTIFICATION POPOVER, MESSAGE DRAWER & DROPDOWN MENUS
+// Pure White Surface, Dark Slate Text, High Contrast
+// -------------------------------------------------------------------
+.popover-region-container,
+.popover-region-Notifications,
+.popover-region-Messages,
+.popover-region-footer-container,
+.popover-region-header-container,
+.content-item-container,
+.notification-message,
+.context-header-settings-menu,
+.dropdown-menu,
+[data-region="popover-region-content"] {
     background: #ffffff !important;
-    border-radius: 24px !important;
-    padding: 28px 24px !important;
-    max-width: 480px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    box-shadow: 0 24px 56px rgba(10, 32, 20, 0.35) !important;
-    border: 2px solid rgba(216, 243, 220, 0.9) !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
 }
 
-#page-login-index .login-form-forgotpassword,
-#page-login-index #guestlogin,
-#page-login-index .login-instructions,
-#page-login-index .login-signup,
-#page-login-index #page-footer {
-    display: none !important;
+.popover-region-container,
+.dropdown-menu {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08) !important;
 }
 
-.mx-instant-login-box {
-    background: #f4fbf6;
-    border: 2px solid #b7e4c7;
-    border-radius: 18px;
-    padding: 16px;
-    margin-top: 18px;
+.popover-region-header-container {
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 12px 16px !important;
 }
 
-.mx-instant-btn {
-    width: 100%;
-    min-height: 50px;
-    border-radius: 14px;
-    font-weight: 800;
-    font-size: 0.96rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: transform 0.12s ease;
-    text-align: left;
+.popover-region-header-text {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
 }
 
-.mx-instant-btn:last-child {
-    margin-bottom: 0;
+.content-item-container {
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 12px 16px !important;
+    transition: background-color 0.12s ease !important;
 }
 
-.mx-instant-btn:active {
-    transform: scale(0.99);
+.content-item-container.unread {
+    background-color: #f0fdf4 !important;
 }
 
-// ===================================================================
-// COURSE TILES / LESSON CARDS UI (WCAG AAA >= 48px Touch Targets)
-// ===================================================================
-.mx-course-section-block {
-    background: #ffffff;
-    border: 2px solid #dceee0;
-    border-radius: 22px;
-    padding: 20px;
-    box-shadow: 0 6px 18px rgba(27, 67, 50, 0.05);
+.content-item-container:hover {
+    background-color: #f8fafc !important;
 }
 
-.mx-sec-title {
-    color: #1b4332;
-    font-weight: 800;
-    font-size: 1.25rem;
-    margin-bottom: 8px;
+.content-item-container .content-item-body {
+    color: #334155 !important;
+    font-size: 0.88rem !important;
 }
 
-.mx-sec-summary {
-    color: #4e6358;
-    font-size: 0.94rem;
-    margin-bottom: 14px;
+.content-item-container .notification-message {
+    color: #0f172a !important;
+    font-weight: 500 !important;
 }
 
-.mx-lesson-tile-card {
-    background: #f9fdf9;
-    border: 2px solid #c8e6c9;
-    border-radius: 18px;
-    padding: 18px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+.content-item-container .timestamp {
+    color: #64748b !important;
+    font-size: 0.78rem !important;
 }
 
-.mx-lesson-tile-card:hover {
-    border-color: #2e7d32;
-    box-shadow: 0 8px 20px rgba(27, 67, 50, 0.1);
+.popover-region-footer-container {
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 10px 16px !important;
+    text-align: center !important;
 }
 
-.mx-tile-type-pill {
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: #1b4332;
-    background: #e8f5e9;
-    padding: 4px 10px;
-    border-radius: 999px;
-}
-
-.mx-tile-status-badge {
-    font-size: 0.78rem;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 999px;
-}
-
-.mx-badge-done {
-    background: #d8f3dc;
-    color: #1b4332;
-}
-
-.mx-badge-todo {
-    background: #eceff1;
-    color: #37474f;
-}
-
-.mx-tile-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 1.4;
-    margin: 8px 0 0;
-}
-
-.mx-tile-title a {
-    color: #14281d;
-    text-decoration: none;
-}
-
-.mx-tile-action-btn {
-    min-height: 50px !important;
-    border-radius: 14px !important;
-    font-weight: 800 !important;
-    font-size: 0.98rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #1b4332 !important;
-    border-color: #1b4332 !important;
-}
-
-// Hide default verbose Moodle course list when custom Tiles Grid is active (non-editing mode)
-body.mx-has-course-tiles:not(.editing) #region-main .course-content {
-    display: none;
-}
-
-// ===================================================================
-// VOICE READER BAR (#mx-tts-player) & LESSON BACK BUTTONS
-// ===================================================================
-#mx-tts-player {
-    background: linear-gradient(135deg, #e8f5e9, #d8f3dc);
-    border: 2px solid #2e7d32;
-    border-radius: 18px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.mx-tts-btn {
-    min-height: 48px;
-    border-radius: 12px;
-    font-weight: 800;
-    padding: 0 16px;
-    border: 2px solid #1b4332;
-    background: #1b4332;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-.mx-tts-btn.secondary {
-    background: #ffffff;
-    color: #1b4332;
-}
-
-.mx-back-nav-bar {
-    margin: 10px 0 16px;
-}
-
-.mx-back-nav-btn {
-    min-height: 48px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 18px;
-    border-radius: 14px;
-    border: 2px solid #1b4332;
-    background: #ffffff;
-    color: #1b4332;
-    font-weight: 800;
-    text-decoration: none;
-}
-
-// ===================================================================
-// FIXED BOTTOM NAVIGATION BAR (bottom-nav-bar) - 6 COMPACT ICONS
-// ===================================================================
-.bottom-nav-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 64px;
-    background: #ffffff;
-    border-top: 2px solid #b7e4c7;
-    box-shadow: 0 -6px 24px rgba(27, 67, 50, 0.12);
-    display: flex;
-    align-items: stretch;
-    justify-content: space-around;
-    z-index: 1040;
-    padding: 2px 4px;
-}
-
-.bottom-nav-bar a {
-    flex: 1;
-    min-height: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #37474f;
-    font-size: 0.68rem;
-    font-weight: 800;
-    border-radius: 10px;
-    line-height: 1.15;
-    padding: 2px;
-}
-
-.bottom-nav-bar a .mx-bnav-icon {
-    font-size: 1.15rem;
-    margin-bottom: 1px;
-}
-
-.bottom-nav-bar a.active,
-.bottom-nav-bar a:hover {
-    color: #1b4332;
-    background: #e8f5e9;
-}
-
-.bottom-nav-bar a.mx-bnav-ai {
-    color: #15803d;
-}
-
-.bottom-nav-bar a.mx-bnav-ai:hover {
-    background: #dcfce7;
-    color: #14532d;
-}
-
-// Desktop (>= 992px): Compact floating dock (58px height, 680px width)
-@media (min-width: 992px) {
-    .bottom-nav-bar {
-        left: 50%;
-        right: auto;
-        bottom: 12px;
-        transform: translateX(-50%);
-        width: min(680px, calc(100vw - 24px));
-        max-width: 680px;
-        height: 58px;
-        padding: 4px 14px;
-        gap: 4px;
-        background: rgba(255, 255, 255, 0.88);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        backdrop-filter: blur(16px) saturate(180%);
-        border: 1.5px solid rgba(183, 228, 199, 0.9);
-        border-radius: 999px;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-    }
-
-    .bottom-nav-bar a {
-        border-radius: 999px;
-        padding: 4px 8px;
-        font-size: 0.74rem;
-        transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
-    }
-
-    .bottom-nav-bar a:hover {
-        transform: translateY(-2px);
-    }
-
-    .bottom-nav-bar a.active {
-        background: #1b4332;
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(27, 67, 50, 0.28);
-    }
-
-    body:not(#page-login-index) {
-        padding-bottom: 95px !important;
-    }
-}
-
-// Standalone FAB is no longer needed (integrated into dock)
-button#mx-crop-doctor-fab {
-    display: none !important;
-}
-
-// Hide Moodle's ? footer popover button completely
-#page-footer .btn-footer-popover,
-#page-footer .popover-region,
-.popover-region-footer,
-.footer-content-popover,
-#page-footer a[data-action="footer-popover"],
-.btn-footer-popover {
-    display: none !important;
-}
-
-#mx-crop-doctor-panel {
-    position: fixed;
-    right: 20px;
-    bottom: 78px;
-    width: min(390px, calc(100vw - 24px));
-    max-height: calc(100vh - 140px);
-    background: #ffffff;
-    border: 2.5px solid #1b4332;
-    border-radius: 20px;
-    box-shadow: 0 18px 48px rgba(20, 40, 29, 0.28);
-    z-index: 1055;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#mx-crop-doctor-panel.open {
-    display: flex;
-}
-
-// ===================================================================
-// RESPONSIVE TABLES SAFEGUARD (.table-responsive)
-// ===================================================================
-.table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-// ===================================================================
-// OUTDOOR HARSH SUNLIGHT MODE (☀️ Ngoài trời: #FFF, #000, 115%, 3px)
-// ===================================================================
-html.mx-outdoor-html {
-    font-size: 115% !important;
-}
-
-body.mx-outdoor-mode,
-body.mx-outdoor-mode #page,
-body.mx-outdoor-mode #region-main,
-body.mx-outdoor-mode .card,
-body.mx-outdoor-mode .mx-course-tile,
-body.mx-outdoor-mode .mx-lesson-tile-card,
-body.mx-outdoor-mode .mx-kpi-card,
-body.mx-outdoor-mode .mx-course-section-block,
-body.mx-outdoor-mode .mx-smart-utility-bar,
-body.mx-outdoor-mode .bottom-nav-bar {
-    background: #ffffff !important;
-    color: #000000 !important;
-}
-
-body.mx-outdoor-mode .mx-course-tile,
-body.mx-outdoor-mode .mx-lesson-tile-card,
-body.mx-outdoor-mode .mx-kpi-card,
-body.mx-outdoor-mode .mx-course-section-block,
-body.mx-outdoor-mode .mx-quick-tile,
-body.mx-outdoor-mode .form-control,
-body.mx-outdoor-mode .btn,
-body.mx-outdoor-mode #mx-tts-player,
-body.mx-outdoor-mode .bottom-nav-bar {
-    border: 3px solid #000000 !important;
-    box-shadow: none !important;
-}
-
-body.mx-outdoor-mode h1,
-body.mx-outdoor-mode h2,
-body.mx-outdoor-mode h3,
-body.mx-outdoor-mode h4,
-body.mx-outdoor-mode p,
-body.mx-outdoor-mode td,
-body.mx-outdoor-mode th,
-body.mx-outdoor-mode label,
-body.mx-outdoor-mode a:not(.btn) {
-    color: #000000 !important;
-}
-
-body.mx-outdoor-mode .btn-success,
-body.mx-outdoor-mode .mx-tile-action-btn,
-body.mx-outdoor-mode .mx-outdoor-btn {
-    background: #000000 !important;
-    color: #ffffff !important;
-    border: 3px solid #000000 !important;
-}
-
-// ===================================================================
-// SEQUENTIAL LEARNING PATH STEPPER (Bước 1 -> Bước 2 -> Bước 3 -> Bước 4)
-// ===================================================================
-.mx-roadmap-card {
-    background: linear-gradient(135deg, #f4fbf6 0%, #e8f5e9 100%);
-    border: 2.5px solid #2e7d32;
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: 0 10px 26px rgba(27, 67, 50, 0.08);
-}
-
-.mx-roadmap-heading {
-    color: #1b4332;
-    font-weight: 900;
-    font-size: 1.2rem;
-    margin-bottom: 4px;
-}
-
-.mx-roadmap-sub {
-    color: #37474f;
-    font-size: 0.9rem;
-}
-
-.mx-roadmap-pct-box {
-    background: #1b4332;
-    color: #ffffff;
-    border-radius: 16px;
-    padding: 8px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 120px;
-}
-
-.mx-roadmap-bar {
-    height: 12px;
-    background: #ffffff;
-    border-radius: 999px;
-    overflow: hidden;
-    border: 1.5px solid #a5d6a7;
-}
-
-.mx-roadmap-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #1b4332, #43a047);
-    border-radius: 999px;
-    transition: width 0.3s ease;
-}
-
-.mx-stepper-track {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 8px;
-}
-
-.mx-stepper-node {
-    flex: 1 1 180px;
-    background: #ffffff;
-    border: 2px solid #c8e6c9;
-    border-radius: 16px;
-    padding: 12px 14px;
+.popover-region-footer-container a,
+.content-item-container a {
+    color: #1e3a2f !important;
+    font-weight: 600 !important;
     text-decoration: none !important;
-    color: #14281d;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 82px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.mx-stepper-node:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(27, 67, 50, 0.12);
+.popover-region-footer-container a:hover,
+.content-item-container a:hover {
+    text-decoration: underline !important;
 }
 
-.mx-stepper-node.mx-step-done {
-    background: #d8f3dc;
-    border-color: #1b4332;
+.dropdown-item {
+    color: #334155 !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    padding: 8px 16px !important;
 }
 
-.mx-stepper-node.mx-step-current {
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+// -------------------------------------------------------------------
+// 3. MINIMAL SECONDARY NAV BAR (.mx-subnav)
+// -------------------------------------------------------------------
+.mx-subnav {
     background: #ffffff;
-    border: 3px solid #2e7d32;
-    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 8px 24px;
+    margin-bottom: 24px;
 }
 
-.mx-stepper-node.mx-step-locked {
-    background: #f5f7f6;
-    border: 2px dashed #90a4ae;
-    color: #546e7a;
-}
-
-.mx-stepper-node.mx-step-cert {
-    background: #fff8e1;
-    border: 2px solid #f9a825;
-}
-
-.mx-step-num {
-    font-size: 0.78rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: #1b4332;
-}
-
-.mx-step-badge {
-    font-size: 0.74rem;
-    font-weight: 800;
-    background: rgba(27, 67, 50, 0.1);
-    color: #1b4332;
-    padding: 2px 8px;
-    border-radius: 999px;
-}
-
-.mx-step-title {
-    font-size: 0.88rem;
-    font-weight: 800;
-    line-height: 1.35;
-    color: #14281d;
-}
-
-.mx-stepper-arrow {
+.mx-subnav-inner {
+    max-width: 1140px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    color: #2e7d32;
-    font-size: 1.15rem;
-    padding: 0 2px;
+    gap: 8px;
 }
 
-@media (max-width: 767.98px) {
-    .mx-stepper-arrow {
-        display: none;
-    }
-    .mx-stepper-node {
-        flex: 1 1 100%;
-    }
-}
-
-// Locked Section & Locked Activity Cards
-.mx-sec-is-locked {
-    background: #f8faf9;
-    border: 2px dashed #90a4ae;
-}
-
-.mx-sec-lock-banner {
-    background: #fff8e1;
-    border: 1.5px solid #ffb300;
-    color: #5d4037;
-    border-radius: 14px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-}
-
-.mx-sec-unlock-banner {
-    background: #e8f5e9;
-    border: 1.5px solid #66bb6a;
-    color: #1b4332;
-    border-radius: 14px;
-    padding: 8px 14px;
-    font-size: 0.88rem;
-}
-
-.mx-sec-prog-pill {
-    background: #e8f5e9;
-    color: #1b4332;
-    border: 1.5px solid #a5d6a7;
-    border-radius: 999px;
-    padding: 4px 12px;
-    font-size: 0.82rem;
-    font-weight: 800;
-}
-
-.mx-tile-locked {
-    background: #f4f6f5 !important;
-    border: 2px dashed #b0bec5 !important;
-}
-
-.mx-badge-locked {
-    background: #ffecb3;
-    color: #e65100;
-}
-
-.mx-avail-lock-note {
-    background: #fff3e0;
-    border-left: 4px solid #fb8c00;
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    color: #4e342e;
+.mx-subnav a {
+    color: #475569;
+    text-decoration: none;
     font-weight: 600;
+    font-size: 0.88rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
-.mx-avail-open-note {
-    background: #e8f5e9;
-    border-left: 4px solid #2e7d32;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: #1b4332;
+.mx-subnav a:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+}
+
+.mx-subnav a.active {
+    color: #1e3a2f;
+    background: #eef5f1;
     font-weight: 700;
 }
 
-.mx-tile-locked-btn {
-    min-height: 50px !important;
-    border-radius: 14px !important;
-    font-weight: 800 !important;
-    font-size: 0.92rem !important;
+.mx-subnav-lang {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: #94a3b8;
 }
 
-.mx-std-chip {
-    display: inline-block;
-    padding: 2px 7px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 900;
-    margin-left: 4px;
-    vertical-align: middle;
+.mx-subnav-lang a {
+    padding: 4px 8px;
+    font-weight: 700;
+    font-size: 0.82rem;
 }
 
-.mx-chip-pdf {
-    background: #ffebee;
-    color: #c62828;
-    border: 1px solid #ef9a9a;
+// -------------------------------------------------------------------
+// 4. MAIN PAGE LAYOUT & WHITESPACE
+// -------------------------------------------------------------------
+#page {
+    background-color: #f8fafc !important;
 }
 
-.mx-chip-h5p {
-    background: #e3f2fd;
-    color: #0d47a1;
-    border: 1px solid #90caf9;
+#page-wrapper {
+    background-color: #f8fafc !important;
 }
 
-.mx-chip-scorm {
-    background: #fff8e1;
-    color: #e65100;
-    border: 1px solid #ffe082;
+#region-main {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
-.mx-chip-video {
-    background: #e8f5e9;
-    color: #1b4332;
-    border: 1px solid #a5d6a7;
+.main-inner {
+    max-width: 1140px !important;
+    margin: 0 auto !important;
+    padding: 16px 20px 48px !important;
 }
 
-// ===================================================================
-// INLINE EMBEDDED PDF VIEWER (mod_resource RESOURCELIB_DISPLAY_EMBED)
-// Desktop height: 650px | Mobile height: 480px | Zoom +/- Controls
-// ===================================================================
-.mx-pdf-viewer-shell {
-    border: 2px solid #1b4332;
-    border-radius: 14px;
-    overflow: hidden;
+// -------------------------------------------------------------------
+// 5. ACADEMIC COURSE OUTLINE (MATCHING LMS DLU)
+// -------------------------------------------------------------------
+.mx-academic-outline {
+    width: 100%;
+}
+
+.mx-course-overall,
+.mx-outline-header {
     background: #ffffff;
-    box-shadow: 0 10px 30px rgba(27, 67, 50, 0.16);
-    margin: 12px 0 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.mx-overall-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.mx-overall-label {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.mx-overall-pct {
+    font-weight: 800;
+    color: #1e3a2f;
+    font-size: 1rem;
+}
+
+.mx-overall-sub {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.mx-outline-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px;
+    letter-spacing: -0.2px;
+}
+
+.mx-outline-desc {
+    font-size: 0.94rem;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0 0 16px;
+}
+
+.mx-overall-prog {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.88rem;
+    color: #334155;
+    font-weight: 600;
+}
+
+.mx-course-section-block,
+.mx-sec-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.mx-sec-header,
+.mx-sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.mx-sec-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.mx-sec-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.mx-bar {
+    width: 100px;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.mx-bar-fill {
+    height: 100%;
+    background: #1e3a2f;
+    border-radius: 999px;
+}
+
+.mx-sec-summary {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.mx-act-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mx-act-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-bottom: 1px solid #f8fafc;
+    transition: background-color 0.12s ease;
+}
+
+.mx-act-row:hover {
+    background-color: #f8fafc;
+}
+
+.mx-act-row.mx-act-locked {
+    opacity: 0.65;
+}
+
+.mx-act-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.mx-act-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.mx-act-link {
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.94rem;
+    text-decoration: none;
+}
+
+.mx-act-link:hover {
+    color: #1e3a2f;
+    text-decoration: underline;
+}
+
+.mx-act-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.mx-act-status {
+    flex-shrink: 0;
+}
+
+.mx-status {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.mx-status-done {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.mx-status-todo {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.mx-status-locked {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+// -------------------------------------------------------------------
+// 6. DASHBOARD & 3-COLUMN ACADEMIC COURSE GRID
+// -------------------------------------------------------------------
+.mx-dashboard-academic,
+.mx-dashboard-acad {
+    width: 100%;
+}
+
+.mx-academic-header,
+.mx-acad-header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.mx-academic-title,
+.mx-acad-welcome {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 6px;
+}
+
+.mx-academic-sub,
+.mx-acad-sub {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.mx-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.mx-summary-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+    display: flex;
+    flex-direction: column;
+}
+
+.mx-summary-num {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.mx-summary-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.mx-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.mx-metric-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.mx-metric-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.mx-metric-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+.mx-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 16px;
+}
+
+.mx-course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.mx-course-tile,
+.mx-course-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.mx-course-tile:hover,
+.mx-course-card:hover {
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    transform: translateY(-2px);
+}
+
+.mx-course-cover {
+    height: 70px;
+    background: #eef5f1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: #1e3a2f;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+
+.mx-course-code {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1e3a2f;
+    background: #eef5f1;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+    align-self: flex-start;
+}
+
+.mx-course-name,
+.mx-course-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.4;
+    margin: 0 0 8px;
+}
+
+.mx-course-name a,
+.mx-course-title a {
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.mx-course-name a:hover,
+.mx-course-title a:hover {
+    color: #1e3a2f;
+}
+
+.mx-course-summary,
+.mx-course-desc {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.mx-course-progress {
+    margin-bottom: 14px;
+}
+
+.mx-course-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.mx-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.mx-btn-primary,
+.mx-enter-course-btn {
+    background-color: #1e3a2f !important;
+    border: 1px solid #1e3a2f !important;
+    color: #ffffff !important;
+    width: 100%;
+}
+
+.mx-btn-primary:hover,
+.mx-enter-course-btn:hover {
+    background-color: #162f26 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.mx-btn-outline {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+}
+
+.mx-btn-outline:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.mx-course-title a {
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.mx-course-title a:hover {
+    color: #1e3a2f;
+}
+
+.mx-course-desc {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    flex: 1;
+}
+
+.mx-card-footer {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 14px;
+}
+
+.mx-card-prog {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.mx-prog-line {
+    width: 100%;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.mx-prog-line-fill {
+    height: 100%;
+    background: #1e3a2f;
+    border-radius: 999px;
+}
+
+// -------------------------------------------------------------------
+// 7. INLINE PDF VIEWER (CLEAN LIGHT BACKDROP, ZERO CUTOFF)
+// -------------------------------------------------------------------
+.mx-pdf-viewer-shell {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0 24px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .mx-pdf-toolbar {
-    background: linear-gradient(135deg, #1b4332, #2e7d32);
+    background: #1e3a2f;
     color: #ffffff;
-    padding: 10px 16px;
+    padding: 10px 18px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    border-bottom: 2px solid #40916c;
+}
+
+.mx-pdf-badge {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.mx-pdf-pagecount {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    margin-left: 10px;
+}
+
+.mx-pdf-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .mx-pdf-zoom-btn {
-    min-height: 40px;
-    min-width: 44px;
-    border-radius: 10px;
-    border: 1.5px solid rgba(255, 255, 255, 0.65);
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: #ffffff;
-    font-weight: 800;
-    font-size: 0.86rem;
-    padding: 4px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-    transition: background-color 0.15s ease;
+    transition: background 0.12s ease;
 }
 
 .mx-pdf-zoom-btn:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.mx-pdf-zoompct {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+    min-width: 44px;
+    text-align: center;
 }
 
 .mx-pdf-viewport {
-    height: 650px !important;
-    max-height: 650px !important;
+    background-color: #f8fafc !important;
+    height: 72vh !important;
+    min-height: 520px;
+    max-height: 850px;
     overflow-y: auto;
     overflow-x: auto;
-    background: #f1f5f9 !important; /* Clean light modern reader backdrop */
-    padding: 22px 14px;
+    padding: 24px 16px;
     text-align: center;
-    position: relative;
-    scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #f1f5f9;
 }
 
 .mx-pdf-viewport::-webkit-scrollbar {
@@ -908,1017 +880,123 @@ body.mx-outdoor-mode .mx-outdoor-btn {
 }
 
 .mx-pdf-viewport::-webkit-scrollbar-thumb {
-    background: #94a3b8;
+    background: #cbd5e1;
     border-radius: 4px;
-}
-
-.mx-pdf-viewport::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-}
-
-@media (max-width: 767.98px) {
-    .mx-pdf-viewport {
-        height: 480px !important;
-        max-height: 480px !important;
-        padding: 12px 8px;
-    }
-}
-
-#mx-pdf-canvas-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
 }
 
 .mx-pdf-page-wrap {
     margin: 0 auto 20px;
     display: inline-block;
     background: #ffffff;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
     border: 1px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 4px;
     overflow: hidden;
     max-width: 100%;
 }
 
-.mx-pdf-page-wrap:last-child {
-    margin-bottom: 2px !important;
-}
-
 .mx-pdf-page-label {
-    background: #f0fdf4;
-    color: #166534;
+    background: #f8fafc;
+    color: #64748b;
     font-size: 0.78rem;
-    font-weight: 800;
-    padding: 5px 14px;
+    font-weight: 600;
+    padding: 6px 14px;
     text-align: right;
-    border-bottom: 1px solid #bbf7d0;
-}
-
-// Fallback container / native iframe protection
-#mx-pdf-fallback {
-    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 #mx-pdf-fallback iframe#resourceobject,
 .resourcecontent.resourcepdf iframe#resourceobject {
     width: 100% !important;
-    height: 650px !important;
+    height: 72vh !important;
+    min-height: 520px !important;
     border: none !important;
+    background: #f8fafc !important;
 }
 
-@media (max-width: 767.98px) {
-    #mx-pdf-fallback iframe#resourceobject,
-    .resourcecontent.resourcepdf iframe#resourceobject {
-        height: 480px !important;
-    }
-}
-
-// Ensure H5P Player & SCORM Player iframes always render spaciously on Desktop & Mobile
+// -------------------------------------------------------------------
+// 8. H5P & SCORM EMBED ENHANCEMENTS
+// -------------------------------------------------------------------
 iframe.h5p-player,
 iframe.h5p-iframe {
     width: 100% !important;
-    min-height: 560px !important;
-    border: 2px solid #c8e6c9 !important;
-    border-radius: 18px;
-    background: #ffffff;
-}
-
-@media (max-width: 767.98px) {
-    iframe.h5p-player,
-    iframe.h5p-iframe {
-        min-height: 480px !important;
-    }
-}
-
-
-// ===================================================================
-// ===================================================================
-// UI/UX OVERHAUL v3.0 - SENIOR DESIGN SYSTEM
-// TASK 1: NOTIFICATION POPOVER, MESSAGE DRAWER & DROPDOWN CONTRAST FIX
-// TASK 2: IMMERSIVE AGTECH HERO + BENTO GRID + MASONRY LAYOUT
-// TASK 3: FLOATING DOCK (macOS/iOS STYLE) ON DESKTOP & FULL-WIDTH MOBILE
-// ===================================================================
-
-// ---- 1. Notification / message popovers --------------------------
-.navbar .popover-region-container,
-.popover-region-container {
-    width: 380px !important;
-    max-width: calc(100vw - 16px);
-    background-color: #ffffff !important;
-    color: #1e293b !important;
+    min-height: 580px !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18) !important;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.popover-region-container,
-.popover-region-container .popover-region-content-container,
-.popover-region-container [data-region="popover-region-content"],
-.popover-region-container .popover-region-content,
-.popover-region-container .all-notifications,
-.popover-region-container .empty-message,
-.popover-region-container .content-item-container {
-    background-color: #ffffff !important;
-    color: #1e293b !important;
-}
-
-// Global text reset inside popover to dark slate (#1e293b)
-.popover-region-container * {
-    color: #1e293b !important;
-}
-
-.popover-region-container .popover-region-header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 14px 16px;
-    height: auto;
-    background-color: #f8fafc !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-}
-
-.popover-region-container .popover-region-header-text {
-    margin: 0;
-    font-size: 1.02rem;
-    font-weight: 800;
-    color: #0f172a !important;
-}
-
-.popover-region-container .popover-region-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.popover-region-container .popover-region-header-actions a,
-.popover-region-container .popover-region-header-actions button,
-.popover-region-container .popover-region-header-actions .btn {
-    color: #1b4332 !important;
-    background: transparent !important;
-    border-radius: 10px;
-    min-width: 36px;
-    min-height: 36px;
-}
-
-.popover-region-container .popover-region-header-actions a:hover,
-.popover-region-container .popover-region-header-actions button:hover {
-    background: #e8f5e9 !important;
-}
-
-.popover-region-container .popover-region-content-container {
-    height: auto !important;
-    max-height: min(380px, calc(100vh - 290px)) !important;
-    overflow-y: auto;
-}
-
-// Keep header / list / footer stacked so the "Xem tất cả thông báo" footer is always visible
-.popover-region:not(.collapsed) .popover-region-container {
-    display: flex !important;
-    flex-direction: column;
-    height: auto !important;
-    max-height: calc(100vh - 90px);
-}
-
-.popover-region-container .popover-region-header-container,
-.popover-region-container .see-all-link,
-.popover-region-container .popover-region-footer-container {
-    position: static !important;
-    flex: 0 0 auto;
-}
-
-.popover-region-container .popover-region-header-actions a:focus,
-.popover-region-container .popover-region-header-actions button:focus {
-    outline: 2px solid #16a34a;
-    outline-offset: 1px;
-    box-shadow: none;
-}
-
-// Notification content items
-.popover-region-container .content-item-container {
-    position: relative;
-    padding: 14px 16px;
-    border: 0;
-    border-bottom: 1px solid #eef2f7;
-    border-left: 4px solid transparent;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    background-color: #ffffff !important; // Read: nền trắng sạch
-}
-
-.popover-region-container .content-item-container .context-link,
-.popover-region-container .content-item-container .content-item-body {
-    text-decoration: none;
-}
-
-.popover-region-container .content-item-container .notification-message {
-    font-size: 0.92rem;
-    line-height: 1.45;
-    color: #0f172a !important; // chữ màu #0f172a
-}
-
-.popover-region-container .content-item-container .timecreated {
-    font-size: 0.78rem;
-    color: #475569 !important; // thời gian màu #475569
-    margin-top: 5px;
-}
-
-// Unread notification: nền xanh kem dịu (#f0fdf4), viền trái 4px solid #16a34a, tiêu đề đậm #0f172a
-.popover-region-container .content-item-container.unread {
-    background-color: #f0fdf4 !important;
-    border-left: 4px solid #16a34a !important;
-}
-
-.popover-region-container .content-item-container.unread .notification-message,
-.popover-region-container .content-item-container.unread .content-item-body {
-    font-weight: 700;
-    color: #0f172a !important;
-}
-
-.popover-region-container .content-item-container.unread .notification-message,
-.popover-region-container .content-item-container.unread .notification-message * {
-    color: #0f172a !important;
-    background-color: transparent !important;
-}
-
-// Link "View full notification" màu xanh lục đậm #15803d
-.popover-region-container .content-item-footer {
-    margin-top: 6px;
-}
-
-.popover-region-container .content-item-footer .view-more,
-.popover-region-container .content-item-container a.view-more {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 999px;
-    border: 1.5px solid #15803d;
+    border-radius: 8px !important;
     background: #ffffff !important;
-    color: #15803d !important;
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-decoration: none;
 }
 
-// When hover (.content-item-container:hover): Nền chuyển sang #166534 (xanh rừng đậm), toàn bộ chữ và link bên trong chuyển sang #ffffff !important
-.popover-region-container .content-item-container:hover,
-.popover-region-container .content-item-container:focus-within,
-.popover-region-container .content-item-container.unread:hover {
-    background-color: #166534 !important;
-    border-left-color: #86efac !important;
+// -------------------------------------------------------------------
+// 9. CLEAN MINIMALIST LOGIN PAGE
+// -------------------------------------------------------------------
+#page-login-index {
+    background: #f8fafc !important;
+    min-height: 100vh;
 }
 
-.popover-region-container .content-item-container:hover *:not(svg):not(path),
-.popover-region-container .content-item-container:focus-within *:not(svg):not(path),
-.popover-region-container .content-item-container.unread:hover *:not(svg):not(path),
-.popover-region-container .content-item-container:hover a,
-.popover-region-container .content-item-container:hover .notification-message,
-.popover-region-container .content-item-container:hover .timecreated,
-.popover-region-container .content-item-container:hover .view-more {
-    color: #ffffff !important;
-    background-color: transparent !important;
-    border-color: #ffffff !important;
+#page-login-index #page {
+    background: transparent !important;
+    padding-top: 2rem !important;
 }
 
-// Footer "Xem tất cả"
-.popover-region-container .see-all-link,
-.popover-region-container .popover-region-footer-container {
-    display: block;
-    background-color: #f8fafc !important;
-    border-top: 1px solid #e2e8f0 !important;
-    text-decoration: none;
+#page-login-index #region-main {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.popover-region-container .popover-region-footer-container {
-    height: auto !important;
-    min-height: 46px;
-    padding: 12px 16px;
-    text-align: center;
-}
-
-.popover-region-container .see-all-link {
-    height: auto !important;
-}
-
-.popover-region-container .popover-region-seeall-text {
-    font-weight: 800;
-    font-size: 0.92rem;
-    color: #15803d !important;
-}
-
-.popover-region-container .see-all-link:hover .popover-region-footer-container {
-    background-color: #166534 !important;
-}
-
-.popover-region-container .see-all-link:hover .popover-region-seeall-text {
-    color: #ffffff !important;
-}
-
-.popover-region-container .empty-message {
-    padding: 28px 16px;
-    text-align: center;
-    color: #475569 !important;
-}
-
-@media (max-width: 575.98px) {
-    .navbar .popover-region-container,
-    .popover-region-container {
-        position: fixed !important;
-        top: 62px !important;
-        left: 8px !important;
-        right: 8px !important;
-        width: auto !important;
-    }
-}
-
-// ---- 2. Dropdown menus, user menu & settings menus -----------------
-.dropdown-menu,
-.navbar .dropdown-menu,
-.usermenu .dropdown-menu,
-.context-header-settings-menu .dropdown-menu {
-    background-color: #ffffff !important;
-    color: #1e293b !important;
+#page-login-index .login-container {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 32px 28px !important;
+    max-width: 440px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 14px !important;
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16) !important;
-    padding: 6px;
 }
 
-.dropdown-menu .dropdown-item,
-.dropdown-menu .dropdown-header,
-.dropdown-menu .dropdown-item-text,
-.dropdown-menu a:not(.btn),
-.dropdown-menu .menu-action-text,
-.dropdown-menu .carousel-item,
-.dropdown-menu .carousel-item a,
-.dropdown-menu .userfullname,
-.dropdown-menu .login {
-    color: #1e293b !important;
-    background-color: transparent;
-}
-
-.dropdown-menu .dropdown-item {
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-weight: 600;
-}
-
-.dropdown-menu .dropdown-divider {
-    border-top-color: #e2e8f0;
-}
-
-.navbar.fixed-top .dropdown-menu .btn,
-.dropdown-menu .btn-link {
-    color: #1b4332 !important;
-}
-
-.dropdown-menu .dropdown-item:hover,
-.dropdown-menu .dropdown-item:focus,
-.dropdown-menu .dropdown-item.active,
-.dropdown-menu a.dropdown-item:hover,
-.dropdown-menu .carousel-item a:hover {
-    background-color: #166534 !important;
-    color: #ffffff !important;
-}
-
-.dropdown-menu .dropdown-item:hover *,
-.dropdown-menu .dropdown-item:focus *,
-.dropdown-menu .dropdown-item.active *,
-.dropdown-menu .carousel-item a:hover * {
-    color: #ffffff !important;
-}
-
-// Navbar toggles stay white on the dark navbar
-.navbar.fixed-top .usermenu .dropdown-toggle,
-.navbar.fixed-top .popover-region-toggle {
-    color: #ffffff !important;
-}
-
-// ---- 3. Message drawer & modals --------------------------------------
-.message-app,
-.message-app .body-container,
-.message-app .list-group-item {
-    background-color: #ffffff;
-    color: #1e293b;
-}
-
-.modal-content {
-    color: #1e293b;
-    background-color: #ffffff;
-}
-
-.modal-content .modal-title,
-.modal-content .modal-body {
-    color: #1e293b;
-}
-
-.mx-pdf-viewport {
-    color: #ffffff;
-}
-
-// ===================================================================
-// TASK 2: DASHBOARD OVERHAUL - HERO, BENTO GRID & MASONRY LAYOUT
-// ===================================================================
-
-@media (min-width: 992px) {
-    body.path-local #page.drawers .main-inner,
-    body.path-local #topofscroll {
-        max-width: 1280px;
-    }
-}
-
-.mx-hub-container {
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-// Section Header reusable
-.mx-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 22px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.mx-section-title {
-    color: #1b4332;
-    font-weight: 900;
-    font-size: 1.38rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.mx-section-subtitle {
-    font-size: 0.92rem;
-    color: #475569;
-    font-weight: 600;
-}
-
-// Hide default Moodle page header & duplicate utility bar on dashboard
-body#page-local-mamxanhapp-index #page-header,
-body#page-local-mamxanhapp-index .mx-smart-utility-bar,
-body.path-local-mamxanhapp:not(.path-local-mamxanhapp-manage):not(.path-local-mamxanhapp-clone_course) #page-header,
-body.path-local-mamxanhapp:not(.path-local-mamxanhapp-manage):not(.path-local-mamxanhapp-clone_course) .mx-smart-utility-bar {
+#page-login-index .login-form-forgotpassword,
+#page-login-index #guestlogin,
+#page-login-index .login-instructions,
+#page-login-index .login-signup,
+#page-login-index #page-footer {
     display: none !important;
 }
 
-body#page-local-mamxanhapp-index #page-content {
-    padding-top: 6px !important;
-}
-
-// A. Immersive AgTech Hero (Compact Above-The-Fold ~260px - 280px)
-.mx-hero-banner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    background: linear-gradient(135deg, #0d3b26 0%, #1b5e3a 50%, #2d7a4f 100%);
-    background-image: 
-        radial-gradient(circle at 12% 20%, rgba(149, 213, 178, 0.2) 0%, transparent 40%),
-        radial-gradient(circle at 88% 80%, rgba(245, 158, 11, 0.16) 0%, transparent 45%),
-        linear-gradient(135deg, #0d3b26 0%, #1b5e3a 50%, #2d7a4f 100%);
-    color: #ffffff;
-    border-radius: 22px;
-    padding: 18px 22px;
-    margin-bottom: 22px;
-    box-shadow: 0 16px 40px rgba(13, 59, 38, 0.24);
-    border: 1.5px solid rgba(255, 255, 255, 0.18);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    position: relative;
-    overflow: hidden;
-}
-
-@media (min-width: 992px) {
-    .mx-hero-banner {
-        grid-template-columns: minmax(0, 7.2fr) minmax(0, 4.8fr);
-        gap: 22px;
-        padding: 22px 26px;
-        align-items: stretch;
-    }
-}
-
-.mx-hero-main {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.mx-hero-top-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-    margin-bottom: 8px;
-}
-
-.mx-hero-quick-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.mx-hero-farmchip {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-    align-self: flex-start;
-    max-width: 100%;
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    margin-bottom: 0;
-    backdrop-filter: blur(6px);
-}
-
-.mx-hero-title {
-    color: #ffffff;
-    font-weight: 900;
-    font-size: 1.65rem;
-    margin: 0 0 4px;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
-}
-
-.mx-hero-lead {
-    color: #d8f3dc;
-    margin: 0 0 10px;
-    font-size: 0.86rem;
-    line-height: 1.45;
-    max-width: 62ch;
-}
-
-// Overview progress strip inside hero
-.mx-hero-stats-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 14px;
-    margin-bottom: 12px;
-    background: rgba(0, 0, 0, 0.16);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 12px;
-    padding: 6px 12px;
-}
-
-.mx-hero-stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.82rem;
-    color: #ffffff;
-    font-weight: 700;
-}
-
-.mx-hero-stat-item span.num {
-    background: #f59e0b;
-    color: #0f172a;
-    padding: 1px 6px;
-    border-radius: 6px;
-    font-weight: 900;
-    font-size: 0.8rem;
-}
-
-.mx-hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.mx-hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 40px;
-    padding: 0 16px 0 12px;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 0.88rem;
-    text-decoration: none !important;
-    border: 2px solid transparent;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
-}
-
-.mx-hero-btn:hover,
-.mx-hero-btn:focus {
-    transform: translateY(-2px);
-    text-decoration: none !important;
-}
-
-.mx-hero-btn .mx-hero-btn-ico {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    flex: 0 0 auto;
-}
-
-.mx-hero-btn .mx-hero-btn-ico svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-// Primary CTA: Sun Yellow #f59e0b with bold dark text
-.mx-hero-btn-primary {
-    background: #f59e0b !important;
-    color: #0f172a !important;
-    border-color: #f59e0b !important;
-    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
-}
-
-.mx-hero-btn-primary:hover {
-    background: #fbbf24 !important;
-    box-shadow: 0 10px 22px rgba(245, 158, 11, 0.45);
-}
-
-// Secondary CTA: frosted glass border
-.mx-hero-btn-secondary {
-    background: rgba(255, 255, 255, 0.14) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
-}
-
-.mx-hero-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.24) !important;
-}
-
-.mx-hero-btn-warn {
-    background: #ffffff !important;
-    color: #1b4332 !important;
-    border-color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-}
-
-// Weather Widget: 3D Glassmorphism
-.mx-weather-widget {
-    min-width: 0;
-    background: rgba(255, 255, 255, 0.12);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border: 1.5px solid rgba(255, 255, 255, 0.24);
-    border-radius: 18px;
-    padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 8px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
-}
-
-.mx-weather-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.mx-weather-badge {
-    font-weight: 900;
-    font-size: 0.95rem;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    line-height: 1.3;
-}
-
-.mx-weather-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin: 2px 0;
-}
-
-.mx-weather-pill {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.32);
-    color: #ffffff;
-    font-weight: 800;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.78rem;
-}
-
-.mx-weather-pill.highlight {
-    background: #f59e0b;
-    color: #0f172a;
-    border-color: #f59e0b;
-}
-
-.mx-weather-meta {
-    font-size: 0.8rem;
-    color: #d8f3dc;
-    line-height: 1.4;
-    margin-bottom: 2px;
-}
-
-.mx-weather-advice {
-    font-size: 0.82rem;
-    color: #ffffff;
-    margin: 0;
-    line-height: 1.4;
-    background: rgba(0, 0, 0, 0.15);
-    padding: 8px 10px;
-    border-radius: 10px;
-    border-left: 3px solid #f59e0b;
-}
-
-.mx-weather-window {
-    font-size: 0.8rem;
-    color: #bbf7d0;
-    font-weight: 800;
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    padding-top: 6px;
-}
-
-// B. Bento Grid Styles
-.mx-bento-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: minmax(180px, auto);
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-@media (max-width: 991.98px) {
-    .mx-bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 575.98px) {
-    .mx-bento-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.mx-bento-card {
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 24px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.mx-bento-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 36px rgba(27, 67, 50, 0.12);
-    border-color: #2e7d32;
-}
-
-.mx-bento-span-2x2 {
-    grid-column: span 2;
-    grid-row: span 2;
-    background: linear-gradient(145deg, #ffffff 0%, #f4fbf7 100%);
-    border: 2px solid #bbf7d0;
-}
-
-.mx-bento-span-2x1 {
-    grid-column: span 2;
-    grid-row: span 1;
-    background: #ffffff;
-}
-
-.mx-bento-span-1x1 {
-    grid-column: span 1;
-    grid-row: span 1;
-}
-
-@media (max-width: 991.98px) {
-    .mx-bento-span-2x2 {
-        grid-column: span 2;
-        grid-row: auto;
-    }
-    .mx-bento-span-2x1 {
-        grid-column: span 2;
-    }
-    .mx-bento-span-1x1 {
-        grid-column: span 1;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .mx-bento-span-2x2,
-    .mx-bento-span-2x1,
-    .mx-bento-span-1x1 {
-        grid-column: span 1;
-        grid-row: auto;
-    }
-}
-
-.mx-bento-tag {
-    display: inline-block;
-    font-size: 0.74rem;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: #e8f5e9;
-    color: #1b4332;
-    margin-bottom: 10px;
-}
-
-.mx-bento-title {
-    font-size: 1.25rem;
-    font-weight: 900;
-    color: #0f172a;
-    margin-bottom: 8px;
-    line-height: 1.35;
-}
-
-.mx-bento-desc {
-    font-size: 0.92rem;
-    color: #475569;
-    line-height: 1.55;
-    margin-bottom: 16px;
-}
-
-.mx-bento-formula-box {
-    background: #ffffff;
-    border: 1.5px solid #c8e6c9;
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 16px;
-}
-
-.mx-bento-formula-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.mx-bento-formula-pill {
-    background: #f0fdf4;
-    border: 1px solid #86efac;
-    color: #166534;
-    font-size: 0.82rem;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 8px;
-}
-
-.mx-bento-diag-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.mx-bento-diag-pill {
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-}
-
-.mx-bento-status-box {
+.mx-instant-login-box {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 12px 14px;
-    margin-bottom: 14px;
-    font-size: 0.88rem;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 18px;
 }
 
-// C. Masonry Layout
-.mx-masonry-container {
-    column-count: 3;
-    column-gap: 22px;
-}
-
-@media (max-width: 991.98px) {
-    .mx-masonry-container {
-        column-count: 2;
-        column-gap: 16px;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .mx-masonry-container {
-        column-count: 1;
-        column-gap: 0;
-    }
-}
-
-.mx-masonry-item {
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
-    display: inline-block;
+.mx-instant-btn {
     width: 100%;
-    margin-bottom: 22px;
-}
-
-.mx-article-card {
-    background: #ffffff;
-    border-radius: 22px;
-    padding: 22px;
-    border: 1.5px solid #e2e8f0;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.mx-article-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
-    border-color: #1b4332;
-}
-
-.mx-article-tag {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 900;
-    padding: 3px 10px;
-    border-radius: 999px;
+    min-height: 42px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
     margin-bottom: 8px;
-}
-
-.mx-article-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.4;
-    margin-bottom: 10px;
-}
-
-.mx-article-body {
-    font-size: 0.88rem;
-    color: #475569;
-    line-height: 1.6;
-}
-
-.mx-article-table {
-    width: 100%;
-    font-size: 0.82rem;
-    margin: 8px 0;
-    border-collapse: collapse;
-}
-
-.mx-article-table th,
-.mx-article-table td {
-    padding: 6px 8px;
-    border-bottom: 1px solid #e2e8f0;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
     text-align: left;
+    transition: background 0.12s ease, border-color 0.12s ease;
 }
 
-.mx-article-table th {
-    color: #1b4332;
-    font-weight: 800;
-    background: #f8fafc;
+.mx-instant-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
 }
 
-// Chat FAB sits above the desktop dock
-@media (min-width: 992px) {
-    #mx-crop-doctor-fab {
-        bottom: 96px;
-        right: 24px;
-    }
-
-    #mx-crop-doctor-panel {
-        bottom: 158px;
-        right: 24px;
-    }
+.mx-instant-btn:last-child {
+    margin-bottom: 0;
 }
-
-// Outdoor (high-glare) mode keeps the dock + active tab legible
-body.mx-outdoor-mode .bottom-nav-bar {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-}
-
-body.mx-outdoor-mode .bottom-nav-bar a.active {
-    background: #000000 !important;
-    color: #ffffff !important;
-}
-

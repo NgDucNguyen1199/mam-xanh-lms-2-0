@@ -41,7 +41,7 @@ if (isloggedin() && !isguestuser() && !$PAGE->user_is_editing()) {
 }
 
 // 4. Inject PWA Manifest & Theme Meta via $CFG->additionalhtmlhead
-$pwatags = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1B4332"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
+$pwatags = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1E3A2F"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
 if (strpos($CFG->additionalhtmlhead ?? '', '/manifest.json') === false) {
     $CFG->additionalhtmlhead = ($CFG->additionalhtmlhead ?? '') . $pwatags;
 }
@@ -157,12 +157,13 @@ $templatecontext = [
 
     // AgTech Smart UI Context
     'isdashboard'               => (strpos($curpath, '/local/mamxanhapp/index.php') !== false),
+    'showsubnav'                => (isloggedin() && !isguestuser()),
+    'lbl_subnav'                => $isen ? 'Learning tools' : 'Công cụ học tập',
     'isen'                      => $isen,
     'isvi'                      => !$isen,
     'langviurl'                 => $viurl->out(false),
     'langenurl'                 => $enurl->out(false),
     'mxcoursetileshtml'         => $mxcoursetileshtml,
-    'mxshowtts'                 => $mxshowtts,
     'mxbackurl'                 => $mxbackurl,
     'mxbacklabel'               => $mxbacklabel,
     'mxhasback'                 => ($mxbackurl !== ''),
@@ -176,17 +177,11 @@ $templatecontext = [
     'navcalcactive'             => (strpos($curpath, '/local/mamxanhapp/calculator.php') !== false),
     'navcertactive'             => (strpos($curpath, '/local/mamxanhcert/') !== false),
     'navprofactive'             => (strpos($curpath, '/local/farmerprofile/') !== false),
-    'lbl_outdoor'               => $isen ? '☀️ Outdoor Mode' : '☀️ Ngoài trời',
-    'lbl_tts_title'             => $isen ? '🔊 Hands-Free Lesson Voice Reader (en-US)' : '🔊 Trợ lý Giọng đọc Bài giảng Rảnh tay (vi-VN)',
-    'lbl_tts_play'              => $isen ? '▶️ Read Lesson Aloud' : '▶️ Đọc to bài học',
-    'lbl_tts_stop'              => $isen ? '⏹️ Stop' : '⏹️ Dừng đọc',
     'lbl_nav_home'              => ($roletype === 'cbkt' || $roletype === 'admin') ? ($isen ? 'Manage' : 'Quản lý') : ($isen ? 'Courses' : 'Khóa học'),
     'lbl_nav_agri'              => $isen ? 'VietGAP' : 'Nhật ký',
     'lbl_nav_calc'              => $isen ? 'Tools' : 'Công cụ',
     'lbl_nav_cert'              => $isen ? 'Certs' : 'Chứng nhận',
     'lbl_nav_prof'              => $isen ? 'Farm' : 'Nông hộ',
-    'lbl_nav_ai'                => $isen ? 'AI Doctor' : 'Bác sĩ AI',
-    'lbl_bot_fab'               => $isen ? '🌱 Crop Doctor 24/7' : '🌱 Bác sĩ Cây trồng 24/7',
 ];
 
 echo $OUTPUT->render_from_template('theme_agritrain_child/drawers', $templatecontext);

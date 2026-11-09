@@ -13,7 +13,7 @@ $PAGE->set_pagelayout('standard');
 
 $title = local_mamxanhapp_t('Chứng nhận Số QR Ký số HMAC-SHA256 - Mầm Xanh LMS', 'Digital HMAC-SHA256 QR Certificates - Mam Xanh LMS');
 $PAGE->set_title($title);
-$PAGE->set_heading('🎓 ' . $title);
+$PAGE->set_heading('' . $title);
 
 $userid = (int)$USER->id;
 local_mamxanhcert_sync_user_certificates($userid);
@@ -52,13 +52,13 @@ echo $OUTPUT->header();
             <?php echo s(local_mamxanhapp_t('← Quay lại Dashboard', '← Back to Dashboard')); ?>
         </a>
         <a href="<?php echo (new moodle_url('/local/mamxanhcert/verify.php'))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;background:#1B4332;">
-            🔍 <?php echo s(local_mamxanhapp_t('Cổng Xác thực QR Công khai', 'Public QR Verification Portal')); ?>
+            <?php echo s(local_mamxanhapp_t('Cổng Xác thực QR Công khai', 'Public QR Verification Portal')); ?>
         </a>
     </div>
 
     <?php if (empty($certs)): ?>
     <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:32px;text-align:center;">
-        <div style="font-size:3rem;margin-bottom:8px;">🎓</div>
+        <div style="font-size:3rem;margin-bottom:8px;"></div>
         <h4 style="color:#1B4332;font-weight:800;"><?php echo s(local_mamxanhapp_t('Chưa có chứng nhận nào được mở khóa', 'No Digital Certificates Unlocked Yet')); ?></h4>
         <p style="color:#4E6358;max-width:520px;margin:0 auto 18px;">
             <?php echo s(local_mamxanhapp_t(
@@ -67,7 +67,7 @@ echo $OUTPUT->header();
             )); ?>
         </p>
         <a href="<?php echo (new moodle_url('/local/mamxanhapp/index.php'))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;padding:0 24px;background:#1B4332;">
-            🌱 <?php echo s(local_mamxanhapp_t('Vào học & Làm bài Kiểm tra ngay', 'Go to Courses & Take Quiz')); ?>
+            <?php echo s(local_mamxanhapp_t('Vào học & Làm bài Kiểm tra ngay', 'Go to Courses & Take Quiz')); ?>
         </a>
     </div>
     <?php else: ?>
@@ -83,28 +83,28 @@ echo $OUTPUT->header();
                 <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
                     <div style="flex:1;min-width:210px;">
                         <span style="display:inline-block;background:#D8F3DC;color:#1B4332;padding:4px 12px;border-radius:999px;font-weight:800;font-size:0.82rem;margin-bottom:8px;">
-                            🏅 <?php echo s($c->cert_code); ?>
+                            <?php echo s($c->cert_code); ?>
                         </span>
                         <h4 style="color:#1B4332;font-weight:800;font-size:1.15rem;margin-bottom:6px;">
                             <?php echo format_string($c->coursename); ?>
                         </h4>
                         <div style="font-size:0.9rem;color:#37474F;margin-bottom:6px;">
-                            👨‍🌾 <strong><?php echo s($c->firstname . ' ' . $c->lastname); ?></strong> •
-                            🎯 <?php echo s(local_mamxanhapp_t('Điểm đạt: ', 'Score: ')); ?><strong><?php echo number_format((float)$c->final_score, 1); ?>%</strong>
+                            <strong><?php echo s($c->firstname . ' ' . $c->lastname); ?></strong> •
+                            <?php echo s(local_mamxanhapp_t('Điểm đạt: ', 'Score: ')); ?><strong><?php echo number_format((float)$c->final_score, 1); ?>%</strong>
                         </div>
                         <div style="font-size:0.8rem;color:#546E7A;margin-bottom:14px;">
-                            🔐 HMAC-SHA256: <code><?php echo s(substr($c->hmac_signature, 0, 20) . '...'); ?></code>
+                            HMAC-SHA256: <code><?php echo s(substr($c->hmac_signature, 0, 20) . '...'); ?></code>
                         </div>
 
                         <div class="d-flex flex-wrap" style="gap:8px;">
                             <a href="<?php echo $viewurl; ?>" class="btn btn-success btn-sm" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;font-weight:700;padding:0 14px;background:#1B4332;">
-                                📜 <?php echo s(local_mamxanhapp_t('Xem Chứng nhận', 'View Certificate')); ?>
+                                <?php echo s(local_mamxanhapp_t('Xem Chứng nhận', 'View Certificate')); ?>
                             </a>
                             <a href="<?php echo $pdfurl; ?>" class="btn btn-outline-success btn-sm" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;font-weight:700;padding:0 14px;border-width:2px;">
-                                ⬇️ PDF
+                                PDF
                             </a>
                             <a href="<?php echo $verifyurl; ?>" class="btn btn-outline-secondary btn-sm" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;font-weight:700;padding:0 14px;">
-                                ✅ <?php echo s(local_mamxanhapp_t('Xác thực QR', 'Verify QR')); ?>
+                                <?php echo s(local_mamxanhapp_t('Xác thực QR', 'Verify QR')); ?>
                             </a>
                         </div>
                     </div>

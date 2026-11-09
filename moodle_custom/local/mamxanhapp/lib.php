@@ -79,7 +79,7 @@ function local_mamxanhapp_send_403_and_exit(string $msgvi = '', string $msgen = 
 
     echo $OUTPUT->header();
     echo '<div class="mx-forbidden-card" style="max-width:640px;margin:2rem auto;background:#FFF5F5;border:3px solid #C62828;border-radius:24px;padding:2rem;text-align:center;">';
-    echo '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;">🛡️ 403</div>';
+    echo '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;">403</div>';
     echo '<h2 style="color:#B71C1C;font-weight:800;margin-bottom:0.75rem;">' . s($title) . '</h2>';
     echo '<p style="font-size:1.05rem;color:#3E2723;margin-bottom:1.5rem;">' . s($desc) . '</p>';
     echo '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg" style="min-height:48px;border-radius:14px;font-weight:700;background:#1B4332;border-color:#1B4332;">' . s($btnlabel) . '</a>';
@@ -124,7 +124,7 @@ function local_mamxanhapp_weather_data(string $region = 'Lâm Đồng'): array {
             'uv'         => '5 (TB / Mod)',
             'rain_prob'  => '35%',
             'status'     => 'warning',
-            'badge'      => $en ? '🌫️ Morning Mist Alert' : '🌫️ Cảnh báo Sương mù Sáng sớm',
+            'badge'      => $en ? 'Morning Mist Alert' : 'Cảnh báo Sương mù Sáng sớm',
             'advice'     => $en
                 ? 'High humidity (84%). Open greenhouse roof vents at 07:30, drip irrigate EC 1.6 at 08:30–10:30, avoid late-afternoon foliar spray to prevent Downy Mildew & Rust.'
                 : 'Ẩm độ cao (84%). Mở cửa thông gió nhà màng lúc 07:30, tưới nhỏ giọt EC 1.6 khung 08:30–10:30, tuyệt đối không phun ướt lá sau 15:30 để ngừa nấm Sương mai & Gỉ sắt.',
@@ -139,7 +139,7 @@ function local_mamxanhapp_weather_data(string $region = 'Lâm Đồng'): array {
             'uv'         => '8 (Cao / High)',
             'rain_prob'  => '15%',
             'status'     => 'optimal',
-            'badge'      => $en ? '✅ Golden Bio-Spray Window' : '✅ Cửa sổ Vàng Phun Sinh học',
+            'badge'      => $en ? 'Golden Bio-Spray Window' : 'Cửa sổ Vàng Phun Sinh học',
             'advice'     => $en
                 ? 'Gentle wind (9 km/h), optimal VPD 1.35 kPa. Ideal window 06:30–09:00 for biological IPM (Trichoderma / Metarhizium) on Durian & Coffee.'
                 : 'Gió nhẹ (9 km/h), VPD tối ưu 1.35 kPa. Rất thuận lợi phun chế phẩm sinh học IPM (Trichoderma / Nấm xanh) cho Sầu riêng khung 06:30–09:00 sáng.',
@@ -154,7 +154,7 @@ function local_mamxanhapp_weather_data(string $region = 'Lâm Đồng'): array {
             'uv'         => '10 (Rất cao / Extreme)',
             'rain_prob'  => '10%',
             'status'     => 'hot',
-            'badge'      => $en ? '☀️ Midday Heat & High UV' : '☀️ Cảnh báo Nắng gắt & Bốc hơi cao',
+            'badge'      => $en ? 'Midday Heat & High UV' : 'Cảnh báo Nắng gắt & Bốc hơi cao',
             'advice'     => $en
                 ? 'High midday heat (33°C, UV 10). Split drip irrigation into 3 short pulses (+15% water volume, lower EC by 0.2 mS/cm) to prevent blossom-end rot & tipburn.'
                 : 'Nắng gắt giữa trưa (33°C, UV 10). Chia tưới nhỏ giọt thành 3 chu kỳ ngắn (+15% lượng nước, giảm EC 0.2 mS/cm) để chống cháy chóp lá và thối đít trái thiếu Canxi.',
@@ -178,7 +178,7 @@ function local_mamxanhapp_extend_navigation(\global_navigation $nav): void {
     $roletype = local_mamxanhapp_user_role_type();
     if ($roletype === 'cbkt' || $roletype === 'admin') {
         $node = $nav->add(
-            local_mamxanhapp_t('📊 Quản lý & Báo cáo CBKT', '📊 Instructor Analytics'),
+            local_mamxanhapp_t('Quản lý & Báo cáo CBKT', 'Instructor Analytics'),
             new \moodle_url('/local/mamxanhapp/manage.php'),
             \navigation_node::TYPE_CUSTOM,
             null,
@@ -188,7 +188,7 @@ function local_mamxanhapp_extend_navigation(\global_navigation $nav): void {
     }
 
     $farmernode = $nav->add(
-        local_mamxanhapp_t('🌱 Bảng điều khiển Nông dân', '🌱 Farmer Dashboard'),
+        local_mamxanhapp_t('Bảng điều khiển Nông dân', 'Farmer Dashboard'),
         new \moodle_url('/local/mamxanhapp/index.php'),
         \navigation_node::TYPE_CUSTOM,
         null,
@@ -197,7 +197,7 @@ function local_mamxanhapp_extend_navigation(\global_navigation $nav): void {
     $farmernode->showinflatnavigation = true;
 
     $calcnode = $nav->add(
-        local_mamxanhapp_t('🧮 Công cụ Pha phân & Thời tiết', '🧮 AgTech Calculator'),
+        local_mamxanhapp_t('Công cụ Pha phân & Thời tiết', 'AgTech Calculator'),
         new \moodle_url('/local/mamxanhapp/calculator.php'),
         \navigation_node::TYPE_CUSTOM,
         null,

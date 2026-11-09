@@ -13,7 +13,7 @@ $PAGE->set_pagelayout('standard');
 
 $title = local_mamxanhapp_t('Hồ sơ Nông hộ & Đồng bộ Cohort - Mầm Xanh LMS', 'Farmer Household Profile & Cohort Sync - Mam Xanh LMS');
 $PAGE->set_title($title);
-$PAGE->set_heading(local_mamxanhapp_t('🏡 Hồ sơ Nông hộ, Định vị GPS & Tổ hợp tác (Cohort)', '🏡 Farm Household Profile, GPS Coordinates & Regional Cohort'));
+$PAGE->set_heading(local_mamxanhapp_t('Hồ sơ Nông hộ, Định vị GPS & Tổ hợp tác (Cohort)', 'Farm Household Profile, GPS Coordinates & Regional Cohort'));
 
 $userid = (int)$USER->id;
 $savednotice = false;
@@ -74,7 +74,7 @@ echo $OUTPUT->header();
 
     <?php if ($savednotice): ?>
     <div class="alert alert-success" style="border-radius:16px;font-weight:700;border:2px solid #2E7D32;">
-        ✅ <?php echo s(local_mamxanhapp_t('Đã lưu Hồ sơ Nông hộ và tự động đồng bộ vào Tổ hợp tác (Cohort) vùng trồng thành công!', 'Farm household profile saved and automatically synced to your regional Cohort!')); ?>
+        <?php echo s(local_mamxanhapp_t('Đã lưu Hồ sơ Nông hộ và tự động đồng bộ vào Tổ hợp tác (Cohort) vùng trồng thành công!', 'Farm household profile saved and automatically synced to your regional Cohort!')); ?>
     </div>
     <?php endif; ?>
 
@@ -82,12 +82,12 @@ echo $OUTPUT->header();
         <div class="col-lg-7 mb-4">
             <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;">
                 <h3 style="color:#1B4332;font-weight:800;font-size:1.3rem;margin-bottom:14px;">
-                    📝 <?php echo s(local_mamxanhapp_t('Cập nhật Thông tin Nông hộ & Định vị Vườn', 'Update Farm Household & Garden Coordinates')); ?>
+                    <?php echo s(local_mamxanhapp_t('Cập nhật Thông tin Nông hộ & Định vị Vườn', 'Update Farm Household & Garden Coordinates')); ?>
                 </h3>
 
                 <?php if ($cohortname !== ''): ?>
                 <div style="background:#E8F5E9;color:#1B4332;padding:10px 14px;border-radius:14px;font-weight:700;margin-bottom:16px;font-size:0.92rem;">
-                    🤝 <?php echo s(local_mamxanhapp_t('Cohort đã đồng bộ: ', 'Synced Cohort: ') . $cohortname); ?>
+                    <?php echo s(local_mamxanhapp_t('Cohort đã đồng bộ: ', 'Synced Cohort: ') . $cohortname); ?>
                 </div>
                 <?php endif; ?>
 
@@ -141,14 +141,14 @@ echo $OUTPUT->header();
                         </div>
                         <div class="col-12 col-md-4 mb-3">
                             <button type="button" class="btn btn-outline-success w-100" onclick="mxCaptureFarmGps()" style="min-height:48px;border-radius:12px;font-weight:700;border-width:2px;">
-                                📍 <?php echo s(local_mamxanhapp_t('Lấy GPS hiện tại', 'Get Live GPS')); ?>
+                                <?php echo s(local_mamxanhapp_t('Lấy GPS hiện tại', 'Get Live GPS')); ?>
                             </button>
                         </div>
                     </div>
                     <div id="mx-gps-status" style="font-size:0.85rem;color:#2E7D32;font-weight:700;margin-bottom:12px;"></div>
 
                     <button type="submit" class="btn btn-success w-100" style="min-height:52px;border-radius:14px;font-weight:800;font-size:1.05rem;background:#1B4332;border-color:#1B4332;">
-                        💾 <?php echo s(local_mamxanhapp_t('Lưu Hồ sơ & Đồng bộ Cohort Vùng trồng', 'Save Profile & Sync Regional Cohort')); ?>
+                        <?php echo s(local_mamxanhapp_t('Lưu Hồ sơ & Đồng bộ Cohort Vùng trồng', 'Save Profile & Sync Regional Cohort')); ?>
                     </button>
                 </form>
             </div>
@@ -157,7 +157,7 @@ echo $OUTPUT->header();
         <div class="col-lg-5 mb-4">
             <div style="background:linear-gradient(145deg,#1B4332,#2E7D32);color:#FFF;border-radius:24px;padding:24px;height:100%;">
                 <h4 style="color:#FFF;font-weight:800;margin-bottom:12px;">
-                    🗺️ <?php echo s(local_mamxanhapp_t('Lợi ích Đồng bộ Hồ sơ Nông hộ', 'Benefits of Household Cohort Sync')); ?>
+                    <?php echo s(local_mamxanhapp_t('Lợi ích Đồng bộ Hồ sơ Nông hộ', 'Benefits of Household Cohort Sync')); ?>
                 </h4>
                 <ul style="line-height:1.8;color:#E8F5E9;padding-left:20px;">
                     <li><?php echo s(local_mamxanhapp_t('Tự động xếp vào Tổ hợp tác (Cohort) Lâm Đồng, Đắk Lắk hoặc Đồng Nai.', 'Automatic assignment to Lam Dong, Dak Lak, or Dong Nai regional Cohorts.')); ?></li>
@@ -179,7 +179,7 @@ echo $OUTPUT->header();
     ?>
     <section style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:22px;margin-top:8px;">
         <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
-            📋 <?php echo s(local_mamxanhapp_t('Danh bạ Nông hộ Đã Đồng bộ Cohort (' . count($allprofiles) . ' hộ)', 'Synced Farmer Household Directory (' . count($allprofiles) . ' households)')); ?>
+            <?php echo s(local_mamxanhapp_t('Danh bạ Nông hộ Đã Đồng bộ Cohort (' . count($allprofiles) . ' hộ)', 'Synced Farmer Household Directory (' . count($allprofiles) . ' households)')); ?>
         </h4>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -226,17 +226,17 @@ function mxUpdateRegionGps(region) {
 function mxCaptureFarmGps() {
     var status = document.getElementById('mx-gps-status');
     if (!navigator.geolocation) {
-        status.textContent = '📍 Đã dùng tọa độ trung tâm tiểu vùng / Using regional GPS center.';
+        status.textContent = 'Đã dùng tọa độ trung tâm tiểu vùng / Using regional GPS center.';
         return;
     }
-    status.textContent = '⏳ Đang định vị vệ tinh GPS...';
+    status.textContent = 'Đang định vị vệ tinh GPS...';
     navigator.geolocation.getCurrentPosition(function(pos) {
         document.getElementById('id_gps_lat').value = pos.coords.latitude.toFixed(6);
         document.getElementById('id_gps_lng').value = pos.coords.longitude.toFixed(6);
-        status.textContent = '✅ Đã lấy tọa độ GPS thực tế chính xác!';
+        status.textContent = 'Đã lấy tọa độ GPS thực tế chính xác!';
     }, function() {
         mxUpdateRegionGps(document.getElementById('id_region').value);
-        status.textContent = '📍 Đã gán tọa độ tiêu chuẩn của vùng trồng hiện tại.';
+        status.textContent = 'Đã gán tọa độ tiêu chuẩn của vùng trồng hiện tại.';
     }, { timeout: 5000 });
 }
 </script>

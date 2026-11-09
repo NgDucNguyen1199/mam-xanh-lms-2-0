@@ -22,7 +22,7 @@ if (empty($instances)) {
 echo '<div class="list-group">';
 foreach ($instances as $inst) {
     $url = new moodle_url('/mod/fieldpractice/view.php', ['id' => $inst->coursemodule]);
-    echo '<a class="list-group-item list-group-item-action fw-bold" style="min-height:52px;display:flex;align-items:center;" href="' . $url->out(false) . '">🌿 ' . format_string($inst->name) . '</a>';
+    echo '<a class="list-group-item list-group-item-action fw-bold" style="min-height:52px;display:flex;align-items:center;" href="' . $url->out(false) . '">' . format_string($inst->name) . '</a>';
 }
 echo '</div>';
 

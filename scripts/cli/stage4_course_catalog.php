@@ -50,25 +50,25 @@ function mamxanh_get_six_courses_catalog(): array {
     // Shared rich IPM Flashcards (Rust, Mealybugs, Thrips, Spider Mites)
     $standardIpmCards = [
         [
-            'icon'          => '🟠',
+            'icon'          => '',
             'front_title'   => 'Bệnh Gỉ sắt (Puccinia / Uromyces spp.)',
             'front_symptom' => 'Mặt dưới lá già xuất hiện các ổ bào tử nổi u nhỏ màu nâu cam như gỉ sắt, mặt trên chấm vàng; bùng phát mạnh khi sương mù ẩm độ >85%.',
             'back_protocol' => '<strong>1. Canh tác:</strong> Tỉa lá bệnh phía gốc đem tiêu hủy ngoài nhà màng, bật quạt thông gió.<br><strong>2. Sinh học:</strong> Phun nấm đối kháng <em>Chaetomium</em> hoặc vi khuẩn <em>Bacillus subtilis</em> (25g/16L).<br><strong>3. Cách ly PHI:</strong> 0 ngày.',
         ],
         [
-            'icon'          => '⚪',
+            'icon'          => '',
             'front_title'   => 'Rệp sáp phấn trắng (Planococcus spp.)',
             'front_symptom' => 'Bám thành từng cụm phủ lớp sáp bông trắng ở cuống trái, nách lá, cổ rễ; tiết dịch mật ngọt thu hút kiến đen cộng sinh và nấm bồ hóng đen.',
             'back_protocol' => '<strong>1. Cơ giới:</strong> Quấn băng keo bẫy kiến quanh gốc, cắt tỉa cành tăm thông thoáng.<br><strong>2. Sinh học:</strong> Phun <strong>Dầu khoáng sinh học 0.3%</strong> làm tan lớp sáp kết hợp nấm trắng <em>Beauveria bassiana</em>.<br><strong>3. Cách ly PHI:</strong> 0–3 ngày.',
         ],
         [
-            'icon'          => '🌀',
+            'icon'          => '',
             'front_title'   => 'Bọ trĩ hại đọt non & hoa (Thrips palmi)',
             'front_symptom' => 'Đọt non xoăn tít còi cọc, mặt dưới lá có vệt sần ánh bạc màu đồng, cánh hoa cháy nâu, trái non sẹo da cám; truyền bệnh virus khảm xoăn lá.',
             'back_protocol' => '<strong>1. Giám sát:</strong> Treo 40 bẫy dính xanh dương/vàng trên mỗi 1.000m² cao hơn ngọn 15cm.<br><strong>2. Sinh học:</strong> Phun chế phẩm <em>Metarhizium + Beauveria</em> phối hợp tinh dầu Neem ép lạnh vào chiều mát.<br><strong>3. Thiên địch:</strong> Thả nhện bắt mồi <em>Amblyseius swirskii</em>.',
         ],
         [
-            'icon'          => '🕸️',
+            'icon'          => '',
             'front_title'   => 'Nhện đỏ hai chấm (Tetranychus urticae)',
             'front_symptom' => 'Lá xuất hiện vô số chấm trắng vàng li ti như bụi cám, mặt dưới lá chăng tơ mịn, lá khô giòn rụng sớm trong điều kiện nắng nóng khô hạn (<60% ẩm độ).',
             'back_protocol' => '<strong>1. Vi khí hậu:</strong> Tăng ẩm hợp lý, tránh để nhà màng khô nóng cục bộ.<br><strong>2. Sinh học:</strong> Phun ướt đẫm mặt dưới lá bằng hoạt chất sinh học <em>Abamectin</em> hoặc <em>Matrine</em> thảo mộc, luân phiên dầu khoáng.<br><strong>3. Thiên địch:</strong> Nhện bắt mồi <em>Phytoseiulus persimilis</em>.',
@@ -107,14 +107,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Quy trình Tuyển chọn Cây giống F1 & Kiểm soát Thang đo pH / EC Vùng rễ',
                 'infographic_title' => 'Tiêu chuẩn Cây giống Khỏe & Thang đo Dinh dưỡng pH / EC',
                 'chapters' => [
-                    ['time' => '00:00 - 04:10', 'short' => 'Tiêu chuẩn cây giống', 'icon' => '🌱', 'title' => 'Tuyển chọn cây con bầu ươm rễ trắng khỏe sạch bệnh', 'desc' => 'Cây giống đạt chuẩn xuất vườn có thân mập thẳng, đốt ngắn, 4–5 lá thật xanh bóng không dị dạng, bộ rễ trắng ôm chặt giá thể xơ dừa/mụn dừa đã xử lý sạch nấm bệnh và tanin (EC giá thể < 0.5 mS/cm).'],
-                    ['time' => '04:11 - 08:30', 'short' => 'Đo pH & EC thực địa', 'icon' => '🧪', 'title' => 'Hiệu chuẩn bút đo và kiểm tra nước rỉ (Drainage 20-30%)', 'desc' => 'Đo đồng thời dung dịch đầu vào tại béc nhỏ giọt và nước thoát đáy bầu. Nếu EC nước thoát cao hơn đầu vào quá 0.8 mS/cm, cần tưới rửa muối tích tụ bằng nước sạch pH 6.0.'],
-                    ['time' => '08:31 - 12:45', 'short' => 'Điều chỉnh theo nắng', 'icon' => '☀️', 'title' => 'Điều tiết EC linh hoạt theo bức xạ mặt trời & nhiệt độ', 'desc' => 'Ngày nắng gắt nhiệt độ >32°C cây hút nhiều nước hơn muối khoáng nên cần giảm EC 0.2–0.3 mS/cm và chia thành nhiều chu kỳ tưới ngắn để ngừa cháy mép lá thiếu Canxi.'],
+                    ['time' => '00:00 - 04:10', 'short' => 'Tiêu chuẩn cây giống', 'icon' => '', 'title' => 'Tuyển chọn cây con bầu ươm rễ trắng khỏe sạch bệnh', 'desc' => 'Cây giống đạt chuẩn xuất vườn có thân mập thẳng, đốt ngắn, 4–5 lá thật xanh bóng không dị dạng, bộ rễ trắng ôm chặt giá thể xơ dừa/mụn dừa đã xử lý sạch nấm bệnh và tanin (EC giá thể < 0.5 mS/cm).'],
+                    ['time' => '04:11 - 08:30', 'short' => 'Đo pH & EC thực địa', 'icon' => '', 'title' => 'Hiệu chuẩn bút đo và kiểm tra nước rỉ (Drainage 20-30%)', 'desc' => 'Đo đồng thời dung dịch đầu vào tại béc nhỏ giọt và nước thoát đáy bầu. Nếu EC nước thoát cao hơn đầu vào quá 0.8 mS/cm, cần tưới rửa muối tích tụ bằng nước sạch pH 6.0.'],
+                    ['time' => '08:31 - 12:45', 'short' => 'Điều chỉnh theo nắng', 'icon' => '', 'title' => 'Điều tiết EC linh hoạt theo bức xạ mặt trời & nhiệt độ', 'desc' => 'Ngày nắng gắt nhiệt độ >32°C cây hút nhiều nước hơn muối khoáng nên cần giảm EC 0.2–0.3 mS/cm và chia thành nhiều chu kỳ tưới ngắn để ngừa cháy mép lá thiếu Canxi.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '🌱', 'title' => 'Chuẩn Cây Giống Xuất Vườn', 'body' => '• Chiều cao đồng đều 12–15 cm<br>• Bầu rễ trắng kín, không nâu thối<br>• Đã huấn luyện nắng 3–5 ngày trước trồng<br>• Sạch 100% bọ trĩ, bọ phấn & virus'],
-                    ['icon' => '⚖️', 'title' => 'Ngưỡng Vàng pH 5.8 – 6.2', 'body' => '• pH &lt; 5.2: Ngộ độc Mn/Al, kém hút Ca/Mg<br>• <strong>pH 5.8 – 6.2: Hấp thu tối ưu 12 khoáng</strong><br>• pH &gt; 6.8: Kết tủa Sắt (Fe), Kẽm, Lân gây vàng lá ngọn'],
-                    ['icon' => '⚡', 'title' => 'Quản lý Tỷ lệ Thoát Nước 20%', 'body' => '• Thu mẫu nước rỉ sau tưới 30 phút<br>• Tỷ lệ rỉ chuẩn: <strong>15% – 25%</strong> lượng tưới<br>• Ngăn mặn hóa vùng rễ & cân bằng oxy rễ'],
+                    ['icon' => '', 'title' => 'Chuẩn Cây Giống Xuất Vườn', 'body' => '• Chiều cao đồng đều 12–15 cm<br>• Bầu rễ trắng kín, không nâu thối<br>• Đã huấn luyện nắng 3–5 ngày trước trồng<br>• Sạch 100% bọ trĩ, bọ phấn & virus'],
+                    ['icon' => '', 'title' => 'Ngưỡng Vàng pH 5.8 – 6.2', 'body' => '• pH &lt; 5.2: Ngộ độc Mn/Al, kém hút Ca/Mg<br>• <strong>pH 5.8 – 6.2: Hấp thu tối ưu 12 khoáng</strong><br>• pH &gt; 6.8: Kết tủa Sắt (Fe), Kẽm, Lân gây vàng lá ngọn'],
+                    ['icon' => '', 'title' => 'Quản lý Tỷ lệ Thoát Nước 20%', 'body' => '• Thu mẫu nước rỉ sau tưới 30 phút<br>• Tỷ lệ rỉ chuẩn: <strong>15% – 25%</strong> lượng tưới<br>• Ngăn mặn hóa vùng rễ & cân bằng oxy rễ'],
                 ],
                 'scale_bars' => [
                     ['label' => 'Rau ăn lá (Xà lách, Cải ngọt, Cải bó xôi)', 'range' => 'pH 5.8–6.2 | EC 1.2 – 1.8 mS/cm', 'pct' => 55, 'color' => '#43A047'],
@@ -175,14 +175,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Quy trình Thu hoạch Đúng Độ Chín & Hạ nhiệt Sơ bộ (Pre-Cooling) Trong 2 Giờ Vàng',
                 'infographic_title' => 'Chuỗi Lạnh Liên Tục (Cold Chain) Giảm Tổn Thất Sau Thu Hoạch Từ 25% Xuống < 5%',
                 'chapters' => [
-                    ['time' => '00:00 - 04:30', 'short' => 'Độ chín & Thu hoạch', 'icon' => '🧺', 'title' => 'Xác định độ đường Brix & thu hoạch khung giờ mát 06:00–08:30', 'desc' => 'Sử dụng khúc xạ kế đo độ Brix (VD: Dưa lưới >= 14°Brix, Sầu riêng chất khô >= 32%), cắt cuống bằng kéo khử trùng cồn 70°, xếp nhẹ vào sọt nhựa lót xốp thoáng khí tránh dập cơ học.'],
-                    ['time' => '04:31 - 09:20', 'short' => 'Pre-cooling 2 giờ vàng', 'icon' => '❄️', 'title' => 'Hạ nhiệt đồng ruộng (Field Heat Removal) bằng cưỡng bức gió lạnh / chân không', 'desc' => 'Cứ mỗi giờ chậm làm mát sau cắt, rau ăn lá mất tương đương 1 ngày tuổi thọ kệ hàng! Đưa nông sản vào buồng Pre-cooling trong vòng 2 giờ đầu để rút nhiệt tâm sản phẩm về ngưỡng chuẩn.'],
-                    ['time' => '09:21 - 14:10', 'short' => 'Sục Ozone & Đóng gói', 'icon' => '📦', 'title' => 'Rửa sục khí vi bọt, ly tâm ráo nước và đóng gói phòng lạnh 15°C', 'desc' => 'Loại bỏ hoàn toàn nước tự do đọng trên bề mặt lá/vỏ trái trước khi đóng màng vi đục lỗ MAP giúp ngăn thối nhũn vi khuẩn Erwinia trong suốt hành trình vận chuyển lạnh.'],
+                    ['time' => '00:00 - 04:30', 'short' => 'Độ chín & Thu hoạch', 'icon' => '', 'title' => 'Xác định độ đường Brix & thu hoạch khung giờ mát 06:00–08:30', 'desc' => 'Sử dụng khúc xạ kế đo độ Brix (VD: Dưa lưới >= 14°Brix, Sầu riêng chất khô >= 32%), cắt cuống bằng kéo khử trùng cồn 70°, xếp nhẹ vào sọt nhựa lót xốp thoáng khí tránh dập cơ học.'],
+                    ['time' => '04:31 - 09:20', 'short' => 'Pre-cooling 2 giờ vàng', 'icon' => '', 'title' => 'Hạ nhiệt đồng ruộng (Field Heat Removal) bằng cưỡng bức gió lạnh / chân không', 'desc' => 'Cứ mỗi giờ chậm làm mát sau cắt, rau ăn lá mất tương đương 1 ngày tuổi thọ kệ hàng! Đưa nông sản vào buồng Pre-cooling trong vòng 2 giờ đầu để rút nhiệt tâm sản phẩm về ngưỡng chuẩn.'],
+                    ['time' => '09:21 - 14:10', 'short' => 'Sục Ozone & Đóng gói', 'icon' => '', 'title' => 'Rửa sục khí vi bọt, ly tâm ráo nước và đóng gói phòng lạnh 15°C', 'desc' => 'Loại bỏ hoàn toàn nước tự do đọng trên bề mặt lá/vỏ trái trước khi đóng màng vi đục lỗ MAP giúp ngăn thối nhũn vi khuẩn Erwinia trong suốt hành trình vận chuyển lạnh.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '⏱️', 'title' => 'Quy tắc 2 Giờ Vàng', 'body' => '• Hạ nhiệt đồng ruộng ngay trong <strong>&lt; 120 phút</strong><br>• Giảm tốc độ hô hấp và mất nước gấp 4–6 lần<br>• Kéo dài thời hạn tươi từ 3 ngày lên 14–21 ngày'],
-                    ['icon' => '🌡️', 'title' => 'Phân Nhóm Nhiệt Độ Kho Lạnh', 'body' => '• Rau ăn lá, Dâu tây: <strong>2 – 5°C</strong> (RH 90–95%)<br>• Ớt chuông, Dưa lưới: <strong>7 – 10°C</strong><br>• Trái nhiệt đới (Chuối, Xoài, Sầu riêng tươi): <strong>13 – 15°C</strong> (Tránh tổn thương lạnh!)'],
-                    ['icon' => '🧊', 'title' => 'Cấp Đông Nhanh IQF (-35°C)', 'body' => '• Tinh thể băng cực mịn không phá vỡ màng tế bào<br>• Múi sầu riêng / xoài rã đông không chảy dịch<br>• Trữ đông ổn định 18–24 tháng ở <strong>-18°C</strong>'],
+                    ['icon' => '', 'title' => 'Quy tắc 2 Giờ Vàng', 'body' => '• Hạ nhiệt đồng ruộng ngay trong <strong>&lt; 120 phút</strong><br>• Giảm tốc độ hô hấp và mất nước gấp 4–6 lần<br>• Kéo dài thời hạn tươi từ 3 ngày lên 14–21 ngày'],
+                    ['icon' => '', 'title' => 'Phân Nhóm Nhiệt Độ Kho Lạnh', 'body' => '• Rau ăn lá, Dâu tây: <strong>2 – 5°C</strong> (RH 90–95%)<br>• Ớt chuông, Dưa lưới: <strong>7 – 10°C</strong><br>• Trái nhiệt đới (Chuối, Xoài, Sầu riêng tươi): <strong>13 – 15°C</strong> (Tránh tổn thương lạnh!)'],
+                    ['icon' => '', 'title' => 'Cấp Đông Nhanh IQF (-35°C)', 'body' => '• Tinh thể băng cực mịn không phá vỡ màng tế bào<br>• Múi sầu riêng / xoài rã đông không chảy dịch<br>• Trữ đông ổn định 18–24 tháng ở <strong>-18°C</strong>'],
                 ],
                 'scale_bars' => [
                     ['label' => 'Rau ăn lá & Hoa cắt cành (Làm mát chân không / gió cưỡng bức)', 'range' => '2°C – 5°C | Ẩm độ 92–95%', 'pct' => 25, 'color' => '#0288D1'],
@@ -243,14 +243,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Lắp đặt Trạm Cảm biến IoT & Đọc Hiểu Chỉ số VPD (Vapor Pressure Deficit)',
                 'infographic_title' => 'Tam Giác Vi Khí Hậu Nhà Màng: Nhiệt độ — Ẩm độ — Bức xạ PAR',
                 'chapters' => [
-                    ['time' => '00:00 - 03:50', 'short' => 'Vị trí đặt cảm biến', 'icon' => '📡', 'title' => 'Treo hộp chắn bức xạ cảm biến đúng tầng tán lá ngọn', 'desc' => 'Đặt cảm biến nhiệt-ẩm trong hộp lá sách thông gió (Shield) ngay độ cao ngọn cây đang phát triển, tránh nắng chiếu trực tiếp lên đầu dò gây sai số +4°C.'],
-                    ['time' => '03:51 - 07:40', 'short' => 'Chỉ số vàng VPD', 'icon' => '🌿', 'title' => 'Điều hành khí khổng mở tối ưu ở VPD 0.8 – 1.2 kPa', 'desc' => 'VPD quá thấp (<0.4 kPa) cây ngừng thoát hơi nước dễ nhiễm nấm sương mai; VPD quá cao (>1.6 kPa) cây đóng khí khổng ngừng quang hợp!'],
-                    ['time' => '07:41 - 11:30', 'short' => 'Kịch bản rơ-le tự động', 'icon' => '⚙️', 'title' => 'Liên động tự động Lưới cắt nắng 50% + Quạt đối lưu + Phun sương cao áp', 'desc' => 'Cài đặt ngưỡng trễ (Hysteresis) thông minh để mô-tơ rèm và quạt không bật/tắt liên tục gây quá tải điện.'],
+                    ['time' => '00:00 - 03:50', 'short' => 'Vị trí đặt cảm biến', 'icon' => '', 'title' => 'Treo hộp chắn bức xạ cảm biến đúng tầng tán lá ngọn', 'desc' => 'Đặt cảm biến nhiệt-ẩm trong hộp lá sách thông gió (Shield) ngay độ cao ngọn cây đang phát triển, tránh nắng chiếu trực tiếp lên đầu dò gây sai số +4°C.'],
+                    ['time' => '03:51 - 07:40', 'short' => 'Chỉ số vàng VPD', 'icon' => '', 'title' => 'Điều hành khí khổng mở tối ưu ở VPD 0.8 – 1.2 kPa', 'desc' => 'VPD quá thấp (<0.4 kPa) cây ngừng thoát hơi nước dễ nhiễm nấm sương mai; VPD quá cao (>1.6 kPa) cây đóng khí khổng ngừng quang hợp!'],
+                    ['time' => '07:41 - 11:30', 'short' => 'Kịch bản rơ-le tự động', 'icon' => '', 'title' => 'Liên động tự động Lưới cắt nắng 50% + Quạt đối lưu + Phun sương cao áp', 'desc' => 'Cài đặt ngưỡng trễ (Hysteresis) thông minh để mô-tơ rèm và quạt không bật/tắt liên tục gây quá tải điện.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '🌡️', 'title' => 'VPD Chuẩn 0.8 – 1.2 kPa', 'body' => '• Cây con: <strong>0.6 – 0.8 kPa</strong><br>• Sinh trưởng &amp; Nuôi trái: <strong>0.8 – 1.2 kPa</strong><br>• Ngừa nấm &amp; tối ưu hút Canxi'],
-                    ['icon' => '☀️', 'title' => 'Cường độ Sáng PAR / Lux', 'body' => '• Đóng lưới cắt nắng khi bức xạ &gt; 45.000 Lux<br>• Mở lưới đón nắng sớm 06:30 – 09:30<br>• Giữ màng PE sạch bụi truyền sáng &gt;88%'],
-                    ['icon' => '🌬️', 'title' => 'Thông gió &amp; Lưới Chắn Côn trùng', 'body' => '• Lưới vách <strong>50 mesh</strong> chặn bọ trĩ, bọ phấn<br>• Buồng đệm cửa đôi (Double-door airlock)<br>• Khay sát trùng giày dép đầu cửa'],
+                    ['icon' => '', 'title' => 'VPD Chuẩn 0.8 – 1.2 kPa', 'body' => '• Cây con: <strong>0.6 – 0.8 kPa</strong><br>• Sinh trưởng &amp; Nuôi trái: <strong>0.8 – 1.2 kPa</strong><br>• Ngừa nấm &amp; tối ưu hút Canxi'],
+                    ['icon' => '', 'title' => 'Cường độ Sáng PAR / Lux', 'body' => '• Đóng lưới cắt nắng khi bức xạ &gt; 45.000 Lux<br>• Mở lưới đón nắng sớm 06:30 – 09:30<br>• Giữ màng PE sạch bụi truyền sáng &gt;88%'],
+                    ['icon' => '', 'title' => 'Thông gió &amp; Lưới Chắn Côn trùng', 'body' => '• Lưới vách <strong>50 mesh</strong> chặn bọ trĩ, bọ phấn<br>• Buồng đệm cửa đôi (Double-door airlock)<br>• Khay sát trùng giày dép đầu cửa'],
                 ],
                 'scale_bars' => [
                     ['label' => 'VPD Quá Thấp (< 0.45 kPa) — Nguy cơ Nấm bệnh & Đọng sương', 'range' => 'Cần bật quạt đối lưu thông gió', 'pct' => 28, 'color' => '#0288D1'],
@@ -306,14 +306,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Vận hành Hệ thống Màng Dinh dưỡng Hồi lưu NFT & Kiểm soát Oxy Hòa tan (DO)',
                 'infographic_title' => 'Thông số Vàng Thủy canh NFT: Độ dốc 1:40 • Dòng chảy 1.5 L/phút • DO >= 6 mg/L',
                 'chapters' => [
-                    ['time' => '00:00 - 04:15', 'short' => 'Độ dốc máng NFT', 'icon' => '📐', 'title' => 'Căn chỉnh độ dốc máng 2% – 2.5% (1:40) tạo màng nước mỏng 2mm', 'desc' => 'Nửa trên bộ rễ tiếp xúc trực tiếp không khí giàu Oxy trong lòng máng, nửa dưới chạm lớp màng dinh dưỡng chảy liên tục không đọng vũng gây thối rễ Pythium.'],
-                    ['time' => '04:16 - 08:40', 'short' => 'Nhiệt nước & Oxy DO', 'icon' => '💧', 'title' => 'Giữ nhiệt độ dung dịch hồi lưu < 26°C & sục khí Venturi', 'desc' => 'Chôn ngầm bồn dinh dưỡng dưới đất hoặc bọc cách nhiệt để nước luôn mát 20–25°C, giữ hàm lượng oxy hòa tan DO đạt 6–8 mg/L giúp rễ trắng muốt.'],
-                    ['time' => '08:41 - 13:05', 'short' => 'Giảm Nitrat cuối vụ', 'icon' => '🥬', 'title' => 'Hạ EC trước thu hoạch 3–5 ngày đảm bảo dư lượng Nitrat an toàn', 'desc' => 'Chuyển sang chế độ giảm đạm / hạ EC về 0.8–1.0 mS/cm và thu hoạch buổi chiều nắng hoặc sáng sau khi cây chuyển hóa hết NO3- tự do trong lá.'],
+                    ['time' => '00:00 - 04:15', 'short' => 'Độ dốc máng NFT', 'icon' => '', 'title' => 'Căn chỉnh độ dốc máng 2% – 2.5% (1:40) tạo màng nước mỏng 2mm', 'desc' => 'Nửa trên bộ rễ tiếp xúc trực tiếp không khí giàu Oxy trong lòng máng, nửa dưới chạm lớp màng dinh dưỡng chảy liên tục không đọng vũng gây thối rễ Pythium.'],
+                    ['time' => '04:16 - 08:40', 'short' => 'Nhiệt nước & Oxy DO', 'icon' => '', 'title' => 'Giữ nhiệt độ dung dịch hồi lưu < 26°C & sục khí Venturi', 'desc' => 'Chôn ngầm bồn dinh dưỡng dưới đất hoặc bọc cách nhiệt để nước luôn mát 20–25°C, giữ hàm lượng oxy hòa tan DO đạt 6–8 mg/L giúp rễ trắng muốt.'],
+                    ['time' => '08:41 - 13:05', 'short' => 'Giảm Nitrat cuối vụ', 'icon' => '', 'title' => 'Hạ EC trước thu hoạch 3–5 ngày đảm bảo dư lượng Nitrat an toàn', 'desc' => 'Chuyển sang chế độ giảm đạm / hạ EC về 0.8–1.0 mS/cm và thu hoạch buổi chiều nắng hoặc sáng sau khi cây chuyển hóa hết NO3- tự do trong lá.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '📏', 'title' => 'Chuẩn Máng NFT', 'body' => '• Chiều dài máng tối đa: <strong>12 – 15m</strong><br>• Độ dốc chuẩn: <strong>2.0 – 2.5%</strong><br>• Lưu lượng đầu máng: <strong>1.5 – 2.0 L/phút</strong>'],
-                    ['icon' => '🫧', 'title' => 'Oxy Hòa Tan &amp; Nhiệt Nước', 'body' => '• Nhiệt dung dịch: <strong>20 – 26°C</strong><br>• Oxy hòa tan DO: <strong>&ge; 6.0 mg/L</strong><br>• Chống bệnh thối nhũn rễ <em>Pythium</em>'],
-                    ['icon' => '🥥', 'title' => 'Xử lý Giá thể Xơ dừa', 'body' => '• Ngâm xả sạch chất chát Tanin &amp; Lignin<br>• Đệm bằng Canxi Nitrat đẩy Na+/K+ thừa<br>• Đạt chuẩn <strong>EC &lt; 0.5 mS/cm</strong> trước trồng'],
+                    ['icon' => '', 'title' => 'Chuẩn Máng NFT', 'body' => '• Chiều dài máng tối đa: <strong>12 – 15m</strong><br>• Độ dốc chuẩn: <strong>2.0 – 2.5%</strong><br>• Lưu lượng đầu máng: <strong>1.5 – 2.0 L/phút</strong>'],
+                    ['icon' => '', 'title' => 'Oxy Hòa Tan &amp; Nhiệt Nước', 'body' => '• Nhiệt dung dịch: <strong>20 – 26°C</strong><br>• Oxy hòa tan DO: <strong>&ge; 6.0 mg/L</strong><br>• Chống bệnh thối nhũn rễ <em>Pythium</em>'],
+                    ['icon' => '', 'title' => 'Xử lý Giá thể Xơ dừa', 'body' => '• Ngâm xả sạch chất chát Tanin &amp; Lignin<br>• Đệm bằng Canxi Nitrat đẩy Na+/K+ thừa<br>• Đạt chuẩn <strong>EC &lt; 0.5 mS/cm</strong> trước trồng'],
                 ],
                 'scale_bars' => [
                     ['label' => 'Ươm cây con mút xốp / viên nén (7–10 ngày đầu)', 'range' => 'EC 0.8 – 1.0 mS/cm | pH 5.8', 'pct' => 38, 'color' => '#4FC3F7'],
@@ -369,14 +369,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Quản lý Cơi đọt Khỏe, Xử lý Ra hoa Sinh lý & Hồ sơ Mã số Vùng trồng (PUC)',
                 'infographic_title' => '4 Cột Mốc Quyết Định Năng Suất & Phẩm Chất Sầu Riêng Xuất Khẩu',
                 'chapters' => [
-                    ['time' => '00:00 - 05:00', 'short' => 'Nuôi 2–3 cơi đọt', 'icon' => '🌿', 'title' => 'Phục hồi sau thu hoạch & bảo vệ trọn vẹn bộ lá cơi đọt tránh rầy phấn', 'desc' => 'Mỗi trái sầu riêng 3kg cần tối thiểu 300–400 lá khỏe quang hợp nuôi cơm vàng dẻo. Phải giữ bộ lá dày xanh bóng không bị rầy nhảy/cháy lá trước khi làm bông.'],
-                    ['time' => '05:01 - 10:15', 'short' => 'Ra hoa & Chống rụng', 'icon' => '🌼', 'title' => 'Siết nước phân hóa mầm hoa, tỉa bông chùm và kiểm soát đi đọt non cạnh tranh', 'desc' => 'Giai đoạn xổ nhụy và trái non bằng quả trứng gà cực kỳ nhạy cảm: nếu cây phóng đọt non mạnh sẽ rút hết Canxi-Bo làm rụng trái non hàng loạt!'],
-                    ['time' => '10:16 - 15:20', 'short' => 'Mã vùng trồng & Cadimi', 'icon' => '🌏', 'title' => 'Tuân thủ Nghị định thư Xuất khẩu: Không Rệp sáp, Không Cadimi vượt ngưỡng', 'desc' => 'Kiểm nghiệm pH đất & nguồn phân lân đầu vào để ngăn tích lũy kim loại nặng Cadimi (Cd <= 0.05 mg/kg), vệ sinh sạch 100% rệp sáp ở rãnh gai trước đóng gói.'],
+                    ['time' => '00:00 - 05:00', 'short' => 'Nuôi 2–3 cơi đọt', 'icon' => '', 'title' => 'Phục hồi sau thu hoạch & bảo vệ trọn vẹn bộ lá cơi đọt tránh rầy phấn', 'desc' => 'Mỗi trái sầu riêng 3kg cần tối thiểu 300–400 lá khỏe quang hợp nuôi cơm vàng dẻo. Phải giữ bộ lá dày xanh bóng không bị rầy nhảy/cháy lá trước khi làm bông.'],
+                    ['time' => '05:01 - 10:15', 'short' => 'Ra hoa & Chống rụng', 'icon' => '', 'title' => 'Siết nước phân hóa mầm hoa, tỉa bông chùm và kiểm soát đi đọt non cạnh tranh', 'desc' => 'Giai đoạn xổ nhụy và trái non bằng quả trứng gà cực kỳ nhạy cảm: nếu cây phóng đọt non mạnh sẽ rút hết Canxi-Bo làm rụng trái non hàng loạt!'],
+                    ['time' => '10:16 - 15:20', 'short' => 'Mã vùng trồng & Cadimi', 'icon' => '', 'title' => 'Tuân thủ Nghị định thư Xuất khẩu: Không Rệp sáp, Không Cadimi vượt ngưỡng', 'desc' => 'Kiểm nghiệm pH đất & nguồn phân lân đầu vào để ngăn tích lũy kim loại nặng Cadimi (Cd <= 0.05 mg/kg), vệ sinh sạch 100% rệp sáp ở rãnh gai trước đóng gói.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '🌳', 'title' => 'Thiết kế Mô &amp; Thoát nước', 'body' => '• Lên mô cao thoát nước mùa mưa Tây Nguyên<br>• Duy trì pH đất <strong>5.8 – 6.5</strong><br>• Bón 15–25 kg phân hữu cơ vi sinh + Trichoderma/gốc'],
-                    ['icon' => '🍈', 'title' => 'Tỉa Bông &amp; Nuôi Trái Chuẩn', 'body' => '• Tỉa bông 3 đợt giữ bông mập trên cành cấp 1–2<br>• Thụ phấn bổ sung 19:30 – 21:30 tối giúp tròn học<br>• Cân đối Kali Sunfat <code>K2SO4</code> (không dùng KCl!)'],
-                    ['icon' => '🛡️', 'title' => 'Chuẩn Kiểm dịch Xuất khẩu', 'body' => '• Sạch tuyệt đối đối tượng kiểm dịch <strong>Rệp sáp</strong><br>• Kiểm soát <strong>Cadimi (Cd)</strong> &amp; dư lượng BVTV<br>• Nhật ký Mã số vùng trồng (PUC) minh bạch'],
+                    ['icon' => '', 'title' => 'Thiết kế Mô &amp; Thoát nước', 'body' => '• Lên mô cao thoát nước mùa mưa Tây Nguyên<br>• Duy trì pH đất <strong>5.8 – 6.5</strong><br>• Bón 15–25 kg phân hữu cơ vi sinh + Trichoderma/gốc'],
+                    ['icon' => '', 'title' => 'Tỉa Bông &amp; Nuôi Trái Chuẩn', 'body' => '• Tỉa bông 3 đợt giữ bông mập trên cành cấp 1–2<br>• Thụ phấn bổ sung 19:30 – 21:30 tối giúp tròn học<br>• Cân đối Kali Sunfat <code>K2SO4</code> (không dùng KCl!)'],
+                    ['icon' => '', 'title' => 'Chuẩn Kiểm dịch Xuất khẩu', 'body' => '• Sạch tuyệt đối đối tượng kiểm dịch <strong>Rệp sáp</strong><br>• Kiểm soát <strong>Cadimi (Cd)</strong> &amp; dư lượng BVTV<br>• Nhật ký Mã số vùng trồng (PUC) minh bạch'],
                 ],
                 'scale_bars' => [
                     ['label' => 'Độ tuổi cơi lá chuyển lụa già tích lũy Lân-Kali làm bông', 'range' => 'Cơi 2–3 hoàn chỉnh | C:N tối ưu', 'pct' => 75, 'color' => '#2E7D32'],
@@ -432,14 +432,14 @@ function mamxanh_get_six_courses_catalog(): array {
                 'video_title'       => 'Kỹ thuật Phối trộn Tỷ lệ C/N (25–30:1), Kiểm tra Ẩm độ Nắm tay & Ủ Hiếu khí Nhiệt cao',
                 'infographic_title' => 'Quy trình 45 Ngày Chuyển Hóa Phụ Phẩm Thành Phân Hữu Cơ Vi Sinh Sạch Bệnh',
                 'chapters' => [
-                    ['time' => '00:00 - 04:05', 'short' => 'Phối trộn C/N & Ẩm 55%', 'icon' => '♻️', 'title' => 'Cân bằng vật liệu giàu Carbon (vỏ cà phê, rơm) và giàu Nitơ (phân chuồng, bã đậu)', 'desc' => 'Kiểm tra ẩm độ thực địa bằng bài test nắm tay: bóp chặt hỗn hợp thấy nước rỉ nhẹ qua kẽ ngón tay nhưng không nhỏ giọt thành dòng, mở tay ra khối nguyên liệu kết dính là đạt chuẩn 55–60%.'],
-                    ['time' => '04:06 - 08:20', 'short' => 'Pha ưa nhiệt 60°C', 'icon' => '🔥', 'title' => 'Theo dõi pha ưa nhiệt (55–65°C) tiêu diệt E.coli, trứng tuyến trùng và hạt cỏ dại', 'desc' => 'Đống ủ cao 1.2–1.5m tăng nhiệt lên 60–65°C từ ngày thứ 5–15 giúp thanh trùng hoàn toàn mầm bệnh hại. Đảo trộn cấp oxy khi tâm đống ủ vượt 68°C.'],
-                    ['time' => '08:21 - 12:15', 'short' => 'Cấy Trichoderma khi nguội', 'icon' => '🍄', 'title' => 'Bổ sung nấm đối kháng Trichoderma & vi khuẩn cố định đạm khi đống ủ hạ < 38°C', 'desc' => 'Tuyệt đối không trộn chủng Trichoderma sống lúc đống ủ đang nóng 65°C! Đợi pha chín muồi hạ nhiệt <38°C mới nhân cấy để mật độ bào tử đạt >10^8 CFU/g.'],
+                    ['time' => '00:00 - 04:05', 'short' => 'Phối trộn C/N & Ẩm 55%', 'icon' => '', 'title' => 'Cân bằng vật liệu giàu Carbon (vỏ cà phê, rơm) và giàu Nitơ (phân chuồng, bã đậu)', 'desc' => 'Kiểm tra ẩm độ thực địa bằng bài test nắm tay: bóp chặt hỗn hợp thấy nước rỉ nhẹ qua kẽ ngón tay nhưng không nhỏ giọt thành dòng, mở tay ra khối nguyên liệu kết dính là đạt chuẩn 55–60%.'],
+                    ['time' => '04:06 - 08:20', 'short' => 'Pha ưa nhiệt 60°C', 'icon' => '', 'title' => 'Theo dõi pha ưa nhiệt (55–65°C) tiêu diệt E.coli, trứng tuyến trùng và hạt cỏ dại', 'desc' => 'Đống ủ cao 1.2–1.5m tăng nhiệt lên 60–65°C từ ngày thứ 5–15 giúp thanh trùng hoàn toàn mầm bệnh hại. Đảo trộn cấp oxy khi tâm đống ủ vượt 68°C.'],
+                    ['time' => '08:21 - 12:15', 'short' => 'Cấy Trichoderma khi nguội', 'icon' => '', 'title' => 'Bổ sung nấm đối kháng Trichoderma & vi khuẩn cố định đạm khi đống ủ hạ < 38°C', 'desc' => 'Tuyệt đối không trộn chủng Trichoderma sống lúc đống ủ đang nóng 65°C! Đợi pha chín muồi hạ nhiệt <38°C mới nhân cấy để mật độ bào tử đạt >10^8 CFU/g.'],
                 ],
                 'infographic_cards' => [
-                    ['icon' => '⚖️', 'title' => 'Tỷ lệ Vàng C/N = 25–30 : 1', 'body' => '• C/N &gt; 50 (toàn mùn cưa/vỏ khô): Ủ rất lâu hoai<br>• C/N &lt; 15 (toàn đạm tươi): Hôi thối mất NH3<br>• <strong>Phối trộn chuẩn giúp hoai nhanh không mùi</strong>'],
-                    ['icon' => '🌡️', 'title' => 'Pha Thanh Trùng 55–65°C', 'body' => '• Duy trì tối thiểu 7–10 ngày kết hợp đảo trộn<br>• Diệt sạch <em>Salmonella, E.coli</em> &amp; hạt cỏ<br>• Tuyệt đối không bón phân tươi sống vào vườn!'],
-                    ['icon' => '🦠', 'title' => 'Hệ Vi Sinh Có Ích >10^8 CFU', 'body' => '• <em>Trichoderma</em>: Đối kháng nấm thối rễ<br>• <em>Bacillus</em>: Phân giải Lân khó tan<br>• <em>Azotobacter</em>: Cố định đạm tự nhiên'],
+                    ['icon' => '', 'title' => 'Tỷ lệ Vàng C/N = 25–30 : 1', 'body' => '• C/N &gt; 50 (toàn mùn cưa/vỏ khô): Ủ rất lâu hoai<br>• C/N &lt; 15 (toàn đạm tươi): Hôi thối mất NH3<br>• <strong>Phối trộn chuẩn giúp hoai nhanh không mùi</strong>'],
+                    ['icon' => '', 'title' => 'Pha Thanh Trùng 55–65°C', 'body' => '• Duy trì tối thiểu 7–10 ngày kết hợp đảo trộn<br>• Diệt sạch <em>Salmonella, E.coli</em> &amp; hạt cỏ<br>• Tuyệt đối không bón phân tươi sống vào vườn!'],
+                    ['icon' => '', 'title' => 'Hệ Vi Sinh Có Ích >10^8 CFU', 'body' => '• <em>Trichoderma</em>: Đối kháng nấm thối rễ<br>• <em>Bacillus</em>: Phân giải Lân khó tan<br>• <em>Azotobacter</em>: Cố định đạm tự nhiên'],
                 ],
                 'scale_bars' => [
                     ['label' => 'Giai đoạn Khởi động (Ngày 1–4): Vi sinh vật ưa ấm phân giải đường dễ tiêu', 'range' => '30°C – 45°C | Ẩm độ 60%', 'pct' => 45, 'color' => '#43A047'],

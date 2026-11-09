@@ -93,7 +93,7 @@ $PAGE->set_context($syscontext);
 $PAGE->set_url(new moodle_url('/local/mamxanhcert/view.php', ['code' => $cert->cert_code]));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Chứng nhận ' . $cert->cert_code);
-$PAGE->set_heading('📜 ' . $cert->cert_code);
+$PAGE->set_heading('' . $cert->cert_code);
 
 $qrsvg = \local_mamxanhapp\qr_helper::render_svg($verifyurl, 150, '#1B4332');
 
@@ -107,17 +107,17 @@ echo $OUTPUT->header();
         </a>
         <div class="d-flex flex-wrap" style="gap:10px;">
             <a href="<?php echo (new moodle_url('/local/mamxanhcert/view.php', ['code' => $cert->cert_code, 'download' => 'pdf']))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;background:#1B4332;">
-                ⬇️ <?php echo s(local_mamxanhapp_t('Tải Bản PDF Ký Số', 'Download Signed PDF')); ?>
+                <?php echo s(local_mamxanhapp_t('Tải Bản PDF Ký Số', 'Download Signed PDF')); ?>
             </a>
             <button type="button" onclick="window.print()" class="btn btn-outline-secondary" style="min-height:48px;border-radius:14px;font-weight:700;">
-                🖨️ <?php echo s(local_mamxanhapp_t('In Chứng nhận', 'Print')); ?>
+                <?php echo s(local_mamxanhapp_t('In Chứng nhận', 'Print')); ?>
             </button>
         </div>
     </div>
 
     <article style="background:linear-gradient(180deg,#FFFFFF 0%,#F7FCF8 100%);border:6px double #1B4332;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 16px 40px rgba(27,67,50,0.14);">
         <div style="color:#2E7D32;font-weight:800;letter-spacing:0.08em;font-size:0.92rem;margin-bottom:6px;">
-            🌱 HỆ THỐNG TẬP HUẤN NÔNG NGHIỆP CÔNG NGHỆ CAO • MẦM XANH LMS 2.0
+            HỆ THỐNG TẬP HUẤN NÔNG NGHIỆP CÔNG NGHỆ CAO • MẦM XANH LMS 2.0
         </div>
         <h2 style="color:#1B4332;font-weight:900;font-size:2rem;margin-bottom:6px;">
             <?php echo s(local_mamxanhapp_t('CHỨNG NHẬN HOÀN THÀNH KHÓA HỌC', 'CERTIFICATE OF COMPLETION')); ?>
@@ -134,17 +134,17 @@ echo $OUTPUT->header();
         </h3>
 
         <div style="display:inline-flex;flex-wrap:wrap;justify-content:center;gap:14px;background:#E8F5E9;padding:10px 22px;border-radius:999px;font-weight:800;color:#1B4332;margin-bottom:24px;">
-            <span>🎯 <?php echo s(local_mamxanhapp_t('Điểm tổng kết: ', 'Final Score: ') . number_format((float)$cert->final_score, 1) . '%'); ?></span>
+            <span><?php echo s(local_mamxanhapp_t('Điểm tổng kết: ', 'Final Score: ') . number_format((float)$cert->final_score, 1) . '%'); ?></span>
             <span>•</span>
-            <span>📅 <?php echo date('d/m/Y', (int)$cert->timecreated); ?></span>
+            <span><?php echo date('d/m/Y', (int)$cert->timecreated); ?></span>
             <span>•</span>
-            <span>🆔 <?php echo s($cert->cert_code); ?></span>
+            <span><?php echo s($cert->cert_code); ?></span>
         </div>
 
         <div class="row align-items-center text-start" style="background:#FFF;border:1.5px solid #C8E6C9;border-radius:18px;padding:16px;margin:0;">
             <div class="col-md-8 mb-3 mb-md-0">
                 <div style="font-weight:800;color:#1B4332;margin-bottom:4px;">
-                    <?php echo $isvalid ? '✅ CHỮ KÝ SỐ HỢP LỆ (HMAC-SHA256 VERIFIED)' : '⚠️ INVALID SIGNATURE'; ?>
+                    <?php echo $isvalid ? 'CHỮ KÝ SỐ HỢP LỆ (HMAC-SHA256 VERIFIED)' : 'INVALID SIGNATURE'; ?>
                 </div>
                 <div style="font-size:0.8rem;word-break:break-all;color:#455A64;">
                     <strong>HMAC-SHA256 Digest:</strong> <code><?php echo s($cert->hmac_signature); ?></code>

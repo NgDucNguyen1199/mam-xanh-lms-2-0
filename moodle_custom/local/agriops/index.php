@@ -13,7 +13,7 @@ $PAGE->set_pagelayout('standard');
 
 $title = local_mamxanhapp_t('Nhật ký Canh tác VietGAP & Truy xuất QR - Mầm Xanh LMS', 'VietGAP Voice Diary & QR Traceability - Mam Xanh LMS');
 $PAGE->set_title($title);
-$PAGE->set_heading(local_mamxanhapp_t('📒 Quản lý Lô Nông sản VietGAP & Nhật ký Giọng nói', '📒 VietGAP Production Lots, Voice Diary & QR Traceability'));
+$PAGE->set_heading(local_mamxanhapp_t('Quản lý Lô Nông sản VietGAP & Nhật ký Giọng nói', 'VietGAP Production Lots, Voice Diary & QR Traceability'));
 
 $userid = (int)$USER->id;
 $canaudit = is_siteadmin() || has_capability('local/agriops:audit', $syscontext);
@@ -86,7 +86,7 @@ echo $OUTPUT->header();
 
     <?php if ($flashmsg !== ''): ?>
     <div class="alert alert-success" id="mx-agriops-alert" style="border-radius:16px;font-weight:700;border:2px solid #2E7D32;">
-        ✅ <?php echo s($flashmsg); ?>
+        <?php echo s($flashmsg); ?>
     </div>
     <?php endif; ?>
 
@@ -95,7 +95,7 @@ echo $OUTPUT->header();
         <div class="col-lg-5 mb-4">
             <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
                 <h3 style="color:#1B4332;font-weight:800;font-size:1.25rem;margin-bottom:14px;">
-                    📦 <?php echo s(local_mamxanhapp_t('Tạo Lô Nông sản VietGAP Mới', 'Register New VietGAP Crop Batch')); ?>
+                    <?php echo s(local_mamxanhapp_t('Tạo Lô Nông sản VietGAP Mới', 'Register New VietGAP Crop Batch')); ?>
                 </h3>
                 <form method="post" action="<?php echo (new moodle_url('/local/agriops/index.php'))->out(false); ?>" id="mx-create-batch-form">
                     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
@@ -132,7 +132,7 @@ echo $OUTPUT->header();
                     </div>
 
                     <button type="submit" id="mx-submit-batch-btn" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#1B4332;border-color:#1B4332;">
-                        ➕ <?php echo s(local_mamxanhapp_t('Khởi tạo Lô & Sinh Mã QR Truy xuất', 'Create Batch & Generate Traceability QR')); ?>
+                        <?php echo s(local_mamxanhapp_t('Khởi tạo Lô & Sinh Mã QR Truy xuất', 'Create Batch & Generate Traceability QR')); ?>
                     </button>
                 </form>
             </div>
@@ -142,7 +142,7 @@ echo $OUTPUT->header();
         <div class="col-lg-7 mb-4">
             <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
                 <h3 style="color:#1B4332;font-weight:800;font-size:1.25rem;margin-bottom:14px;">
-                    🎤 <?php echo s(local_mamxanhapp_t('Ghi Nhật ký Canh tác Rảnh tay (Web Speech API)', 'Hands-Free Voice Field Diary (Web Speech API)')); ?>
+                    <?php echo s(local_mamxanhapp_t('Ghi Nhật ký Canh tác Rảnh tay (Web Speech API)', 'Hands-Free Voice Field Diary (Web Speech API)')); ?>
                 </h3>
 
                 <?php if (empty($batches)): ?>
@@ -167,11 +167,11 @@ echo $OUTPUT->header();
                         <div class="col-md-5 mb-3">
                             <label class="form-label fw-bold" for="id_activity_type"><?php echo s(local_mamxanhapp_t('Hạng mục công việc', 'Activity Type')); ?></label>
                             <select id="id_activity_type" name="activity_type" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;">
-                                <option value="watering_fert"><?php echo s(local_mamxanhapp_t('💧 Tưới nhỏ giọt & Bón phân A-B', '💧 Drip Irrigation & Fertigation')); ?></option>
-                                <option value="ipm_bio"><?php echo s(local_mamxanhapp_t('🐞 Phun sinh học IPM / Trichoderma', '🐞 Biological IPM Spray')); ?></option>
-                                <option value="env_check"><?php echo s(local_mamxanhapp_t('🌡️ Đo pH / EC & Kiểm tra nhà màng', '🌡️ pH / EC Sensor Check')); ?></option>
-                                <option value="pruning"><?php echo s(local_mamxanhapp_t('✂️ Tỉa cành, treo dây, bao trái', '✂️ Pruning & Fruit Bagging')); ?></option>
-                                <option value="harvest"><?php echo s(local_mamxanhapp_t('🧺 Thu hoạch & Làm mát Pre-cooling', '🧺 Harvest & Pre-cooling')); ?></option>
+                                <option value="watering_fert"><?php echo s(local_mamxanhapp_t('Tưới nhỏ giọt & Bón phân A-B', 'Drip Irrigation & Fertigation')); ?></option>
+                                <option value="ipm_bio"><?php echo s(local_mamxanhapp_t('Phun sinh học IPM / Trichoderma', 'Biological IPM Spray')); ?></option>
+                                <option value="env_check"><?php echo s(local_mamxanhapp_t('Đo pH / EC & Kiểm tra nhà màng', 'pH / EC Sensor Check')); ?></option>
+                                <option value="pruning"><?php echo s(local_mamxanhapp_t('Tỉa cành, treo dây, bao trái', 'Pruning & Fruit Bagging')); ?></option>
+                                <option value="harvest"><?php echo s(local_mamxanhapp_t('Thu hoạch & Làm mát Pre-cooling', 'Harvest & Pre-cooling')); ?></option>
                             </select>
                         </div>
                     </div>
@@ -194,7 +194,7 @@ echo $OUTPUT->header();
                     <div class="mb-2 d-flex flex-wrap justify-content-between align-items-center" style="gap:8px;">
                         <label class="form-label fw-bold mb-0" for="id_log_notes"><?php echo s(local_mamxanhapp_t('Nội dung nhật ký thực địa', 'Field Diary Notes')); ?></label>
                         <button type="button" id="mx-voice-btn" onclick="mxStartVoiceDiary()" class="btn btn-outline-danger btn-sm" style="min-height:42px;border-radius:999px;font-weight:800;padding:0 16px;border-width:2px;">
-                            🎙️ <?php echo s(local_mamxanhapp_t('Bấm để Đọc bằng Giọng nói', 'Tap to Dictate by Voice')); ?>
+                            <?php echo s(local_mamxanhapp_t('Bấm để Đọc bằng Giọng nói', 'Tap to Dictate by Voice')); ?>
                         </button>
                     </div>
 
@@ -209,7 +209,7 @@ echo $OUTPUT->header();
                     </div>
 
                     <button type="submit" id="mx-submit-log-btn" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#2E7D32;border-color:#2E7D32;">
-                        📝 <?php echo s(local_mamxanhapp_t('Lưu Nhật ký vào Sổ Điện tử VietGAP', 'Save Entry to Digital VietGAP Logbook')); ?>
+                        <?php echo s(local_mamxanhapp_t('Lưu Nhật ký vào Sổ Điện tử VietGAP', 'Save Entry to Digital VietGAP Logbook')); ?>
                     </button>
                 </form>
                 <?php endif; ?>
@@ -220,7 +220,7 @@ echo $OUTPUT->header();
     <!-- VietGAP Batches & QR Passport Cards -->
     <section>
         <h3 style="color:#1B4332;font-weight:800;font-size:1.3rem;margin-bottom:16px;">
-            🏷️ <?php echo s(local_mamxanhapp_t('Danh sách Lô Nông sản & Mã QR Truy xuất Nguồn gốc (' . count($batches) . ')', 'Active VietGAP Batches & Traceability QR Codes (' . count($batches) . ')')); ?>
+            <?php echo s(local_mamxanhapp_t('Danh sách Lô Nông sản & Mã QR Truy xuất Nguồn gốc (' . count($batches) . ')', 'Active VietGAP Batches & Traceability QR Codes (' . count($batches) . ')')); ?>
         </h3>
         <div class="row">
             <?php foreach ($batches as $b):
@@ -233,14 +233,14 @@ echo $OUTPUT->header();
                     <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
                         <div style="flex:1;min-width:200px;">
                             <span style="display:inline-block;background:#D8F3DC;color:#1B4332;padding:4px 12px;border-radius:999px;font-weight:800;font-size:0.82rem;margin-bottom:8px;">
-                                ✅ VietGAP: <?php echo s($b->batch_code); ?>
+                                VietGAP: <?php echo s($b->batch_code); ?>
                             </span>
                             <h4 style="color:#14281D;font-weight:800;font-size:1.15rem;margin-bottom:6px;"><?php echo s($b->product_name); ?></h4>
                             <div style="font-size:0.88rem;color:#4E6358;margin-bottom:10px;">
-                                📍 <?php echo s($b->region); ?> • <?php echo number_format((int)$b->area_m2); ?> m² • <?php echo number_format((int)$b->expected_yield_kg); ?> kg
+                                <?php echo s($b->region); ?> • <?php echo number_format((int)$b->area_m2); ?> m² • <?php echo number_format((int)$b->expected_yield_kg); ?> kg
                             </div>
                             <a href="<?php echo $traceurl; ?>" class="btn btn-outline-success btn-sm" style="min-height:42px;display:inline-flex;align-items:center;border-radius:12px;font-weight:700;border-width:2px;">
-                                🔍 <?php echo s(local_mamxanhapp_t('Mở Trang Truy xuất QR Công khai', 'Open Public QR Traceability Page')); ?>
+                                <?php echo s(local_mamxanhapp_t('Mở Trang Truy xuất QR Công khai', 'Open Public QR Traceability Page')); ?>
                             </a>
                         </div>
                         <div class="text-center">
@@ -258,7 +258,7 @@ echo $OUTPUT->header();
                             <li>
                                 <span class="text-muted">[<?php echo userdate($lg->log_time, '%d/%m %H:%M'); ?>]</span>
                                 <?php echo s($lg->notes); ?>
-                                <small class="text-success fw-bold">(pH <?php echo s($lg->ph_val); ?>, EC <?php echo s($lg->ec_val); ?>, PHI <?php echo (int)$lg->phi_days; ?>d<?php echo !empty($lg->voice_input) ? ' 🎙️' : ''; ?>)</small>
+                                <small class="text-success fw-bold">(pH <?php echo s($lg->ph_val); ?>, EC <?php echo s($lg->ec_val); ?>, PHI <?php echo (int)$lg->phi_days; ?>d<?php echo !empty($lg->voice_input) ? ' ' : ''; ?>)</small>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -280,8 +280,8 @@ function mxStartVoiceDiary() {
 
     if (!SpeechRecognition) {
         statusEl.textContent = isEn
-            ? 'ℹ️ Browser voice engine unavailable in headless mode; please use quick template chips below.'
-            : 'ℹ️ Trình duyệt hiện tại chưa bật mic giọng nói; bạn có thể chạm các nút Mẫu câu nhanh bên dưới.';
+            ? 'ℹBrowser voice engine unavailable in headless mode; please use quick template chips below.'
+            : 'ℹTrình duyệt hiện tại chưa bật mic giọng nói; bạn có thể chạm các nút Mẫu câu nhanh bên dưới.';
         return;
     }
 
@@ -290,16 +290,16 @@ function mxStartVoiceDiary() {
     rec.interimResults = false;
     rec.maxAlternatives = 1;
 
-    statusEl.textContent = isEn ? '🎙️ Listening... Speak your field log now...' : '🎙️ Đang lắng nghe... Bà con hãy đọc nội dung nhật ký...';
+    statusEl.textContent = isEn ? 'Listening... Speak your field log now...' : 'Đang lắng nghe... Bà con hãy đọc nội dung nhật ký...';
     rec.onresult = function(event) {
         var text = event.results[0][0].transcript;
         notesEl.value = (notesEl.value ? notesEl.value + ' ' : '') + text;
         document.getElementById('id_voice_input').value = '1';
         statusEl.style.color = '#2E7D32';
-        statusEl.textContent = isEn ? '✅ Voice captured successfully!' : '✅ Đã nhận diện giọng nói thành công!';
+        statusEl.textContent = isEn ? 'Voice captured successfully!' : 'Đã nhận diện giọng nói thành công!';
     };
     rec.onerror = function(err) {
-        statusEl.textContent = (isEn ? '⚠️ Mic notice: ' : '⚠️ Thông báo Micro: ') + err.error;
+        statusEl.textContent = (isEn ? 'Mic notice: ' : 'Thông báo Micro: ') + err.error;
     };
     rec.start();
 }

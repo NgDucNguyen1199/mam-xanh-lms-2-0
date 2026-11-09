@@ -1,40 +1,38 @@
 <div class="loginform mx-login-card-inner">
-    <div class="d-flex justify-content-between align-items-center mb-3" style="gap:8px;">
-        <span style="display:inline-flex;align-items:center;gap:6px;background:#D8F3DC;color:#1B4332;font-weight:800;font-size:0.82rem;padding:5px 12px;border-radius:999px;">
-            🌱 MẦM XANH LMS 2.0
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span style="display:inline-block;background:#eef5f1;color:#1e3a2f;font-weight:700;font-size:0.8rem;padding:4px 10px;border-radius:4px;letter-spacing:0.3px;">
+            MẦM XANH LMS 2.0
         </span>
-        <div class="mx-lang-pill" id="mx-login-lang-switcher">
-            <a href="?lang=vi" id="mx-lang-vi" class="mx-lang-link">🇻🇳 VI</a>
-            <a href="?lang=en" id="mx-lang-en" class="mx-lang-link">🇬🇧 EN</a>
+        <div class="mx-lang-pill" id="mx-login-lang-switcher" style="display:inline-flex;gap:4px;font-size:0.82rem;font-weight:600;">
+            <a href="?lang=vi" id="mx-lang-vi" style="color:#475569;text-decoration:none;padding:2px 6px;">VI</a>
+            <span style="color:#cbd5e1;">/</span>
+            <a href="?lang=en" id="mx-lang-en" style="color:#475569;text-decoration:none;padding:2px 6px;">EN</a>
         </div>
     </div>
 
-    <div class="text-center mb-3">
-        <div style="width:64px;height:64px;margin:0 auto 10px;border-radius:18px;background:linear-gradient(135deg,#1B4332,#2E7D32);display:flex;align-items:center;justify-content:center;font-size:2rem;color:#FFF;box-shadow:0 8px 20px rgba(27,67,50,0.22);">
-            🌾
-        </div>
-        <h1 class="h4 mb-1" style="color:#1B4332;font-weight:900;" id="mx-login-title">
+    <div class="text-center mb-4">
+        <h1 class="h5 mb-1" style="color:#0f172a;font-weight:700;letter-spacing:-0.2px;" id="mx-login-title">
             Hệ thống Tập huấn Nông nghiệp Công nghệ cao
         </h1>
-        <p class="mb-0" style="color:#4E6358;font-size:0.9rem;" id="mx-login-subtitle">
-            Học trực quan • Giọng đọc rảnh tay • Truy xuất QR VietGAP
+        <p class="mb-0" style="color:#64748b;font-size:0.88rem;" id="mx-login-subtitle">
+            Học phần Trực tuyến &amp; Quản lý Canh tác Số VietGAP
         </p>
     </div>
 
     {{#maintenance}}
-        <div class="alert alert-danger login-maintenance">
+        <div class="alert alert-danger login-maintenance mb-3">
             {{{maintenance}}}
         </div>
     {{/maintenance}}
 
     {{#error}}
         <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
-        <div class="alert alert-danger" role="alert" style="border-radius:14px;font-weight:700;">{{error}}</div>
+        <div class="alert alert-danger mb-3" role="alert" style="border-radius:6px;font-size:0.88rem;">{{error}}</div>
     {{/error}}
 
     {{#info}}
         <a href="#" id="logininfomessage" class="sr-only">{{info}}</a>
-        <div class="alert alert-info" role="alert" style="border-radius:14px;">{{info}}</div>
+        <div class="alert alert-info mb-3" role="alert" style="border-radius:6px;font-size:0.88rem;">{{info}}</div>
     {{/info}}
 
     {{#showloginform}}
@@ -42,57 +40,54 @@
             <input type="hidden" name="logintoken" value="{{logintoken}}">
 
             <div class="login-form-username form-group mb-3">
-                <label for="username" class="fw-bold mb-1" style="color:#1B4332;font-size:0.9rem;">{{#str}} username {{/str}}</label>
+                <label for="username" class="mb-1" style="color:#334155;font-size:0.85rem;font-weight:600;">{{#str}} username {{/str}}</label>
                 <input type="text" name="username" id="username"
-                    class="form-control form-control-lg"
+                    class="form-control"
                     value="{{username}}"
                     placeholder="{{#cleanstr}}username{{/cleanstr}}"
                     autocomplete="username"
-                    style="min-height:50px;border-radius:14px;border:2px solid #C8E6C9;font-size:1rem;">
+                    style="min-height:44px;border-radius:6px;border:1px solid #cbd5e1;font-size:0.92rem;">
             </div>
 
             <div class="login-form-password form-group mb-3">
-                <label for="password" class="fw-bold mb-1" style="color:#1B4332;font-size:0.9rem;">{{#str}} password {{/str}}</label>
+                <label for="password" class="mb-1" style="color:#334155;font-size:0.85rem;font-weight:600;">{{#str}} password {{/str}}</label>
                 <input type="password" name="password" id="password" value=""
-                    class="form-control form-control-lg"
+                    class="form-control"
                     placeholder="{{#cleanstr}}password{{/cleanstr}}"
                     autocomplete="current-password"
-                    style="min-height:50px;border-radius:14px;border:2px solid #C8E6C9;font-size:1rem;">
+                    style="min-height:44px;border-radius:6px;border:1px solid #cbd5e1;font-size:0.92rem;">
             </div>
 
-            <div class="login-form-submit">
-                <button class="btn btn-success btn-lg w-100" type="submit" id="loginbtn"
-                    style="min-height:52px;border-radius:14px;font-weight:800;background:#1B4332;border-color:#1B4332;font-size:1.05rem;">
-                    🔐 {{#str}}login{{/str}}
+            <div class="login-form-submit mb-3">
+                <button class="btn btn-primary w-100" type="submit" id="loginbtn"
+                    style="min-height:44px;border-radius:6px;font-weight:600;background:#1e3a2f;border-color:#1e3a2f;font-size:0.95rem;color:#ffffff;">
+                    {{#str}}login{{/str}}
                 </button>
             </div>
         </form>
 
         <!-- 1-Click Instant Role Login (CSRF logintoken Preserved) -->
         <div class="mx-instant-login-box" aria-label="1-Click Instant Login">
-            <div style="font-size:0.85rem;font-weight:800;color:#1B4332;margin-bottom:10px;text-align:center;" id="mx-instant-heading">
-                ⚡ 1-Chạm Đăng nhập Tức thì (1-Click Instant Login)
+            <div style="font-size:0.8rem;font-weight:600;color:#64748b;margin-bottom:8px;text-align:center;" id="mx-instant-heading">
+                Đăng nhập mẫu thử nghiệm (1-Click Test Login)
             </div>
 
             <button type="button" id="mx-1click-farmer" class="mx-instant-btn"
-                onclick="mxInstantLogin('nd_rau_lamdong', 'MX!Rau2026')"
-                style="background:#1B4332;color:#FFFFFF;border:2px solid #1B4332;">
-                <span>👨‍🌾 <span id="mx-role-farmer-lbl">Nông dân (Học & Nhật ký)</span></span>
-                <span style="font-size:0.78rem;background:rgba(255,255,255,0.18);padding:3px 8px;border-radius:8px;">nd_rau_lamdong →</span>
+                onclick="mxInstantLogin('nd_rau_lamdong', 'MX!Rau2026')">
+                <span id="mx-role-farmer-lbl">Nông dân (Học &amp; Nhật ký)</span>
+                <span style="font-size:0.75rem;color:#64748b;">nd_rau_lamdong</span>
             </button>
 
             <button type="button" id="mx-1click-cbkt" class="mx-instant-btn"
-                onclick="mxInstantLogin('cbkt_pilot', 'MX!Canbo2026')"
-                style="background:#2E7D32;color:#FFFFFF;border:2px solid #2E7D32;">
-                <span>👨‍🔬 <span id="mx-role-cbkt-lbl">Cán bộ Kỹ thuật (Chấm & Báo cáo)</span></span>
-                <span style="font-size:0.78rem;background:rgba(255,255,255,0.18);padding:3px 8px;border-radius:8px;">cbkt_pilot →</span>
+                onclick="mxInstantLogin('cbkt_pilot', 'MX!Canbo2026')">
+                <span id="mx-role-cbkt-lbl">Cán bộ Kỹ thuật (Chấm &amp; Báo cáo)</span>
+                <span style="font-size:0.75rem;color:#64748b;">cbkt_pilot</span>
             </button>
 
             <button type="button" id="mx-1click-admin" class="mx-instant-btn"
-                onclick="mxInstantLogin('admin', 'Admin!2026MX')"
-                style="background:#FFFFFF;color:#1B4332;border:2px solid #1B4332;">
-                <span>🛡️ <span id="mx-role-admin-lbl">Quản trị viên Hệ thống</span></span>
-                <span style="font-size:0.78rem;background:#E8F5E9;padding:3px 8px;border-radius:8px;">admin →</span>
+                onclick="mxInstantLogin('admin', 'Admin!2026MX')">
+                <span id="mx-role-admin-lbl">Quản trị viên Hệ thống</span>
+                <span style="font-size:0.75rem;color:#64748b;">admin</span>
             </button>
         </div>
     {{/showloginform}}
@@ -108,7 +103,12 @@ function mxInstantLogin(user, pass) {
     }
     uInput.value = user;
     pInput.value = pass;
-    form.submit();
+    var btn = document.getElementById('loginbtn');
+    if (btn) {
+        btn.click();
+    } else {
+        form.submit();
+    }
 }
 
 (function() {
@@ -117,19 +117,21 @@ function mxInstantLogin(user, pass) {
     var enBtn = document.getElementById('mx-lang-en');
     if (viBtn && enBtn) {
         if (isEn) {
-            enBtn.classList.add('active');
+            enBtn.style.color = '#1e3a2f';
+            enBtn.style.fontWeight = '700';
             document.getElementById('mx-login-title').textContent = 'High-Tech Agriculture Training LMS';
-            document.getElementById('mx-login-subtitle').textContent = 'Interactive Lessons • Voice Reader • VietGAP QR Traceability';
+            document.getElementById('mx-login-subtitle').textContent = 'Online Academic Modules & VietGAP Traceability';
             var h = document.getElementById('mx-instant-heading');
-            if (h) h.textContent = '⚡ 1-Click Instant Role Login';
+            if (h) h.textContent = '1-Click Instant Role Login';
             var rf = document.getElementById('mx-role-farmer-lbl');
-            if (rf) rf.textContent = 'Farmer (Courses & VietGAP)';
+            if (rf) rf.textContent = 'Farmer (Learning & Diary)';
             var rc = document.getElementById('mx-role-cbkt-lbl');
-            if (rc) rc.textContent = 'Tech Officer (Rubric & CSV)';
+            if (rc) rc.textContent = 'Tech Officer (Grading & Reports)';
             var ra = document.getElementById('mx-role-admin-lbl');
             if (ra) ra.textContent = 'System Administrator';
         } else {
-            viBtn.classList.add('active');
+            viBtn.style.color = '#1e3a2f';
+            viBtn.style.fontWeight = '700';
         }
     }
 })();

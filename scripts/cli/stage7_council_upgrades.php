@@ -589,10 +589,10 @@ $DB->set_field('course_sections', 'availability', $availSec4, ['course' => $tplc
 
 // Add Certificate Unlock Module inside Section 4 requiring Quiz grade >= 70%
 $certPageHtml = '<div style="background:linear-gradient(135deg,#1B4332,#2E7D32);color:#FFF;border-radius:22px;padding:26px;text-align:center;">'
-    . '<div style="font-size:3rem;margin-bottom:8px;">🎓</div>'
+    . '<div style="font-size:3rem;margin-bottom:8px;"></div>'
     . '<h3 style="color:#FFF;font-weight:900;">Chúc mừng bạn đã hoàn thành Lộ trình 4 Bước & Đạt >= 70% Bài Kiểm tra!</h3>'
     . '<p style="color:#D8F3DC;max-width:640px;margin:10px auto 18px;">Chứng nhận Số ký mật mã <strong>HMAC-SHA256</strong> và Huy hiệu Kỹ thuật của bạn đã được kích hoạt tự động. Nhấn nút bên dưới để xem bản in Web, tải file PDF chuẩn Tiếng Việt và quét mã QR xác thực.</p>'
-    . '<a href="/local/mamxanhcert/index.php" class="btn btn-warning" style="min-height:52px;display:inline-flex;align-items:center;border-radius:14px;font-weight:900;color:#1B4332;padding:0 26px;">📜 Mở & Tải Chứng nhận Số QR Ngay →</a>'
+    . '<a href="/local/mamxanhcert/index.php" class="btn btn-warning" style="min-height:52px;display:inline-flex;align-items:center;border-radius:14px;font-weight:900;color:#1B4332;padding:0 26px;">Mở & Tải Chứng nhận Số QR Ngay →</a>'
     . '</div>';
 
 $availCertMod = json_encode([

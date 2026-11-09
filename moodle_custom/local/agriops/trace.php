@@ -12,7 +12,7 @@ $PAGE->set_pagelayout('standard');
 
 $title = local_mamxanhapp_t('Hộ chiếu Truy xuất Nguồn gốc Nông sản VietGAP', 'VietGAP Digital Agricultural Traceability Passport');
 $PAGE->set_title($title);
-$PAGE->set_heading('🌿 ' . $title);
+$PAGE->set_heading('' . $title);
 
 $batch = null;
 $farmer = null;
@@ -37,7 +37,7 @@ echo $OUTPUT->header();
     <?php if (!$batch): ?>
     <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:28px;text-align:center;">
         <h3 style="color:#1B4332;font-weight:800;margin-bottom:12px;">
-            🔍 <?php echo s(local_mamxanhapp_t('Tra cứu Mã Lô Nông sản VietGAP', 'Lookup VietGAP Batch Code')); ?>
+            <?php echo s(local_mamxanhapp_t('Tra cứu Mã Lô Nông sản VietGAP', 'Lookup VietGAP Batch Code')); ?>
         </h3>
         <form method="get" action="<?php echo (new moodle_url('/local/agriops/trace.php'))->out(false); ?>" class="d-flex flex-wrap justify-content-center" style="gap:10px;">
             <input type="text" name="code" class="form-control" style="max-width:340px;min-height:48px;border-radius:12px;" placeholder="VD: VG-LD-202611-0001" value="<?php echo s($code); ?>">
@@ -54,7 +54,7 @@ echo $OUTPUT->header();
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:16px;">
             <div>
                 <span style="display:inline-block;background:#D8F3DC;color:#1B4332;padding:6px 14px;border-radius:999px;font-weight:800;font-size:0.88rem;margin-bottom:8px;">
-                    🛡️ <?php echo s(local_mamxanhapp_t('ĐÃ XÁC THỰC NGUỒN GỐC VIETGAP', 'VERIFIED VIETGAP TRACEABILITY PASSPORT')); ?>
+                    <?php echo s(local_mamxanhapp_t('ĐÃ XÁC THỰC NGUỒN GỐC VIETGAP', 'VERIFIED VIETGAP TRACEABILITY PASSPORT')); ?>
                 </span>
                 <h2 style="color:#1B4332;font-weight:800;margin-bottom:4px;"><?php echo s($batch->product_name); ?></h2>
                 <div style="font-size:0.95rem;color:#4E6358;">
@@ -67,25 +67,25 @@ echo $OUTPUT->header();
 
         <div class="row mb-4" style="background:#F4FBF6;border-radius:18px;padding:16px;margin:0;">
             <div class="col-md-6 mb-2">
-                <strong>👨‍🌾 <?php echo s(local_mamxanhapp_t('Nông hộ sản xuất:', 'Producer Household:')); ?></strong><br>
+                <strong><?php echo s(local_mamxanhapp_t('Nông hộ sản xuất:', 'Producer Household:')); ?></strong><br>
                 <?php echo s(($profile ? $profile->farm_name . ' — ' : '') . ($farmer ? fullname($farmer) : '')); ?>
             </div>
             <div class="col-md-6 mb-2">
-                <strong>📍 <?php echo s(local_mamxanhapp_t('Vùng trồng & Tọa độ GPS:', 'Region & GPS Coordinates:')); ?></strong><br>
+                <strong><?php echo s(local_mamxanhapp_t('Vùng trồng & Tọa độ GPS:', 'Region & GPS Coordinates:')); ?></strong><br>
                 <?php echo s($batch->region); ?> (<code><?php echo s($profile ? ($profile->gps_lat . ', ' . $profile->gps_lng) : '11.9404, 108.4583'); ?></code>)
             </div>
             <div class="col-md-6">
-                <strong>📐 <?php echo s(local_mamxanhapp_t('Quy mô & Sản lượng:', 'Scale & Expected Yield:')); ?></strong><br>
+                <strong><?php echo s(local_mamxanhapp_t('Quy mô & Sản lượng:', 'Scale & Expected Yield:')); ?></strong><br>
                 <?php echo number_format((int)$batch->area_m2); ?> m² • <?php echo number_format((int)$batch->expected_yield_kg); ?> kg
             </div>
             <div class="col-md-6">
-                <strong>🔐 <?php echo s(local_mamxanhapp_t('Mã băm bảo mật:', 'Verification Token:')); ?></strong><br>
+                <strong><?php echo s(local_mamxanhapp_t('Mã băm bảo mật:', 'Verification Token:')); ?></strong><br>
                 <code><?php echo s($batch->qr_token); ?></code>
             </div>
         </div>
 
         <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
-            📜 <?php echo s(local_mamxanhapp_t('Nhật ký Canh tác Điện tử Minh bạch (' . count($logs) . ' bản ghi)', 'Transparent Cultivation Timeline (' . count($logs) . ' logs)')); ?>
+            <?php echo s(local_mamxanhapp_t('Nhật ký Canh tác Điện tử Minh bạch (' . count($logs) . ' bản ghi)', 'Transparent Cultivation Timeline (' . count($logs) . ' logs)')); ?>
         </h4>
         <div class="table-responsive">
             <table class="table table-bordered align-middle mb-0">
@@ -101,7 +101,7 @@ echo $OUTPUT->header();
                     <?php foreach ($logs as $lg): ?>
                     <tr>
                         <td><?php echo userdate($lg->log_time, '%d/%m/%Y %H:%M'); ?></td>
-                        <td><?php echo s($lg->notes); ?> <?php echo !empty($lg->voice_input) ? '🎙️' : ''; ?></td>
+                        <td><?php echo s($lg->notes); ?> <?php echo !empty($lg->voice_input) ? '' : ''; ?></td>
                         <td><code>pH <?php echo s($lg->ph_val); ?> | EC <?php echo s($lg->ec_val); ?></code></td>
                         <td><span class="badge bg-success"><?php echo (int)$lg->phi_days; ?> <?php echo s(local_mamxanhapp_t('ngày', 'days')); ?></span></td>
                     </tr>

@@ -298,7 +298,7 @@ $PAGE->set_context($syscontext);
 $PAGE->set_url(new moodle_url('/local/mamxanhapp/clone_course.php'));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(local_mamxanhapp_t('Nhân bản Khóa học Địa phương (1-Click Cloner) - Mầm Xanh LMS 2.0', '1-Click Local Course Cloner - Mam Xanh LMS 2.0'));
-$PAGE->set_heading(local_mamxanhapp_t('🧬 Công cụ Nhân bản Khóa học Mẫu theo Địa phương (1-Click Course Cloner)', '🧬 1-Click Master Course Cloner for Local Regions'));
+$PAGE->set_heading(local_mamxanhapp_t('Công cụ Nhân bản Khóa học Mẫu theo Địa phương (1-Click Course Cloner)', '1-Click Master Course Cloner for Local Regions'));
 
 echo $OUTPUT->header();
 ?>
@@ -309,7 +309,7 @@ echo $OUTPUT->header();
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:16px;">
             <div>
                 <span style="display:inline-block;background:rgba(255,255,255,0.2);padding:5px 14px;border-radius:999px;font-size:0.84rem;font-weight:800;margin-bottom:8px;">
-                    🧬 MOODLE BACKUP & RESTORE CONTROLLER ENGINE
+                    MOODLE BACKUP & RESTORE CONTROLLER ENGINE
                 </span>
                 <h2 style="color:#FFF;font-weight:900;font-size:1.55rem;margin-bottom:6px;">
                     <?php echo s(local_mamxanhapp_t(
@@ -334,7 +334,7 @@ echo $OUTPUT->header();
 
     <?php if ($cloneerror !== ''): ?>
     <div class="alert alert-danger" style="border-radius:16px;font-weight:700;border-width:2px;">
-        ⚠️ <?php echo s($cloneerror); ?>
+        <?php echo s($cloneerror); ?>
     </div>
     <?php endif; ?>
 
@@ -344,10 +344,10 @@ echo $OUTPUT->header();
         <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
             <div>
                 <span style="background:#1B4332;color:#FFF;padding:5px 14px;border-radius:999px;font-weight:900;font-size:0.82rem;">
-                    ✅ <?php echo s(local_mamxanhapp_t('NHÂN BẢN THÀNH CÔNG 100%', 'CLONED SUCCESSFULLY 100%')); ?> • <?php echo s($cloneresult->elapsed . 's'); ?>
+                    <?php echo s(local_mamxanhapp_t('NHÂN BẢN THÀNH CÔNG 100%', 'CLONED SUCCESSFULLY 100%')); ?> • <?php echo s($cloneresult->elapsed . 's'); ?>
                 </span>
                 <h3 style="color:#1B4332;font-weight:900;font-size:1.4rem;margin:10px 0 6px;">
-                    🌱 <?php echo s($cloneresult->fullname); ?>
+                    <?php echo s($cloneresult->fullname); ?>
                     <code style="font-size:0.95rem;background:#FFF;padding:3px 10px;border-radius:8px;color:#1B4332;">[<?php echo s($cloneresult->shortname); ?>]</code>
                 </h3>
                 <p style="color:#263238;margin-bottom:10px;font-weight:600;">
@@ -362,7 +362,7 @@ echo $OUTPUT->header();
                 <div class="d-flex flex-wrap" style="gap:8px;">
                     <?php foreach ($cloneresult->modcounts as $mname => $mc): ?>
                     <span style="background:#FFFFFF;border:1.5px solid #81C784;color:#1B4332;padding:5px 12px;border-radius:999px;font-weight:800;font-size:0.84rem;">
-                        📦 <?php echo s(strtoupper($mname)); ?>: <?php echo (int)$mc->cnt; ?>
+                        <?php echo s(strtoupper($mname)); ?>: <?php echo (int)$mc->cnt; ?>
                     </span>
                     <?php endforeach; ?>
                 </div>
@@ -370,7 +370,7 @@ echo $OUTPUT->header();
 
             <div>
                 <a href="<?php echo $cloneresult->courseurl; ?>" id="mx-open-cloned-course-btn" class="btn btn-success" style="min-height:54px;display:inline-flex;align-items:center;gap:8px;border-radius:16px;font-weight:900;font-size:1.02rem;background:#1B4332;border-color:#1B4332;padding:0 24px;">
-                    🚀 <?php echo s(local_mamxanhapp_t('Mở Khóa học Địa phương Vừa Tạo →', 'Open Newly Cloned Local Course →')); ?>
+                    <?php echo s(local_mamxanhapp_t('Mở Khóa học Địa phương Vừa Tạo →', 'Open Newly Cloned Local Course →')); ?>
                 </a>
             </div>
         </div>
@@ -382,7 +382,7 @@ echo $OUTPUT->header();
         <div class="col-12 col-lg-7 mb-4">
             <section style="background:#FFFFFF;border:2px solid #C8E6C9;border-radius:24px;padding:24px;box-shadow:0 8px 22px rgba(27,67,50,0.06);">
                 <h3 style="color:#1B4332;font-weight:900;font-size:1.25rem;margin-bottom:16px;">
-                    ⚡ <?php echo s(local_mamxanhapp_t('Khởi tạo Lớp Tập huấn Địa phương Mới (1-Chạm)', 'Create New Regional Training Class (1-Click)')); ?>
+                    <?php echo s(local_mamxanhapp_t('Khởi tạo Lớp Tập huấn Địa phương Mới (1-Chạm)', 'Create New Regional Training Class (1-Click)')); ?>
                 </h3>
 
                 <form method="post" action="<?php echo (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false); ?>" id="mx-course-cloner-form">
@@ -429,7 +429,7 @@ echo $OUTPUT->header();
                             <select name="cohortid" id="mx-clone-cohort" class="form-control" style="width:100%;max-width:100%;min-height:50px;border-radius:14px;border:2px solid #81C784;font-weight:700;">
                                 <?php foreach ($cohorts as $ch): ?>
                                 <option value="<?php echo (int)$ch->id; ?>">
-                                    📍 <?php echo s($ch->name); ?> (<?php echo (int)($cohortcounts[(int)$ch->id] ?? 0); ?> <?php echo s(local_mamxanhapp_t('nông hộ', 'farmers')); ?>)
+                                    <?php echo s($ch->name); ?> (<?php echo (int)($cohortcounts[(int)$ch->id] ?? 0); ?> <?php echo s(local_mamxanhapp_t('nông hộ', 'farmers')); ?>)
                                 </option>
                                 <?php endforeach; ?>
                                 <option value="0"><?php echo s(local_mamxanhapp_t('-- Chưa gán Cohort (Mở tự ghi danh) --', '-- No Cohort (Open Self-Enrolment) --')); ?></option>
@@ -439,7 +439,7 @@ echo $OUTPUT->header();
 
                     <button type="submit" id="mx-clone-submit-btn" class="btn btn-success w-100 mt-2"
                             style="min-height:54px;border-radius:16px;font-weight:900;font-size:1.05rem;background:#1B4332;border-color:#1B4332;">
-                        🧬 <?php echo s(local_mamxanhapp_t('Nhân bản ngay (Clone Khóa học Địa phương)', 'Clone Course Now (1-Click Backup & Restore)')); ?>
+                        <?php echo s(local_mamxanhapp_t('Nhân bản ngay (Clone Khóa học Địa phương)', 'Clone Course Now (1-Click Backup & Restore)')); ?>
                     </button>
                 </form>
             </section>
@@ -448,7 +448,7 @@ echo $OUTPUT->header();
         <div class="col-12 col-lg-5 mb-4">
             <section style="background:#F4FBF6;border:2px solid #B7E4C7;border-radius:24px;padding:22px;height:100%;">
                 <h4 style="color:#1B4332;font-weight:900;font-size:1.12rem;margin-bottom:12px;">
-                    📋 <?php echo s(local_mamxanhapp_t('Quy chuẩn Khóa học Mẫu được Bảo toàn 100% khi Nhân bản', '100% Preserved Master Course Blueprint')); ?>
+                    <?php echo s(local_mamxanhapp_t('Quy chuẩn Khóa học Mẫu được Bảo toàn 100% khi Nhân bản', '100% Preserved Master Course Blueprint')); ?>
                 </h4>
                 <ul style="padding-left:18px;line-height:1.75;color:#14281D;font-weight:600;margin-bottom:16px;">
                     <li><strong>Bước 1 (Chuyên đề 1):</strong> Video MP4 thực tế có phụ đề <code>.vtt</code> + Xem trực tiếp Sổ tay PDF kỹ thuật (<code>RESOURCELIB_DISPLAY_EMBED</code>).</li>
@@ -457,7 +457,7 @@ echo $OUTPUT->header();
                     <li><strong>Bước 4 (Chuyên đề 4):</strong> Bài kiểm tra Quiz 12 câu (Ngân hàng câu hỏi đầy đủ) — đạt <code>&ge; 70%</code> tự động mở khóa Chứng nhận Số QR <code>HMAC-SHA256</code>.</li>
                 </ul>
                 <div style="background:#FFFFFF;border-radius:16px;padding:14px;border:1.5px solid #A5D6A7;font-size:0.88rem;color:#2E7D32;font-weight:700;">
-                    💡 <?php echo s(local_mamxanhapp_t(
+                    <?php echo s(local_mamxanhapp_t(
                         'Mẹo cho Cán bộ Kỹ thuật: Sau khi nhân bản, mọi ID điều kiện mở khóa tuần tự (Availability JSON) và Sổ điểm Gradebook đều được Moodle tự động ánh xạ sang lớp địa phương mới!',
                         'Tip: All Restrict Access module IDs and Gradebook categories are automatically remapped to the new local course!'
                     )); ?>

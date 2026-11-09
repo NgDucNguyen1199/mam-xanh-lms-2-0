@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('action', '', PARAM_
     $note = optional_param('checkin_note', '', PARAM_TEXT);
 
     if (!fieldpractice_validate_token($fp, $codeinput)) {
-        $msg = local_mamxanhapp_t('⚠️ Mã QR điểm danh đã hết hạn hoặc không khớp. Vui lòng quét mã mới trên màn hình Cán bộ kỹ thuật.', '⚠️ Rotating QR code expired or invalid. Please scan the active garden QR code.');
+        $msg = local_mamxanhapp_t('Mã QR điểm danh đã hết hạn hoặc không khớp. Vui lòng quét mã mới trên màn hình Cán bộ kỹ thuật.', 'Rotating QR code expired or invalid. Please scan the active garden QR code.');
         $msgtype = 'danger';
     } else {
         $existing = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $userid]);
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('action', '', PARAM_
                 'graded_time'     => 0,
             ]);
         }
-        $msg = local_mamxanhapp_t('✅ Đã điểm danh Thực hành Tại vườn kèm tọa độ GPS thành công!', '✅ Garden QR & GPS attendance recorded successfully!');
+        $msg = local_mamxanhapp_t('Đã điểm danh Thực hành Tại vườn kèm tọa độ GPS thành công!', 'Garden QR & GPS attendance recorded successfully!');
     }
 }
 
@@ -90,7 +90,7 @@ echo $OUTPUT->header();
         </a>
         <?php if ($cangrade): ?>
         <a href="<?php echo $gradeurl; ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;background:#1B4332;">
-            📝 <?php echo s(local_mamxanhapp_t('Mở Bảng Chấm điểm Rubric 4 Tiêu chí (CBKT)', 'Open 4-Criteria Rubric Grading (Instructor)')); ?>
+            <?php echo s(local_mamxanhapp_t('Mở Bảng Chấm điểm Rubric 4 Tiêu chí (CBKT)', 'Open 4-Criteria Rubric Grading (Instructor)')); ?>
         </a>
         <?php endif; ?>
     </div>
@@ -104,7 +104,7 @@ echo $OUTPUT->header();
     <!-- Activity Intro & Station Info -->
     <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;margin-bottom:20px;">
         <span style="display:inline-block;background:#E8F5E9;color:#1B4332;padding:5px 14px;border-radius:999px;font-weight:800;font-size:0.85rem;margin-bottom:8px;">
-            📍 <?php echo s($fp->location_name . ' (' . $fp->target_lat . ', ' . $fp->target_lng . ')'); ?>
+            <?php echo s($fp->location_name . ' (' . $fp->target_lat . ', ' . $fp->target_lng . ')'); ?>
         </span>
         <h3 style="color:#1B4332;font-weight:800;margin-bottom:10px;"><?php echo format_string($fp->name); ?></h3>
         <?php if (!empty($fp->intro)): ?>
@@ -119,7 +119,7 @@ echo $OUTPUT->header();
         <div class="col-lg-6 mb-4">
             <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
                 <h4 style="color:#1B4332;font-weight:800;margin-bottom:12px;">
-                    📲 <?php echo s(local_mamxanhapp_t('Điểm danh Thực hành Bằng QR Xoay vòng & GPS', 'Rotating QR & GPS Garden Check-In')); ?>
+                    <?php echo s(local_mamxanhapp_t('Điểm danh Thực hành Bằng QR Xoay vòng & GPS', 'Rotating QR & GPS Garden Check-In')); ?>
                 </h4>
 
                 <div class="d-flex align-items-center mb-3" style="gap:16px;background:#F4FBF6;padding:14px;border-radius:18px;">
@@ -157,7 +157,7 @@ echo $OUTPUT->header();
                     </div>
 
                     <button type="submit" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#1B4332;">
-                        📍 <?php echo s(local_mamxanhapp_t('Xác nhận Điểm danh Tại Vườn', 'Confirm Garden Check-In')); ?>
+                        <?php echo s(local_mamxanhapp_t('Xác nhận Điểm danh Tại Vườn', 'Confirm Garden Check-In')); ?>
                     </button>
                 </form>
             </div>
@@ -167,12 +167,12 @@ echo $OUTPUT->header();
         <div class="col-lg-6 mb-4">
             <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
                 <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
-                    📊 <?php echo s(local_mamxanhapp_t('Phiếu Kết quả Chấm điểm Rubric 4 Tiêu chí', '4-Criteria Field Rubric Scorecard')); ?>
+                    <?php echo s(local_mamxanhapp_t('Phiếu Kết quả Chấm điểm Rubric 4 Tiêu chí', '4-Criteria Field Rubric Scorecard')); ?>
                 </h4>
 
                 <?php if (!$mysub || $mysub->total_grade === null): ?>
                 <div style="background:#F8FCF9;border:1.5px dashed #81C784;border-radius:18px;padding:24px;text-align:center;">
-                    <div style="font-size:2.4rem;margin-bottom:8px;">⏳</div>
+                    <div style="font-size:2.4rem;margin-bottom:8px;"></div>
                     <div style="font-weight:700;color:#1B4332;margin-bottom:6px;">
                         <?php echo $mysub
                             ? s(local_mamxanhapp_t('Đã điểm danh lúc ' . date('H:i d/m/Y', (int)$mysub->checkin_time) . ' — Đang chờ Cán bộ kỹ thuật chấm Rubric.', 'Checked in — Waiting for Instructor Rubric evaluation.'))
@@ -210,7 +210,7 @@ echo $OUTPUT->header();
 
                 <?php if (!empty($mysub->feedback)): ?>
                 <div style="background:#F4FBF6;border-left:4px solid #2E7D32;padding:12px 14px;border-radius:10px;font-size:0.92rem;">
-                    <strong>💬 <?php echo s(local_mamxanhapp_t('Nhận xét của Cán bộ kỹ thuật:', 'Instructor Feedback:')); ?></strong><br>
+                    <strong><?php echo s(local_mamxanhapp_t('Nhận xét của Cán bộ kỹ thuật:', 'Instructor Feedback:')); ?></strong><br>
                     <?php echo s($mysub->feedback); ?>
                 </div>
                 <?php endif; ?>

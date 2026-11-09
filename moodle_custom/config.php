@@ -50,7 +50,8 @@ $CFG->cachedir      = '/var/moodledata/cache';
 $CFG->localcachedir = '/tmp/moodle_localcache';
 $CFG->tempdir       = '/tmp/moodle_temp';
 
-$CFG->directorypermissions = 02775;
+$CFG->directorypermissions = 0777;
+$CFG->filepermissions      = 0666;
 $CFG->admin = 'admin';
 
 // 4. Redis 7 In-Memory Session Handler
@@ -72,5 +73,8 @@ $CFG->slasharguments      = 1;
 $CFG->noemailever         = true;
 $CFG->additionalhtmlhead  = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1B4332"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
 $CFG->mamxanh_hmac_secret = getenv('MAMXANH_HMAC_SECRET') ?: 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
+
+$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debugdisplay = 0;
 
 require_once(__DIR__ . '/lib/setup.php');

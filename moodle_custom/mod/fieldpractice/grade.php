@@ -76,19 +76,19 @@ echo $OUTPUT->header();
             ← <?php echo s(local_mamxanhapp_t('Quay lại trang Thực hành', 'Back to Activity')); ?>
         </a>
         <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;background:#1B4332;">
-            📊 <?php echo s(local_mamxanhapp_t('Về Trung tâm Báo cáo CBKT', 'Instructor Analytics Hub')); ?>
+            <?php echo s(local_mamxanhapp_t('Về Trung tâm Báo cáo CBKT', 'Instructor Analytics Hub')); ?>
         </a>
     </div>
 
     <?php if ($savedmsg !== ''): ?>
     <div class="alert alert-success" id="mx-rubric-saved-alert" style="border-radius:16px;font-weight:800;border:2px solid #2E7D32;">
-        ✅ <?php echo s($savedmsg); ?>
+        <?php echo s($savedmsg); ?>
     </div>
     <?php endif; ?>
 
     <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;">
         <h3 style="color:#1B4332;font-weight:800;margin-bottom:6px;">
-            📝 <?php echo s(local_mamxanhapp_t('Chấm điểm Thực hành Tại vườn theo Rubric 4 Tiêu chí', '4-Criteria Field Practice Rubric Evaluation')); ?>
+            <?php echo s(local_mamxanhapp_t('Chấm điểm Thực hành Tại vườn theo Rubric 4 Tiêu chí', '4-Criteria Field Practice Rubric Evaluation')); ?>
         </h3>
         <p style="color:#4E6358;margin-bottom:18px;">
             <strong><?php echo format_string($fp->name); ?></strong> — <?php echo s(local_mamxanhapp_t('Mỗi tiêu chí tối đa 25 điểm (Tổng 100 điểm, tự động ghi thẳng vào Sổ điểm Gradebook).', 'Each criterion is worth 0–25 pts (Total 100 pts, pushed directly to Moodle Gradebook).')); ?>
@@ -121,7 +121,7 @@ echo $OUTPUT->header();
                             </form>
                             <strong><?php echo s(fullname($lu)); ?></strong> (<code><?php echo s($lu->username); ?></code>)<br>
                             <?php if ($sub && !empty($sub->checkin_time)): ?>
-                                <small class="text-success fw-bold">📍 GPS: <?php echo s($sub->gps_lat . ',' . $sub->gps_lng); ?></small>
+                                <small class="text-success fw-bold">GPS: <?php echo s($sub->gps_lat . ',' . $sub->gps_lng); ?></small>
                             <?php else: ?>
                                 <small class="text-muted">Chấm trực tiếp hiện trường</small>
                             <?php endif; ?>
@@ -136,7 +136,7 @@ echo $OUTPUT->header();
                         <td><input form="<?php echo $formid; ?>" type="text" name="feedback" class="form-control" value="<?php echo s($sub->feedback ?? 'Thao tác pha dinh dưỡng và an toàn sinh học đúng chuẩn VietGAP.'); ?>" style="min-height:44px;"></td>
                         <td>
                             <button form="<?php echo $formid; ?>" type="submit" class="btn btn-success mx-save-rubric-btn" data-username="<?php echo s($lu->username); ?>" style="min-height:46px;border-radius:12px;font-weight:800;white-space:nowrap;background:#1B4332;">
-                                💾 <?php echo s(local_mamxanhapp_t('Lưu điểm', 'Save')); ?>
+                                <?php echo s(local_mamxanhapp_t('Lưu điểm', 'Save')); ?>
                             </button>
                         </td>
                     </tr>
