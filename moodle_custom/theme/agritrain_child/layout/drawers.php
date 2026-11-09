@@ -109,11 +109,7 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 
-// 6. Contextual Back Navigation & Voice Reader (#mx-tts-player)
-$dashboardurl = ($roletype === 'cbkt' || $roletype === 'admin')
-    ? (new moodle_url('/local/mamxanhapp/manage.php'))->out(false)
-    : (new moodle_url('/local/mamxanhapp/index.php'))->out(false);
-
+// 6. Contextual Back Navigation & Wayfinding
 $mxshowtts = false;
 $mxbackurl = '';
 $mxbacklabel = '';
@@ -121,10 +117,11 @@ $mxbacklabel = '';
 if (!empty($PAGE->cm->id) && isset($COURSE->id) && (int)$COURSE->id !== SITEID) {
     $mxshowtts = true;
     $mxbackurl = (new moodle_url('/course/view.php', ['id' => $COURSE->id]))->out(false);
-    $mxbacklabel = $isen ? '← Back to Course / Dashboard' : '← Quay lại khóa học / Dashboard';
+    $cname = format_string($COURSE->shortname ?: $COURSE->fullname);
+    $mxbacklabel = $isen ? "← Quay lại: {$cname}" : "← Quay lại: {$cname}";
 } else if (strpos($PAGE->pagetype, 'course-view-') === 0 && isset($COURSE->id) && (int)$COURSE->id !== SITEID) {
-    $mxbackurl = $dashboardurl;
-    $mxbacklabel = $isen ? '← Back to Dashboard' : '← Quay lại Dashboard';
+    $mxbackurl = (new moodle_url('/my/index.php'))->out(false);
+    $mxbacklabel = $isen ? '← Quay lại Bảng điều khiển' : '← Quay lại Bảng điều khiển';
 }
 
 // 7. Language Switcher URLs preserving query parameters
@@ -137,6 +134,8 @@ if ($PAGE->has_set_url()) {
 }
 
 $curpath = $PAGE->has_set_url() ? ($PAGE->url->get_path() ?: '') : '';
+$iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
+$targetcourseid = (!empty($COURSE->id) && (int)$COURSE->id !== SITEID) ? (int)$COURSE->id : 2;
 
 $templatecontext = [
     'sitename'                  => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), 'escape' => false]),
@@ -181,20 +180,34 @@ $templatecontext = [
     'mxbackurl'                 => $mxbackurl,
     'mxbacklabel'               => $mxbacklabel,
     'mxhasback'                 => ($mxbackurl !== ''),
-    'mxdashboardurl'            => $dashboardurl,
+
+    // Secondary Subnav Links & Active States
+    'iscbktadmin'               => $iscbktadmin,
+    'mxmyurl'                   => (new moodle_url('/my/index.php'))->out(false),
+    'mxmamxanhurl'              => (new moodle_url('/local/mamxanhapp/index.php'))->out(false),
+    'mxclonerurl'               => (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false),
+    'mxcourseurl'               => (new moodle_url('/course/view.php', ['id' => $targetcourseid]))->out(false),
     'mxagriopsurl'              => (new moodle_url('/local/agriops/index.php'))->out(false),
     'mxcalcurl'                 => (new moodle_url('/local/mamxanhapp/calculator.php'))->out(false),
     'mxcerturl'                 => (new moodle_url('/local/mamxanhcert/index.php'))->out(false),
     'mxprofileurl'              => (new moodle_url('/local/farmerprofile/index.php'))->out(false),
-    'navhomeactive'             => (strpos($curpath, '/local/mamxanhapp/index.php') !== false || strpos($curpath, '/local/mamxanhapp/manage.php') !== false || strpos($curpath, '/course/') !== false),
+
+    'navmyactive'               => ($PAGE->pagetype === 'my-index' || $curpath === '/my/' || $curpath === '/my/index.php'),
+    'navmamxanhactive'          => (strpos($curpath, '/local/mamxanhapp/index.php') !== false || strpos($curpath, '/local/mamxanhapp/manage.php') !== false),
+    'navcloneractive'           => (strpos($curpath, '/local/mamxanhapp/clone_course.php') !== false),
+    'navcourseactive'           => (strpos($curpath, '/course/view.php') !== false || !empty($PAGE->cm->id)),
     'navagriactive'             => (strpos($curpath, '/local/agriops/') !== false),
     'navcalcactive'             => (strpos($curpath, '/local/mamxanhapp/calculator.php') !== false),
     'navcertactive'             => (strpos($curpath, '/local/mamxanhcert/') !== false),
     'navprofactive'             => (strpos($curpath, '/local/farmerprofile/') !== false),
-    'lbl_nav_home'              => ($roletype === 'cbkt' || $roletype === 'admin') ? ($isen ? 'Manage' : 'Quản lý') : ($isen ? 'Courses' : 'Khóa học'),
-    'lbl_nav_agri'              => $isen ? 'VietGAP' : 'Nhật ký',
+
+    'lbl_nav_my'                => $isen ? 'Dashboard' : 'Bảng điều khiển',
+    'lbl_nav_mamxanh'           => $isen ? 'Smart Agriculture' : 'Không gian Nông nghiệp',
+    'lbl_nav_cloner'            => $isen ? 'Course Cloner' : 'Nhân bản khóa học',
+    'lbl_nav_course'            => $isen ? 'Course' : 'Khóa học',
+    'lbl_nav_agri'              => $isen ? 'VietGAP Log' : 'Nhật ký VietGAP',
     'lbl_nav_calc'              => $isen ? 'Tools' : 'Công cụ',
-    'lbl_nav_cert'              => $isen ? 'Certs' : 'Chứng nhận',
+    'lbl_nav_cert'              => $isen ? 'Certificates' : 'Chứng nhận',
     'lbl_nav_prof'              => $isen ? 'Farm' : 'Nông hộ',
 ];
 

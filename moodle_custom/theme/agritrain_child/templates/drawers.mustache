@@ -45,15 +45,26 @@
     <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
         <div id="topofscroll" class="main-inner">
 
-            <!-- Minimal secondary tab row (replaces the former floating dock) -->
+            <!-- Minimal secondary tab row (Wayfinding Navigation) -->
             {{#showsubnav}}
             <nav class="mx-subnav d-print-none" aria-label="{{ lbl_subnav }}">
                 <div class="mx-subnav-inner">
-                    <a href="{{{ mxdashboardurl }}}" class="{{#navhomeactive}}active{{/navhomeactive}}">{{ lbl_nav_home }}</a>
+                    <a href="{{{ mxmyurl }}}" class="{{#navmyactive}}active{{/navmyactive}}">{{ lbl_nav_my }}</a>
+                    <a href="{{{ mxmamxanhurl }}}" class="{{#navmamxanhactive}}active{{/navmamxanhactive}}">{{ lbl_nav_mamxanh }}</a>
+                    {{#iscbktadmin}}
+                    <a href="{{{ mxclonerurl }}}" class="{{#navcloneractive}}active{{/navcloneractive}}">{{ lbl_nav_cloner }}</a>
+                    {{/iscbktadmin}}
+                    {{^iscbktadmin}}
+                    <a href="{{{ mxcourseurl }}}" class="{{#navcourseactive}}active{{/navcourseactive}}">{{ lbl_nav_course }}</a>
+                    {{/iscbktadmin}}
                     <a href="{{{ mxagriopsurl }}}" class="{{#navagriactive}}active{{/navagriactive}}">{{ lbl_nav_agri }}</a>
+                    {{^iscbktadmin}}
                     <a href="{{{ mxcalcurl }}}" class="{{#navcalcactive}}active{{/navcalcactive}}">{{ lbl_nav_calc }}</a>
+                    {{/iscbktadmin}}
                     <a href="{{{ mxcerturl }}}" class="{{#navcertactive}}active{{/navcertactive}}">{{ lbl_nav_cert }}</a>
+                    {{^iscbktadmin}}
                     <a href="{{{ mxprofileurl }}}" class="{{#navprofactive}}active{{/navprofactive}}">{{ lbl_nav_prof }}</a>
+                    {{/iscbktadmin}}
                     <span class="mx-subnav-lang">
                         <a href="{{{ langviurl }}}" class="{{#isvi}}active{{/isvi}}" id="mx-switch-vi">VI</a>
                         <span aria-hidden="true">/</span>
@@ -480,6 +491,31 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() { clearInterval(timer); }, 600000);
     }
     initH5pButtonsEnhancer();
+
+    // Calendar month day click enhancement: direct navigation to day events
+    function enhanceCalendarClicks() {
+        document.querySelectorAll('.block_calendar_month td.clickable').forEach(function(td) {
+            var ts = td.dataset.dayTimestamp;
+            if (ts) {
+                td.querySelectorAll('a[data-action="view-day-link"]').forEach(function(a) {
+                    a.setAttribute('href', '/calendar/view.php?view=day&time=' + ts);
+                    a.removeAttribute('tabindex');
+                });
+                td.style.cursor = 'pointer';
+                if (!td.__mxCalBound) {
+                    td.__mxCalBound = true;
+                    td.addEventListener('click', function(e) {
+                        if (!e.target.closest('a')) {
+                            window.location.href = '/calendar/view.php?view=day&time=' + ts;
+                        }
+                    });
+                }
+            }
+        });
+    }
+    enhanceCalendarClicks();
+    setTimeout(enhanceCalendarClicks, 500);
+    setTimeout(enhanceCalendarClicks, 1500);
 });
 
 if ('serviceWorker' in navigator) {

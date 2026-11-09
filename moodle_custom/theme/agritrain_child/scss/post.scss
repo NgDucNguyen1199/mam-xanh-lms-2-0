@@ -254,57 +254,137 @@ body {
 }
 
 // -------------------------------------------------------------------
-// 3. MINIMAL SECONDARY NAV BAR (.mx-subnav)
+// 3. MINIMAL SECONDARY NAV BAR (.mx-subnav) & WAYFINDING
 // -------------------------------------------------------------------
 .mx-subnav {
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
-    padding: 8px 24px;
-    margin-bottom: 24px;
+    padding: 6px 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
 
 .mx-subnav-inner {
-    max-width: 1140px;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .mx-subnav a {
     color: #475569;
-    text-decoration: none;
+    text-decoration: none !important;
     font-weight: 600;
     font-size: 0.88rem;
-    padding: 6px 14px;
+    padding: 8px 14px;
     border-radius: 6px;
-    transition: color 0.15s ease, background 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    border-bottom: 2px solid transparent;
 }
 
 .mx-subnav a:hover {
-    color: #0f172a;
+    color: #0f172a !important;
     background: #f1f5f9;
 }
 
 .mx-subnav a.active {
-    color: #1e3a2f;
-    background: #eef5f1;
-    font-weight: 700;
+    color: #166534 !important;
+    background: #f0fdf4 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #166534 !important;
 }
 
 .mx-subnav-lang {
     margin-left: auto;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     font-size: 0.82rem;
     color: #94a3b8;
+    padding-left: 12px;
 }
 
 .mx-subnav-lang a {
     padding: 4px 8px;
     font-weight: 700;
     font-size: 0.82rem;
+    border-radius: 4px;
+}
+
+// Fixed/Prominent 1-Click Wayfinding Back Button
+.mx-back-nav-bar {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+
+    .mx-back-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        background-color: #ffffff !important;
+        color: #166534 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        text-decoration: none !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+        transition: all 0.15s ease;
+
+        &:hover,
+        &:focus {
+            background-color: #f8fafc !important;
+            border-color: #166534 !important;
+            color: #0f5132 !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08) !important;
+            transform: translateY(-1px);
+        }
+    }
+}
+
+// Clean Academic Breadcrumb Styling
+.breadcrumb {
+    background: transparent !important;
+    padding: 4px 0 !important;
+    margin-bottom: 12px !important;
+    font-size: 0.86rem !important;
+
+    .breadcrumb-item {
+        color: #64748b !important;
+
+        + .breadcrumb-item::before {
+            color: #94a3b8 !important;
+            content: "/" !important;
+            padding: 0 8px !important;
+        }
+
+        a {
+            color: #166534 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+
+            &:hover {
+                text-decoration: underline !important;
+                color: #0f5132 !important;
+            }
+        }
+
+        &.active {
+            color: #334155 !important;
+            font-weight: 600 !important;
+        }
+    }
 }
 
 // -------------------------------------------------------------------
@@ -1150,15 +1230,37 @@ iframe.h5p-iframe {
             font-size: 0.85rem !important;
             padding: 6px 2px !important;
 
+            &.hasevent,
             &.hasevents {
                 font-weight: 700 !important;
                 color: #166534 !important;
+
+                .day-number-circle {
+                    background-color: #dcfce7 !important;
+                    color: #166534 !important;
+                    font-weight: 700 !important;
+                    border: 1px solid #86efac !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    width: 30px !important;
+                    height: 30px !important;
+                    border-radius: 50% !important;
+                    transition: all 0.15s ease !important;
+                }
+
+                &:hover .day-number-circle {
+                    background-color: #166534 !important;
+                    color: #ffffff !important;
+                    border-color: #166534 !important;
+                }
             }
 
             &.today {
                 .day-number-circle {
-                    background-color: #1e3a2f !important;
+                    background-color: #166534 !important;
                     color: #ffffff !important;
+                    font-weight: 700 !important;
                 }
             }
         }
@@ -1167,24 +1269,246 @@ iframe.h5p-iframe {
     // Upcoming events block refinements
     .block_calendar_upcoming {
         .event {
-            padding-bottom: 10px !important;
-            margin-bottom: 10px !important;
+            padding: 8px 10px !important;
+            margin-bottom: 8px !important;
             border-bottom: 1px solid #f1f5f9 !important;
+            border-radius: 6px !important;
+            transition: background-color 0.15s ease !important;
+
+            &:hover {
+                background-color: #f8fafc !important;
+            }
 
             &:last-child {
                 border-bottom: none !important;
             }
 
-            .name {
+            .name a {
                 font-size: 0.88rem !important;
                 font-weight: 600 !important;
                 color: #0f172a !important;
+                text-decoration: none !important;
+
+                &:hover {
+                    color: #166534 !important;
+                    text-decoration: underline !important;
+                }
             }
 
             .date {
-                font-size: 0.78rem !important;
+                font-size: 0.8rem !important;
                 color: #64748b !important;
+                margin-top: 2px !important;
             }
+        }
+    }
+}
+
+// -------------------------------------------------------------------
+// 12. COURSE ACTIVITY ITEMS, SCANABILITY & COMPLETION BADGES
+// -------------------------------------------------------------------
+.activity-item {
+    background: #ffffff !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 8px !important;
+    padding: 14px 18px !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+
+    &:hover {
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+    }
+
+    // Unified 24x24 Module Icons
+    .activityiconcontainer {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 0 !important;
+        margin-right: 12px !important;
+
+        .activityicon,
+        img {
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            min-height: 24px !important;
+            object-fit: contain !important;
+        }
+    }
+
+    .activityicon {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        min-height: 24px !important;
+        object-fit: contain !important;
+    }
+
+    // Activity Title & Link
+    .activityname {
+        a.aalink {
+            font-size: 0.95rem !important;
+            font-weight: 600 !important;
+            color: #0f172a !important;
+            line-height: 1.4 !important;
+            text-decoration: none !important;
+
+            &:hover {
+                color: #166534 !important;
+            }
+        }
+    }
+
+    // Activity Description & Question Text (Readability & Scanability)
+    .activity-description,
+    .activity-altcontent {
+        margin-top: 8px !important;
+        font-size: 0.88rem !important;
+        line-height: 1.6 !important;
+        color: #334155 !important;
+        padding-left: 48px;
+
+        p {
+            margin-bottom: 6px !important;
+            line-height: 1.6 !important;
+        }
+
+        strong {
+            color: #0f172a !important;
+            font-weight: 600 !important;
+        }
+
+        ul {
+            margin-bottom: 8px !important;
+        }
+
+        a {
+            color: #166534 !important;
+            text-decoration: underline !important;
+            word-break: break-all !important;
+
+            &:hover {
+                color: #0f5132 !important;
+            }
+        }
+    }
+
+    // Completion Badges (Done & To do / Mark as done)
+    .activity-completion {
+        margin-left: auto !important;
+        align-self: flex-start !important;
+
+        // Completed (Hoàn thành) -> Soft Green
+        .btn-outline-success,
+        .btn-success,
+        .badge-success {
+            background-color: #dcfce7 !important;
+            border-color: #bbf7d0 !important;
+            color: #166534 !important;
+            font-weight: 600 !important;
+            font-size: 0.8rem !important;
+            border-radius: 20px !important;
+            padding: 4px 12px !important;
+            box-shadow: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+
+            .icon,
+            i {
+                color: #166534 !important;
+                font-size: 0.8rem !important;
+            }
+
+            &:hover {
+                background-color: #bbf7d0 !important;
+                color: #14532d !important;
+            }
+        }
+
+        // To do / Mark as done (Cần làm) -> Soft Gray
+        .btn-outline-secondary,
+        .badge-secondary,
+        [data-toggletype="manual:mark-done"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #475569 !important;
+            font-weight: 500 !important;
+            font-size: 0.8rem !important;
+            border-radius: 20px !important;
+            padding: 4px 12px !important;
+            box-shadow: none !important;
+            transition: all 0.15s ease !important;
+
+            &:hover {
+                background-color: #e2e8f0 !important;
+                border-color: #cbd5e1 !important;
+                color: #0f172a !important;
+            }
+        }
+
+        .completion-dropdown .dropdown-toggle {
+            &::after {
+                margin-left: 4px !important;
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------
+// 13. MOBILE RESPONSIVENESS (375x812 VIEWPORT)
+// -------------------------------------------------------------------
+@media (max-width: 768px) {
+    .mx-subnav {
+        padding: 6px 10px !important;
+    }
+
+    .mx-subnav-inner {
+        gap: 2px !important;
+
+        a {
+            padding: 6px 10px !important;
+            font-size: 0.82rem !important;
+        }
+    }
+
+    .mx-back-nav-bar {
+        width: 100% !important;
+
+        .mx-back-nav-btn {
+            width: 100% !important;
+            min-height: 44px !important;
+            justify-content: center !important;
+        }
+    }
+
+    .activity-item {
+        padding: 10px 12px !important;
+
+        .activity-description,
+        .activity-altcontent {
+            padding-left: 0 !important;
+        }
+
+        .activity-grid {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .activity-completion {
+            margin-top: 8px !important;
+            margin-left: 0 !important;
+            align-self: flex-start !important;
         }
     }
 }
