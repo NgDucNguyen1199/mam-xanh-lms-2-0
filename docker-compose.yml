@@ -76,6 +76,7 @@ services:
       - ./moodle_custom/local/agriops:/var/www/html/local/agriops
       - ./moodle_custom/local/mamxanhcert:/var/www/html/local/mamxanhcert
       - ./moodle_custom/mod/fieldpractice:/var/www/html/mod/fieldpractice
+      - ./moodle_custom/mod/attendance:/var/www/html/mod/attendance
       - ./moodle_custom/theme/agritrain_child:/var/www/html/theme/agritrain_child
       - ./moodle_custom/pwa/manifest.json:/var/www/html/manifest.json:ro
       - ./moodle_custom/pwa/sw.js:/var/www/html/sw.js:ro
@@ -128,6 +129,7 @@ services:
       - ./moodle_custom/local/agriops:/var/www/html/local/agriops
       - ./moodle_custom/local/mamxanhcert:/var/www/html/local/mamxanhcert
       - ./moodle_custom/mod/fieldpractice:/var/www/html/mod/fieldpractice
+      - ./moodle_custom/mod/attendance:/var/www/html/mod/attendance
       - ./moodle_custom/theme/agritrain_child:/var/www/html/theme/agritrain_child
       - ./scripts:/opt/mamxanh/scripts
       - ./backups:/opt/mamxanh/backups

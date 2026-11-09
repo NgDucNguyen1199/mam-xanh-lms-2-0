@@ -26,9 +26,10 @@ if (isloggedin() && !isguestuser() && !is_siteadmin() && in_array($reqpath, $adm
 }
 
 // 3. Smart Post-Login & Home Routing for Farmers and CBKT
+// Note: /my/index.php is preserved for direct user access to standard customizable Dashboard
 if (isloggedin() && !isguestuser() && !$PAGE->user_is_editing()) {
     $noredir = optional_param('noredir', 0, PARAM_INT);
-    if (!$noredir && in_array($PAGE->pagetype, ['site-index', 'my-index'], true)) {
+    if (!$noredir && in_array($PAGE->pagetype, ['site-index'], true)) {
         $syscontext = context_system::instance();
         if (!is_siteadmin()) {
             if (has_capability('local/mamxanhapp:manage', $syscontext)) {
@@ -49,7 +50,10 @@ if (strpos($CFG->additionalhtmlhead ?? '', '/manifest.json') === false) {
 $addblockbutton = $OUTPUT->addblockbutton();
 $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhapp_user_role_type() : 'farmer';
 
-if (isloggedin() && ($roletype === 'admin' || $roletype === 'cbkt')) {
+if ($PAGE->pagetype === 'my-index') {
+    $blockdraweropen = true;
+    $courseindexopen = false;
+} else if (isloggedin() && ($roletype === 'admin' || $roletype === 'cbkt')) {
     $courseindexopen = (get_user_preferences('drawer-open-index', false) == true);
     $blockdraweropen = (get_user_preferences('drawer-open-block', false) == true);
 } else {
@@ -154,6 +158,16 @@ $templatecontext = [
     'overflow'                  => $overflow,
     'headercontent'             => $headercontent,
     'addblockbutton'            => $addblockbutton,
+
+    // Customizable Dashboard Controls
+    'ismyindex'                 => ($PAGE->pagetype === 'my-index'),
+    'is_editing'                => $PAGE->user_is_editing(),
+    'resetpageurl'              => (new moodle_url('/my/index.php', ['edit' => 1, 'reset' => 1, 'sesskey' => sesskey()]))->out(false),
+    'stopediturl'               => (new moodle_url('/my/index.php', ['edit' => 0]))->out(false),
+    'startediturl'              => (new moodle_url('/my/index.php', ['edit' => 1]))->out(false),
+    'str_resetpage'             => $isen ? 'Reset page to default' : 'Đặt lại trang về mặc định',
+    'str_stopedit'              => $isen ? 'Stop customising this page' : 'Ngừng chỉnh sửa trang này',
+    'str_startedit'             => $isen ? 'Customise this page' : 'Chỉnh sửa trang này',
 
     // AgTech Smart UI Context
     'isdashboard'               => (strpos($curpath, '/local/mamxanhapp/index.php') !== false),

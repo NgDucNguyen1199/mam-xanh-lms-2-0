@@ -110,6 +110,23 @@
                 </div>
             {{/secondarymoremenu}}
 
+            {{#ismyindex}}
+            <div class="mx-dashboard-customise-bar d-flex justify-content-between align-items-center mb-3 px-3 d-print-none">
+                <div class="mx-dashboard-breadcrumbs">
+                    <span class="text-muted small">Dashboard &gt; My courses</span>
+                </div>
+                <div class="mx-dashboard-actions d-flex gap-2">
+                    {{#is_editing}}
+                    <a href="{{{ resetpageurl }}}" class="btn btn-sm btn-success mx-btn-reset">{{ str_resetpage }}</a>
+                    <a href="{{{ stopediturl }}}" class="btn btn-sm btn-success mx-btn-stopedit">{{ str_stopedit }}</a>
+                    {{/is_editing}}
+                    {{^is_editing}}
+                    <a href="{{{ startediturl }}}" class="btn btn-sm btn-success mx-btn-startedit">{{ str_startedit }}</a>
+                    {{/is_editing}}
+                </div>
+            </div>
+            {{/ismyindex}}
+
             <div id="page-content" class="pb-3 d-print-block">
                 <div id="region-main-box">
                     {{#hasregionmainsettingsmenu}}
