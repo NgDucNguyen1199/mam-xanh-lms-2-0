@@ -132,8 +132,6 @@ body {
 .popover-region-Messages,
 .popover-region-footer-container,
 .popover-region-header-container,
-.content-item-container,
-.notification-message,
 .context-header-settings-menu,
 .dropdown-menu,
 [data-region="popover-region-content"] {
@@ -160,18 +158,52 @@ body {
     font-size: 0.95rem !important;
 }
 
+// Notification Items: Unified, seamless background with NO patchy text boxes
 .content-item-container {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
     border-bottom: 1px solid #f1f5f9 !important;
     padding: 12px 16px !important;
     transition: background-color 0.12s ease !important;
 }
 
-.content-item-container.unread {
+// Unread notification: Unified soft mint background, seamless 1 single color throughout
+.content-item-container.unread,
+.popover-region-Notifications .content-item-container.unread {
+    background: #f0fdf4 !important;
     background-color: #f0fdf4 !important;
+    border-left: 3px solid #16a34a !important;
 }
 
-.content-item-container:hover {
-    background-color: #f8fafc !important;
+// Hover state: Seamless soft highlight across entire card
+.content-item-container:hover,
+.content-item-container.unread:hover,
+.popover-region-Notifications .content-item-container:hover,
+.popover-region-Notifications .content-item-container.unread:hover {
+    background: #f1f5f9 !important;
+    background-color: #f1f5f9 !important;
+}
+
+// CRUCIAL: All nested elements inside notification inherit background (NEVER patch white-on-green)
+.content-item-container *,
+.content-item-container .notification-message,
+.content-item-container .content-item-body,
+.content-item-container .content-item-footer,
+.content-item-container .view-notification,
+.content-item-container .notification-image,
+.content-item-container .timestamp,
+.content-item-container p,
+.content-item-container span,
+.content-item-container div,
+.content-item-container a,
+.content-item-container h1,
+.content-item-container h2,
+.content-item-container h3,
+.content-item-container h4,
+.content-item-container h5,
+.content-item-container h6 {
+    background: transparent !important;
+    background-color: transparent !important;
 }
 
 .content-item-container .content-item-body {
@@ -182,6 +214,7 @@ body {
 .content-item-container .notification-message {
     color: #0f172a !important;
     font-weight: 500 !important;
+    line-height: 1.45 !important;
 }
 
 .content-item-container .timestamp {
