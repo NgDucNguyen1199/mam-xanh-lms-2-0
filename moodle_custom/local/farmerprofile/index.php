@@ -67,26 +67,26 @@ echo $OUTPUT->header();
 
 <div class="mx-profile-wrap">
     <div class="mb-3">
-        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-secondary">
             <?php echo s(local_mamxanhapp_t('← Quay lại Dashboard', '← Back to Dashboard')); ?>
         </a>
     </div>
 
     <?php if ($savednotice): ?>
-    <div class="alert alert-success" style="border-radius:16px;font-weight:700;border:2px solid #2E7D32;">
+    <div class="alert alert-success mb-4" style="border-radius:8px;">
         <?php echo s(local_mamxanhapp_t('Đã lưu Hồ sơ Nông hộ và tự động đồng bộ vào Tổ hợp tác (Cohort) vùng trồng thành công!', 'Farm household profile saved and automatically synced to your regional Cohort!')); ?>
     </div>
     <?php endif; ?>
 
     <div class="row">
         <div class="col-lg-7 mb-4">
-            <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;">
-                <h3 style="color:#1B4332;font-weight:800;font-size:1.3rem;margin-bottom:14px;">
+            <div class="mx-card p-4">
+                <h3 class="h3 mb-3">
                     <?php echo s(local_mamxanhapp_t('Cập nhật Thông tin Nông hộ & Định vị Vườn', 'Update Farm Household & Garden Coordinates')); ?>
                 </h3>
 
                 <?php if ($cohortname !== ''): ?>
-                <div style="background:#E8F5E9;color:#1B4332;padding:10px 14px;border-radius:14px;font-weight:700;margin-bottom:16px;font-size:0.92rem;">
+                <div class="p-2 mb-3 rounded small fw-bold" style="background:#F1F5F9;color:#334155;border:1px solid #E2E8F0;">
                     <?php echo s(local_mamxanhapp_t('Cohort đã đồng bộ: ', 'Synced Cohort: ') . $cohortname); ?>
                 </div>
                 <?php endif; ?>
@@ -97,13 +97,13 @@ echo $OUTPUT->header();
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_farm_name"><?php echo s(local_mamxanhapp_t('Tên Nông hộ / Trang trại', 'Farm Household Name')); ?></label>
-                        <input type="text" id="id_farm_name" name="farm_name" class="form-control" required value="<?php echo s($profile->farm_name); ?>" style="min-height:48px;border-radius:12px;">
+                        <input type="text" id="id_farm_name" name="farm_name" class="form-control" required value="<?php echo s($profile->farm_name); ?>">
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold" for="id_region"><?php echo s(local_mamxanhapp_t('Vùng trồng (Tự động đồng bộ Cohort)', 'Growing Region (Auto Cohort Sync)')); ?></label>
-                            <select id="id_region" name="region" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;" onchange="mxUpdateRegionGps(this.value)">
+                            <select id="id_region" name="region" class="form-control" onchange="mxUpdateRegionGps(this.value)">
                                 <?php foreach (['Lâm Đồng', 'Đắk Lắk', 'Đồng Nai'] as $r): ?>
                                 <option value="<?php echo s($r); ?>" <?php echo ($profile->region === $r) ? 'selected' : ''; ?>><?php echo s($r); ?></option>
                                 <?php endforeach; ?>
@@ -111,18 +111,18 @@ echo $OUTPUT->header();
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold" for="id_area_m2"><?php echo s(local_mamxanhapp_t('Diện tích canh tác (m²)', 'Cultivation Area (m²)')); ?></label>
-                            <input type="number" id="id_area_m2" name="area_m2" class="form-control" required min="50" max="1000000" value="<?php echo (int)$profile->area_m2; ?>" style="min-height:48px;border-radius:12px;font-weight:700;">
+                            <input type="number" id="id_area_m2" name="area_m2" class="form-control fw-bold" required min="50" max="1000000" value="<?php echo (int)$profile->area_m2; ?>">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-7 mb-3">
                             <label class="form-label fw-bold" for="id_main_crop"><?php echo s(local_mamxanhapp_t('Loại cây trồng chủ lực', 'Primary Crop')); ?></label>
-                            <input type="text" id="id_main_crop" name="main_crop" class="form-control" required value="<?php echo s($profile->main_crop); ?>" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_main_crop" name="main_crop" class="form-control" required value="<?php echo s($profile->main_crop); ?>">
                         </div>
                         <div class="col-md-5 mb-3">
                             <label class="form-label fw-bold" for="id_cert_standard"><?php echo s(local_mamxanhapp_t('Tiêu chuẩn canh tác', 'Standard')); ?></label>
-                            <select id="id_cert_standard" name="cert_standard" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;">
+                            <select id="id_cert_standard" name="cert_standard" class="form-control">
                                 <?php foreach (['VietGAP', 'GlobalGAP', 'Organic Hữu cơ', 'Đang chuyển đổi VietGAP'] as $std): ?>
                                 <option value="<?php echo s($std); ?>" <?php echo ($profile->cert_standard === $std) ? 'selected' : ''; ?>><?php echo s($std); ?></option>
                                 <?php endforeach; ?>
@@ -133,21 +133,21 @@ echo $OUTPUT->header();
                     <div class="row align-items-end">
                         <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_gps_lat"><?php echo s(local_mamxanhapp_t('Vĩ độ GPS (Lat)', 'GPS Latitude')); ?></label>
-                            <input type="text" id="id_gps_lat" name="gps_lat" class="form-control" required value="<?php echo s($profile->gps_lat); ?>" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_gps_lat" name="gps_lat" class="form-control" required value="<?php echo s($profile->gps_lat); ?>">
                         </div>
                         <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_gps_lng"><?php echo s(local_mamxanhapp_t('Kinh độ GPS (Lng)', 'GPS Longitude')); ?></label>
-                            <input type="text" id="id_gps_lng" name="gps_lng" class="form-control" required value="<?php echo s($profile->gps_lng); ?>" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_gps_lng" name="gps_lng" class="form-control" required value="<?php echo s($profile->gps_lng); ?>">
                         </div>
                         <div class="col-12 col-md-4 mb-3">
-                            <button type="button" class="btn btn-outline-success w-100" onclick="mxCaptureFarmGps()" style="min-height:48px;border-radius:12px;font-weight:700;border-width:2px;">
+                            <button type="button" class="btn btn-secondary w-100" onclick="mxCaptureFarmGps()">
                                 <?php echo s(local_mamxanhapp_t('Lấy GPS hiện tại', 'Get Live GPS')); ?>
                             </button>
                         </div>
                     </div>
-                    <div id="mx-gps-status" style="font-size:0.85rem;color:#2E7D32;font-weight:700;margin-bottom:12px;"></div>
+                    <div id="mx-gps-status" class="small fw-bold mb-3" style="color:#166534;"></div>
 
-                    <button type="submit" class="btn btn-success w-100" style="min-height:52px;border-radius:14px;font-weight:800;font-size:1.05rem;background:#1B4332;border-color:#1B4332;">
+                    <button type="submit" class="btn btn-primary w-100">
                         <?php echo s(local_mamxanhapp_t('Lưu Hồ sơ & Đồng bộ Cohort Vùng trồng', 'Save Profile & Sync Regional Cohort')); ?>
                     </button>
                 </form>
@@ -155,11 +155,11 @@ echo $OUTPUT->header();
         </div>
 
         <div class="col-lg-5 mb-4">
-            <div style="background:linear-gradient(145deg,#1B4332,#2E7D32);color:#FFF;border-radius:24px;padding:24px;height:100%;">
-                <h4 style="color:#FFF;font-weight:800;margin-bottom:12px;">
+            <div class="mx-card p-4 h-100" style="background:#F8FAFC !important;">
+                <h4 class="h4 mb-3">
                     <?php echo s(local_mamxanhapp_t('Lợi ích Đồng bộ Hồ sơ Nông hộ', 'Benefits of Household Cohort Sync')); ?>
                 </h4>
-                <ul style="line-height:1.8;color:#E8F5E9;padding-left:20px;">
+                <ul class="text-muted" style="line-height:1.8;padding-left:20px;">
                     <li><?php echo s(local_mamxanhapp_t('Tự động xếp vào Tổ hợp tác (Cohort) Lâm Đồng, Đắk Lắk hoặc Đồng Nai.', 'Automatic assignment to Lam Dong, Dak Lak, or Dong Nai regional Cohorts.')); ?></li>
                     <li><?php echo s(local_mamxanhapp_t('Cập nhật bản tin cảnh báo thời tiết tiểu vùng chính xác cho vườn của bạn.', 'Personalizes micro-climate spraying & irrigation alerts on your dashboard.')); ?></li>
                     <li><?php echo s(local_mamxanhapp_t('Gắn tọa độ GPS xác thực lên tem QR truy xuất nguồn gốc nông sản VietGAP.', 'Embeds verified GPS coordinates onto your VietGAP QR traceability labels.')); ?></li>
@@ -177,13 +177,13 @@ echo $OUTPUT->header();
           ORDER BY fp.region ASC, fp.area_m2 DESC
         ");
     ?>
-    <section style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:22px;margin-top:8px;">
-        <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
+    <section class="mx-card p-4 mt-4">
+        <h4 class="h4 mb-3">
             <?php echo s(local_mamxanhapp_t('Danh bạ Nông hộ Đã Đồng bộ Cohort (' . count($allprofiles) . ' hộ)', 'Synced Farmer Household Directory (' . count($allprofiles) . ' households)')); ?>
         </h4>
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead style="background:#E8F5E9;color:#1B4332;">
+            <table class="generaltable table-hover align-middle mb-0">
+                <thead>
                     <tr>
                         <th><?php echo s(local_mamxanhapp_t('Nông dân', 'Farmer')); ?></th>
                         <th><?php echo s(local_mamxanhapp_t('Tên Nông hộ', 'Household')); ?></th>

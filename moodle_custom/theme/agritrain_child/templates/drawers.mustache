@@ -128,11 +128,11 @@
                 </div>
                 <div class="mx-dashboard-actions d-flex gap-2">
                     {{#is_editing}}
-                    <a href="{{{ resetpageurl }}}" class="btn btn-sm btn-success mx-btn-reset">{{ str_resetpage }}</a>
-                    <a href="{{{ stopediturl }}}" class="btn btn-sm btn-success mx-btn-stopedit">{{ str_stopedit }}</a>
+                    <a href="{{{ resetpageurl }}}" class="btn btn-sm btn-secondary mx-btn-reset">{{ str_resetpage }}</a>
+                    <a href="{{{ stopediturl }}}" class="btn btn-sm btn-primary mx-btn-stopedit">{{ str_stopedit }}</a>
                     {{/is_editing}}
                     {{^is_editing}}
-                    <a href="{{{ startediturl }}}" class="btn btn-sm btn-success mx-btn-startedit">{{ str_startedit }}</a>
+                    <a href="{{{ startediturl }}}" class="btn btn-sm btn-primary mx-btn-startedit">{{ str_startedit }}</a>
                     {{/is_editing}}
                 </div>
             </div>

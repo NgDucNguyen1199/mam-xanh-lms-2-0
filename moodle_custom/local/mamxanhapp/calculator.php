@@ -29,20 +29,20 @@ echo $OUTPUT->header();
 
 <div class="mx-toolkit-wrap">
     <div class="mb-3">
-        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-secondary">
             <?php echo s(local_mamxanhapp_t('← Quay lại Dashboard', '← Back to Dashboard')); ?>
         </a>
     </div>
 
     <!-- Interactive Navigation Pills -->
     <div class="d-flex flex-wrap mb-4" style="gap:10px;" role="tablist">
-        <button type="button" class="btn btn-success mx-tool-tab active" data-target="mx-tab-fert" onclick="mxSwitchToolTab('mx-tab-fert', this)" style="min-height:48px;border-radius:14px;font-weight:800;padding:0 18px;background:#1B4332;border-color:#1B4332;">
+        <button type="button" class="btn mx-tool-tab active" data-target="mx-tab-fert" onclick="mxSwitchToolTab('mx-tab-fert', this)">
             <?php echo s(local_mamxanhapp_t('1. Máy tính Pha Phân & Tưới Nhỏ giọt', '1. Fertigation & Drip Calculator')); ?>
         </button>
-        <button type="button" class="btn btn-outline-success mx-tool-tab" data-target="mx-tab-leaf" onclick="mxSwitchToolTab('mx-tab-leaf', this)" style="min-height:48px;border-radius:14px;font-weight:800;padding:0 18px;border-width:2px;">
+        <button type="button" class="btn mx-tool-tab" data-target="mx-tab-leaf" onclick="mxSwitchToolTab('mx-tab-leaf', this)">
             <?php echo s(local_mamxanhapp_t('2. Chẩn đoán Triệu chứng Lá bệnh IPM', '2. Leaf Symptom & IPM Diagnostic')); ?>
         </button>
-        <button type="button" class="btn btn-outline-success mx-tool-tab" data-target="mx-tab-weather" onclick="mxSwitchToolTab('mx-tab-weather', this)" style="min-height:48px;border-radius:14px;font-weight:800;padding:0 18px;border-width:2px;">
+        <button type="button" class="btn mx-tool-tab" data-target="mx-tab-weather" onclick="mxSwitchToolTab('mx-tab-weather', this)">
             <?php echo s(local_mamxanhapp_t('3. Trạm Cảnh báo Thời tiết Tiểu vùng', '3. Micro-Climate Spray Advisory')); ?>
         </button>
     </div>
@@ -50,11 +50,11 @@ echo $OUTPUT->header();
     <!-- ========================================================== -->
     <!-- TOOL 1: FERTIGATION & DRIP IRRIGATION CALCULATOR           -->
     <!-- ========================================================== -->
-    <section id="mx-tab-fert" class="mx-tool-pane" style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;margin-bottom:24px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.35rem;margin-bottom:8px;">
+    <section id="mx-tab-fert" class="mx-tool-pane mx-card p-4 mb-4">
+        <h3 class="h3 mb-2">
             <?php echo s(local_mamxanhapp_t('Máy tính Pha Dinh dưỡng A-B & Lịch Tưới Nhỏ giọt Tự động', 'Automated A-B Fertigation & Drip Schedule Calculator')); ?>
         </h3>
-        <p style="color:#4E6358;margin-bottom:20px;">
+        <p class="text-muted mb-4">
             <?php echo s(local_mamxanhapp_t(
                 'Tự động tính lượng dung dịch mẹ Stock A, Stock B (tỷ lệ 1:100), axit hạ pH (H3PO4) và thời gian mở van tưới nhỏ giọt theo cây trồng & giai đoạn sinh trưởng.',
                 'Calculate Stock A & B concentrate volume (1:100), phosphoric acid pH buffer, and exact drip valve minutes by crop and growth stage.'
@@ -65,7 +65,7 @@ echo $OUTPUT->header();
             <div class="col-lg-6 mb-3">
                 <div class="mb-3">
                     <label for="mx-crop" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('Loại cây trồng chủ lực', 'Target Crop')); ?></label>
-                    <select id="mx-crop" class="form-control" style="min-height:48px;border-radius:12px;font-weight:600;" onchange="mxRunFertCalc()">
+                    <select id="mx-crop" class="form-control" onchange="mxRunFertCalc()">
                         <option value="leafy" data-ec="1.6" data-ph="5.8 - 6.2" data-water="3.5"><?php echo s(local_mamxanhapp_t('Rau ăn lá Thủy canh / Giá thể (Xà lách, Cải)', 'Hydroponic Leafy Greens (Lettuce, Pakchoi)')); ?></option>
                         <option value="melon" data-ec="2.4" data-ph="6.0 - 6.5" data-water="5.0"><?php echo s(local_mamxanhapp_t('Dưa lưới Nhà màng Công nghệ cao', 'Greenhouse Netted Melon')); ?></option>
                         <option value="tomato" data-ec="2.6" data-ph="5.8 - 6.3" data-water="5.5"><?php echo s(local_mamxanhapp_t('Cà chua Beef / Ớt chuông Đà Lạt', 'Greenhouse Beef Tomato / Bell Pepper')); ?></option>
@@ -75,7 +75,7 @@ echo $OUTPUT->header();
 
                 <div class="mb-3">
                     <label for="mx-stage" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('Giai đoạn sinh trưởng', 'Growth Stage')); ?></label>
-                    <select id="mx-stage" class="form-control" style="min-height:48px;border-radius:12px;font-weight:600;" onchange="mxRunFertCalc()">
+                    <select id="mx-stage" class="form-control" onchange="mxRunFertCalc()">
                         <option value="0.7"><?php echo s(local_mamxanhapp_t('1. Cây con / Hồi xanh (70% liều EC)', '1. Seedling / Recovery (70% EC)')); ?></option>
                         <option value="1.0" selected><?php echo s(local_mamxanhapp_t('2. Phát triển thân lá mạnh (100% liều EC)', '2. Vegetative Growth (100% EC)')); ?></option>
                         <option value="1.15"><?php echo s(local_mamxanhapp_t('3. Ra hoa - Nuôi trái (115% liều EC + giàu Kali)', '3. Flowering & Fruit Filling (115% EC + High K)')); ?></option>
@@ -86,64 +86,64 @@ echo $OUTPUT->header();
                 <div class="row">
                     <div class="col-6 mb-3">
                         <label for="mx-area" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('Diện tích vườn (m²)', 'Farm Area (m²)')); ?></label>
-                        <input type="number" id="mx-area" class="form-control" value="1000" min="50" max="100000" style="min-height:48px;border-radius:12px;font-weight:700;" oninput="mxRunFertCalc()">
+                        <input type="number" id="mx-area" class="form-control fw-bold" value="1000" min="50" max="100000" oninput="mxRunFertCalc()">
                     </div>
                     <div class="col-6 mb-3">
                         <label for="mx-tank" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('Thể tích bồn pha (Lít)', 'Mixing Tank (Liters)')); ?></label>
-                        <input type="number" id="mx-tank" class="form-control" value="500" min="20" max="20000" style="min-height:48px;border-radius:12px;font-weight:700;" oninput="mxRunFertCalc()">
+                        <input type="number" id="mx-tank" class="form-control fw-bold" value="500" min="20" max="20000" oninput="mxRunFertCalc()">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-6 mb-3">
                         <label for="mx-raw-ec" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('EC nước đầu vào (mS/cm)', 'Source Water EC')); ?></label>
-                        <input type="number" id="mx-raw-ec" class="form-control" value="0.2" step="0.1" min="0" max="2.0" style="min-height:48px;border-radius:12px;font-weight:700;" oninput="mxRunFertCalc()">
+                        <input type="number" id="mx-raw-ec" class="form-control fw-bold" value="0.2" step="0.1" min="0" max="2.0" oninput="mxRunFertCalc()">
                     </div>
                     <div class="col-6 mb-3">
                         <label for="mx-emitter" class="form-label fw-bold"><?php echo s(local_mamxanhapp_t('Lưu lượng đầu nhỏ giọt (L/h)', 'Drip Emitter (L/hr)')); ?></label>
-                        <input type="number" id="mx-emitter" class="form-control" value="2.0" step="0.5" min="0.5" max="20" style="min-height:48px;border-radius:12px;font-weight:700;" oninput="mxRunFertCalc()">
+                        <input type="number" id="mx-emitter" class="form-control fw-bold" value="2.0" step="0.5" min="0.5" max="20" oninput="mxRunFertCalc()">
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-success w-100" onclick="mxRunFertCalc()" style="min-height:50px;border-radius:14px;font-weight:800;background:#1B4332;border-color:#1B4332;">
+                <button type="button" class="btn btn-primary w-100" onclick="mxRunFertCalc()">
                     <?php echo s(local_mamxanhapp_t('Tính toán Công thức Pha & Giờ Tưới', 'Calculate Exact Fertigation Formula')); ?>
                 </button>
             </div>
 
             <div class="col-lg-6">
-                <div id="mx-fert-result" style="background:linear-gradient(145deg,#F1F8E9,#E8F5E9);border:2px solid #81C784;border-radius:20px;padding:22px;height:100%;">
-                    <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
+                <div id="mx-fert-result" class="mx-card p-4 h-100" style="background:#F8FAFC !important;">
+                    <h4 class="h4 mb-3">
                         <?php echo s(local_mamxanhapp_t('Kết quả Khuyến nghị Kỹ thuật', 'Recommended Field Recipe')); ?>
                     </h4>
                     <div class="row text-center mb-3">
                         <div class="col-6 mb-2">
-                            <div style="background:#FFF;border-radius:14px;padding:12px;border:1px solid #C8E6C9;">
-                                <div style="font-size:0.8rem;color:#4E6358;font-weight:700;">EC MỤC TIÊU / TARGET EC</div>
-                                <div id="res-target-ec" style="font-size:1.55rem;font-weight:800;color:#1B4332;">1.60 mS/cm</div>
+                            <div class="p-3 bg-white rounded border">
+                                <div class="small text-muted fw-bold">EC MỤC TIÊU / TARGET EC</div>
+                                <div id="res-target-ec" class="h3 mb-0" style="color:#1E3A2F;">1.60 mS/cm</div>
                             </div>
                         </div>
                         <div class="col-6 mb-2">
-                            <div style="background:#FFF;border-radius:14px;padding:12px;border:1px solid #C8E6C9;">
-                                <div style="font-size:0.8rem;color:#4E6358;font-weight:700;">NGƯỠNG pH CHUẨN</div>
-                                <div id="res-target-ph" style="font-size:1.55rem;font-weight:800;color:#2E7D32;">5.8 - 6.2</div>
+                            <div class="p-3 bg-white rounded border">
+                                <div class="small text-muted fw-bold">NGƯỠNG pH CHUẨN</div>
+                                <div id="res-target-ph" class="h3 mb-0" style="color:#166534;">5.8 - 6.2</div>
                             </div>
                         </div>
                     </div>
 
-                    <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.98rem;">
-                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn A (Ca(NO3)2 + Fe-EDDHA):', 'Stock Solution A (Calcium + Iron):')); ?></strong> <span id="res-stock-a" style="font-weight:800;color:#1B4332;">2.10 Lít</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn B (MKP + KNO3 + MgSO4 + Vi lượng):', 'Stock Solution B (NPK + Mg + Micro):')); ?></strong> <span id="res-stock-b" style="font-weight:800;color:#1B4332;">2.10 Lít</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Axit H3PO4 85% điều chỉnh pH dự kiến:', 'Estimated H3PO4 pH Down:')); ?></strong> <span id="res-acid" style="font-weight:800;color:#C62828;">35 ml</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Tổng lượng nước tưới cả vườn/ngày:', 'Total Daily Irrigation Volume:')); ?></strong> <span id="res-daily-water" style="font-weight:800;color:#1B4332;">3,500 Lít/ngày</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Thời gian mở van nhỏ giọt (chia 4 lần/ngày):', 'Drip Valve Duration (4 pulses/day):')); ?></strong> <span id="res-drip-mins" style="font-weight:800;color:#2E7D32;">13 phút / lần</span></li>
+                    <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.95rem;">
+                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn A (Ca(NO3)2 + Fe-EDDHA):', 'Stock Solution A (Calcium + Iron):')); ?></strong> <span id="res-stock-a" class="fw-bold" style="color:#1E3A2F;">2.10 Lít</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn B (MKP + KNO3 + MgSO4 + Vi lượng):', 'Stock Solution B (NPK + Mg + Micro):')); ?></strong> <span id="res-stock-b" class="fw-bold" style="color:#1E3A2F;">2.10 Lít</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Axit H3PO4 85% điều chỉnh pH dự kiến:', 'Estimated H3PO4 pH Down:')); ?></strong> <span id="res-acid" class="fw-bold text-danger">35 ml</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Tổng lượng nước tưới cả vườn/ngày:', 'Total Daily Irrigation Volume:')); ?></strong> <span id="res-daily-water" class="fw-bold" style="color:#1E3A2F;">3,500 Lít/ngày</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Thời gian mở van nhỏ giọt (chia 4 lần/ngày):', 'Drip Valve Duration (4 pulses/day):')); ?></strong> <span id="res-drip-mins" class="fw-bold" style="color:#166534;">13 phút / lần</span></li>
                     </ul>
 
-                    <div style="margin-top:14px;background:#FFFDE7;border-left:4px solid #F9A825;padding:10px 14px;border-radius:10px;font-size:0.86rem;color:#4E342E;">
+                    <div class="p-3 mt-3 bg-white rounded border" style="border-left: 4px solid #1E3A2F !important;">
                         <strong><?php echo s(local_mamxanhapp_t('Nguyên tắc vàng:', 'Safety Rule:')); ?></strong>
-                        <?php echo s(local_mamxanhapp_t(
+                        <span class="text-muted"><?php echo s(local_mamxanhapp_t(
                             'Tuyệt đối KHÔNG đổ trực tiếp Stock A vào Stock B đậm đặc (gây kết tủa thạch cao CaSO4 làm tắc béc nhỏ giọt). Pha loãng A vào bồn nước khuấy đều 3 phút rồi mới châm B.',
                             'NEVER mix concentrated Stock A and Stock B directly (causes CaSO4 precipitation & emitter clogging). Dissolve A into water tank first, stir 3 mins, then add B.'
-                        )); ?>
+                        )); ?></span>
                     </div>
                 </div>
             </div>
@@ -153,55 +153,55 @@ echo $OUTPUT->header();
     <!-- ========================================================== -->
     <!-- TOOL 2: INTERACTIVE LEAF SYMPTOM DIAGNOSTIC                -->
     <!-- ========================================================== -->
-    <section id="mx-tab-leaf" class="mx-tool-pane" style="display:none;background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;margin-bottom:24px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.35rem;margin-bottom:8px;">
+    <section id="mx-tab-leaf" class="mx-tool-pane mx-card p-4 mb-4" style="display:none;">
+        <h3 class="h3 mb-2">
             <?php echo s(local_mamxanhapp_t('Chẩn đoán Nhanh Triệu chứng Lá bệnh & Phác đồ Sinh học IPM', 'Interactive Leaf Symptom Doctor & Biological IPM Protocol')); ?>
         </h3>
-        <p style="color:#4E6358;margin-bottom:18px;">
+        <p class="text-muted mb-4">
             <?php echo s(local_mamxanhapp_t('Bấm chọn biểu hiện thực tế trên lá/cây tại vườn để nhận phác đồ xử lý sinh học an toàn VietGAP:', 'Tap the observed symptom on your crop to view the VietGAP-compliant biological IPM treatment:')); ?>
         </p>
 
         <div class="row mb-3">
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('rust')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('rust')">
                     <?php echo s(local_mamxanhapp_t('Ổ bột màu nâu cam / gỉ sắt mặt dưới lá già', 'Orange-brown powdery pustules under older leaves')); ?>
                 </button>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('thrips')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('thrips')">
                     <?php echo s(local_mamxanhapp_t('Lá non ngọn xoăn tít, sần sùi, ánh bạc', 'Curled young shoots with silvery bronzed streaks')); ?>
                 </button>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('mealybug')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('mealybug')">
                     <?php echo s(local_mamxanhapp_t('Lớp phấn sáp trắng bám kẽ lá, cuống trái & kiến đen', 'White waxy cottony clusters on stems/fruits + ants')); ?>
                 </button>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('spidermite')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('spidermite')">
                     <?php echo s(local_mamxanhapp_t('Đốm vàng li ti mặt trên, tơ mảnh đỏ mặt dưới khi nắng nóng', 'Tiny yellow stippling & fine webbing in hot dry weather')); ?>
                 </button>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('calcium')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('calcium')">
                     <?php echo s(local_mamxanhapp_t('Cháy khô mép lá non (Tipburn) / Thối đen đít trái', 'Young leaf edge tipburn / Blossom-end rot on fruit')); ?>
                 </button>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
-                <button type="button" class="btn btn-outline-success w-100 text-start p-3" style="min-height:68px;border-radius:16px;font-weight:700;border-width:2px;" onclick="mxDiagnoseLeaf('rootrot')">
+                <button type="button" class="btn btn-secondary w-100 text-start p-3" style="min-height:60px;" onclick="mxDiagnoseLeaf('rootrot')">
                     <?php echo s(local_mamxanhapp_t('Vàng lá thối rễ, xì mủ thân khi đất bí ẩm pH thấp', 'Yellowing wilt, root rot & trunk gummosis in wet acidic soil')); ?>
                 </button>
             </div>
         </div>
 
-        <div id="mx-leaf-result" style="background:#F1F8E9;border:2px solid #66BB6A;border-radius:20px;padding:22px;">
-            <h4 id="mx-diag-title" style="color:#1B4332;font-weight:800;margin-bottom:8px;">
+        <div id="mx-leaf-result" class="mx-card p-4" style="background:#F8FAFC !important;">
+            <h4 id="mx-diag-title" class="h4 mb-2">
                 <?php echo s(local_mamxanhapp_t('Chẩn đoán: Bệnh Gỉ sắt (Puccinia / Uromyces spp.)', 'Diagnosis: Leaf Rust (Puccinia / Uromyces spp.)')); ?>
             </h4>
-            <p id="mx-diag-cause" style="color:#33691E;font-weight:600;margin-bottom:10px;">
+            <p id="mx-diag-cause" class="text-muted fw-bold mb-3">
                 <?php echo s(local_mamxanhapp_t('Nguyên nhân: Nấm phát sinh mạnh khi sương mù ẩm độ >85%, tán cây rậm rạp thiếu thông gió.', 'Cause: Fungal spores germinate rapidly under >85% humidity, morning mist, and dense canopy.')); ?>
             </p>
-            <div id="mx-diag-action" style="background:#FFF;border-radius:14px;padding:14px 16px;line-height:1.65;color:#14281D;">
+            <div id="mx-diag-action" class="p-3 bg-white rounded border" style="line-height:1.65;">
                 <strong><?php echo s(local_mamxanhapp_t('Phác đồ IPM Sinh học VietGAP:', 'VietGAP Biological IPM Protocol:')); ?></strong><br>
                 1. <?php echo s(local_mamxanhapp_t('Cắt tỉa lá bệnh già phía gốc đem tiêu hủy ngoài vườn, bật quạt đối lưu giảm ẩm.', 'Prune infected basal leaves and remove from greenhouse; increase ventilation.')); ?><br>
                 2. <?php echo s(local_mamxanhapp_t('Phun vi khuẩn đối kháng Bacillus subtilis hoặc nấm Chaetomium 20g/bình 16L vào sáng sớm.', 'Spray antagonistic Bacillus subtilis or Chaetomium bio-fungicide (20g/16L) early morning.')); ?><br>
@@ -213,22 +213,22 @@ echo $OUTPUT->header();
     <!-- ========================================================== -->
     <!-- TOOL 3: MICRO-CLIMATE WEATHER SPRAYING ADVISORY            -->
     <!-- ========================================================== -->
-    <section id="mx-tab-weather" class="mx-tool-pane" style="display:none;background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;margin-bottom:24px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.35rem;margin-bottom:16px;">
+    <section id="mx-tab-weather" class="mx-tool-pane mx-card p-4 mb-4" style="display:none;">
+        <h3 class="h3 mb-3">
             <?php echo s(local_mamxanhapp_t('Trạm Cảnh báo Thời tiết Phun tưới theo 3 Tiểu vùng Khí hậu', 'Micro-Climate Spraying & Fertigation Stations (3 Growing Regions)')); ?>
         </h3>
         <div class="row">
             <?php foreach ([$weatherld, $weatherdl, $weatherdn] as $w): ?>
             <div class="col-lg-4 mb-3">
-                <div style="background:#F8FCF9;border:2px solid #C8E6C9;border-radius:20px;padding:20px;height:100%;display:flex;flex-direction:column;justify-content:space-between;">
+                <div class="p-4 bg-white rounded border h-100 d-flex flex-column justify-content-between" style="border: 1px solid #E2E8F0 !important;">
                     <div>
-                        <span style="display:inline-block;background:#D8F3DC;color:#1B4332;padding:5px 12px;border-radius:999px;font-weight:800;font-size:0.84rem;margin-bottom:10px;">
+                        <span class="badge mb-2" style="background:#F1F5F9;color:#475569;font-size:0.78rem;font-weight:700;border:1px solid #E2E8F0;">
                             <?php echo s($w['badge']); ?>
                         </span>
-                        <h4 style="color:#1B4332;font-weight:800;font-size:1.12rem;margin-bottom:12px;">
+                        <h4 class="h4 mb-3">
                             <?php echo s($w['region']); ?>
                         </h4>
-                        <div class="row mb-3" style="font-size:0.9rem;">
+                        <div class="row mb-3 small">
                             <div class="col-6 mb-2"><strong><?php echo s($w['temp']); ?></strong></div>
                             <div class="col-6 mb-2"><strong><?php echo s($w['humidity']); ?></strong></div>
                             <div class="col-6 mb-2"><strong><?php echo s($w['wind']); ?></strong></div>
@@ -236,11 +236,11 @@ echo $OUTPUT->header();
                             <div class="col-6">UV: <strong><?php echo s($w['uv']); ?></strong></div>
                             <div class="col-6">Rain: <strong><?php echo s($w['rain_prob']); ?></strong></div>
                         </div>
-                        <p style="font-size:0.92rem;color:#263238;line-height:1.55;">
+                        <p class="small text-muted" style="line-height:1.55;">
                             <?php echo s($w['advice']); ?>
                         </p>
                     </div>
-                    <div style="background:#1B4332;color:#FFF;padding:10px 14px;border-radius:12px;font-weight:700;font-size:0.88rem;">
+                    <div class="p-2 text-center rounded small fw-bold" style="background:#F8FAFC;border:1px solid #E2E8F0;color:#0F172A;">
                         <?php echo s(local_mamxanhapp_t('Khung giờ vàng: ', 'Golden Window: ') . $w['window']); ?>
                     </div>
                 </div>

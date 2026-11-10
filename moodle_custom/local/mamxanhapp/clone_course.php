@@ -305,19 +305,19 @@ echo $OUTPUT->header();
 
 <div class="mx-cloner-wrapper" style="padding-bottom: 60px;">
     <!-- Top Header Banner -->
-    <section style="background:linear-gradient(135deg,#1B4332 0%,#2E7D32 100%);color:#FFF;border-radius:24px;padding:24px;margin-bottom:22px;box-shadow:0 12px 28px rgba(27,67,50,0.16);">
+    <section class="mx-page-header-banner">
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:16px;">
             <div>
-                <span style="display:inline-block;background:rgba(255,255,255,0.2);padding:5px 14px;border-radius:999px;font-size:0.84rem;font-weight:800;margin-bottom:8px;">
+                <span class="mx-banner-badge">
                     MOODLE BACKUP & RESTORE CONTROLLER ENGINE
                 </span>
-                <h2 style="color:#FFF;font-weight:900;font-size:1.55rem;margin-bottom:6px;">
+                <h2 class="h2 mb-1">
                     <?php echo s(local_mamxanhapp_t(
                         'Nhân bản Khóa học Mẫu theo Địa phương / Nhóm Nông dân (1-Click)',
                         '1-Click Regional Course Cloner from Master Template'
                     )); ?>
                 </h2>
-                <p style="color:#D8F3DC;margin:0;font-size:0.95rem;">
+                <p class="text-muted mb-0">
                     <?php echo s(local_mamxanhapp_t(
                         'Sao chép nguyên vẹn 100% Lộ trình tuần tự (Restrict Access), Video thực tế, Tài liệu PDF xem trực tiếp, H5P, SCORM 1.2, Thực hành Vườn & Ngân hàng câu hỏi Quiz chỉ trong vài giây.',
                         'Clone 100% of Sequential Learning Path rules, HD Videos, Inline PDFs, H5P, SCORM 1.2, Garden Practice & Quiz Question Bank in seconds.'
@@ -325,7 +325,7 @@ echo $OUTPUT->header();
                 </p>
             </div>
             <div>
-                <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-light" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;color:#1B4332;padding:0 18px;">
+                <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-secondary">
                     ← <?php echo s(local_mamxanhapp_t('Quay lại Dashboard CBKT', 'Back to CBKT Dashboard')); ?>
                 </a>
             </div>
@@ -340,17 +340,17 @@ echo $OUTPUT->header();
 
     <?php if ($cloneresult !== null): ?>
     <!-- Clone Success Result Card -->
-    <section id="mx-clone-success-card" style="background:#E8F5E9;border:3px solid #2E7D32;border-radius:24px;padding:24px;margin-bottom:24px;box-shadow:0 10px 26px rgba(46,125,50,0.14);">
+    <section id="mx-clone-success-card" class="mx-card p-4 mb-4" style="background:#F8FAFC !important;border-left:4px solid #1E3A2F !important;">
         <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
             <div>
-                <span style="background:#1B4332;color:#FFF;padding:5px 14px;border-radius:999px;font-weight:900;font-size:0.82rem;">
+                <span class="badge mb-2" style="background:#DCFCE7;color:#166534;font-size:0.8rem;font-weight:700;">
                     <?php echo s(local_mamxanhapp_t('NHÂN BẢN THÀNH CÔNG 100%', 'CLONED SUCCESSFULLY 100%')); ?> • <?php echo s($cloneresult->elapsed . 's'); ?>
                 </span>
-                <h3 style="color:#1B4332;font-weight:900;font-size:1.4rem;margin:10px 0 6px;">
+                <h3 class="h3 mb-2">
                     <?php echo s($cloneresult->fullname); ?>
-                    <code style="font-size:0.95rem;background:#FFF;padding:3px 10px;border-radius:8px;color:#1B4332;">[<?php echo s($cloneresult->shortname); ?>]</code>
+                    <code style="font-size:0.9rem;background:#F1F5F9;padding:2px 8px;border-radius:6px;color:#0F172A;">[<?php echo s($cloneresult->shortname); ?>]</code>
                 </h3>
-                <p style="color:#263238;margin-bottom:10px;font-weight:600;">
+                <p class="text-muted small mb-2">
                     • <?php echo s(local_mamxanhapp_t('Khóa học gốc:', 'Source Template:')); ?> <strong><?php echo s($cloneresult->sourcename); ?></strong><br>
                     • <?php echo s(local_mamxanhapp_t('Nhóm nông dân địa phương (Cohort):', 'Assigned Farmer Cohort:')); ?>
                     <strong><?php echo s($cloneresult->cohortname); ?></strong>
@@ -361,7 +361,7 @@ echo $OUTPUT->header();
 
                 <div class="d-flex flex-wrap" style="gap:8px;">
                     <?php foreach ($cloneresult->modcounts as $mname => $mc): ?>
-                    <span style="background:#FFFFFF;border:1.5px solid #81C784;color:#1B4332;padding:5px 12px;border-radius:999px;font-weight:800;font-size:0.84rem;">
+                    <span class="badge" style="background:#FFFFFF;border:1px solid #E2E8F0;color:#0F172A;padding:5px 12px;font-size:0.8rem;">
                         <?php echo s(strtoupper($mname)); ?>: <?php echo (int)$mc->cnt; ?>
                     </span>
                     <?php endforeach; ?>
@@ -369,7 +369,7 @@ echo $OUTPUT->header();
             </div>
 
             <div>
-                <a href="<?php echo $cloneresult->courseurl; ?>" id="mx-open-cloned-course-btn" class="btn btn-success" style="min-height:54px;display:inline-flex;align-items:center;gap:8px;border-radius:16px;font-weight:900;font-size:1.02rem;background:#1B4332;border-color:#1B4332;padding:0 24px;">
+                <a href="<?php echo $cloneresult->courseurl; ?>" id="mx-open-cloned-course-btn" class="btn btn-primary">
                     <?php echo s(local_mamxanhapp_t('Mở Khóa học Địa phương Vừa Tạo →', 'Open Newly Cloned Local Course →')); ?>
                 </a>
             </div>
@@ -380,8 +380,8 @@ echo $OUTPUT->header();
     <!-- 1-Click Clone Form + Existing Courses Catalog -->
     <div class="row">
         <div class="col-12 col-lg-7 mb-4">
-            <section style="background:#FFFFFF;border:2px solid #C8E6C9;border-radius:24px;padding:24px;box-shadow:0 8px 22px rgba(27,67,50,0.06);">
-                <h3 style="color:#1B4332;font-weight:900;font-size:1.25rem;margin-bottom:16px;">
+            <section class="mx-card p-4 h-100">
+                <h3 class="h3 mb-3">
                     <?php echo s(local_mamxanhapp_t('Khởi tạo Lớp Tập huấn Địa phương Mới (1-Chạm)', 'Create New Regional Training Class (1-Click)')); ?>
                 </h3>
 
@@ -390,10 +390,10 @@ echo $OUTPUT->header();
                     <input type="hidden" name="do_clone" value="1">
 
                     <div class="mb-3">
-                        <label for="mx-clone-source" style="font-weight:800;color:#1B4332;margin-bottom:6px;display:block;">
+                        <label for="mx-clone-source" class="form-label fw-bold">
                             1. <?php echo s(local_mamxanhapp_t('Chọn Khóa học Mẫu / Khóa học gốc cần nhân bản:', 'Select Master Template / Source Course:')); ?>
                         </label>
-                        <select name="sourcecourseid" id="mx-clone-source" class="form-control" style="width:100%;max-width:100%;min-height:50px;border-radius:14px;border:2px solid #81C784;font-weight:700;" required>
+                        <select name="sourcecourseid" id="mx-clone-source" class="form-control" required>
                             <?php foreach ($rawcourses as $rc): ?>
                             <option value="<?php echo (int)$rc->id; ?>">
                                 [<?php echo s($rc->shortname); ?>] <?php echo s(format_string($rc->fullname)); ?>
@@ -403,30 +403,28 @@ echo $OUTPUT->header();
                     </div>
 
                     <div class="mb-3">
-                        <label for="mx-clone-fullname" style="font-weight:800;color:#1B4332;margin-bottom:6px;display:block;">
+                        <label for="mx-clone-fullname" class="form-label fw-bold">
                             2. <?php echo s(local_mamxanhapp_t('Tên Lớp Tập huấn Địa phương Mới:', 'New Local Training Course Name:')); ?>
                         </label>
                         <input type="text" name="newfullname" id="mx-clone-fullname" class="form-control"
-                               style="min-height:50px;border-radius:14px;border:2px solid #81C784;font-weight:700;"
                                placeholder="VD: Tập huấn Nông dân Đơn Dương - Lâm Đồng Đợt 2"
                                value="Tập huấn Nông dân Đơn Dương - Lâm Đồng Đợt 2" required>
                     </div>
 
                     <div class="row">
                         <div class="col-12 col-md-5 mb-3">
-                            <label for="mx-clone-shortname" style="font-weight:800;color:#1B4332;margin-bottom:6px;display:block;">
+                            <label for="mx-clone-shortname" class="form-label fw-bold">
                                 3. <?php echo s(local_mamxanhapp_t('Mã Lớp (Tùy chọn):', 'Course Code (Optional):')); ?>
                             </label>
                             <input type="text" name="newshortname" id="mx-clone-shortname" class="form-control"
-                                   style="min-height:50px;border-radius:14px;border:2px solid #C8E6C9;font-weight:700;"
                                    placeholder="VD: DONDUONG-LD-02">
                         </div>
 
                         <div class="col-12 col-md-7 mb-3">
-                            <label for="mx-clone-cohort" style="font-weight:800;color:#1B4332;margin-bottom:6px;display:block;">
+                            <label for="mx-clone-cohort" class="form-label fw-bold">
                                 4. <?php echo s(local_mamxanhapp_t('Gán Tổ Hợp tác / Nhóm Nông dân (Cohort):', 'Assign Regional Farmer Cohort:')); ?>
                             </label>
-                            <select name="cohortid" id="mx-clone-cohort" class="form-control" style="width:100%;max-width:100%;min-height:50px;border-radius:14px;border:2px solid #81C784;font-weight:700;">
+                            <select name="cohortid" id="mx-clone-cohort" class="form-control">
                                 <?php foreach ($cohorts as $ch): ?>
                                 <option value="<?php echo (int)$ch->id; ?>">
                                     <?php echo s($ch->name); ?> (<?php echo (int)($cohortcounts[(int)$ch->id] ?? 0); ?> <?php echo s(local_mamxanhapp_t('nông hộ', 'farmers')); ?>)
@@ -437,8 +435,7 @@ echo $OUTPUT->header();
                         </div>
                     </div>
 
-                    <button type="submit" id="mx-clone-submit-btn" class="btn btn-success w-100 mt-2"
-                            style="min-height:54px;border-radius:16px;font-weight:900;font-size:1.05rem;background:#1B4332;border-color:#1B4332;">
+                    <button type="submit" id="mx-clone-submit-btn" class="btn btn-primary w-100 mt-2">
                         <?php echo s(local_mamxanhapp_t('Nhân bản ngay (Clone Khóa học Địa phương)', 'Clone Course Now (1-Click Backup & Restore)')); ?>
                     </button>
                 </form>

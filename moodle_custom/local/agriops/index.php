@@ -77,15 +77,15 @@ $backurl = ($roletype === 'cbkt' || $roletype === 'admin')
 echo $OUTPUT->header();
 ?>
 
-<div class="mx-agriops-wrap">
+<div class="mx-agriops-wrap mx-ops-wrapper">
     <div class="mb-3">
-        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo $backurl->out(false); ?>" class="btn btn-secondary">
             <?php echo s(local_mamxanhapp_t('← Quay lại Dashboard', '← Back to Dashboard')); ?>
         </a>
     </div>
 
     <?php if ($flashmsg !== ''): ?>
-    <div class="alert alert-success" id="mx-agriops-alert" style="border-radius:16px;font-weight:700;border:2px solid #2E7D32;">
+    <div class="alert alert-success mb-4" id="mx-agriops-alert" style="border-radius:8px;">
         <?php echo s($flashmsg); ?>
     </div>
     <?php endif; ?>
@@ -93,8 +93,8 @@ echo $OUTPUT->header();
     <div class="row">
         <!-- Create VietGAP Batch Form -->
         <div class="col-lg-5 mb-4">
-            <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
-                <h3 style="color:#1B4332;font-weight:800;font-size:1.25rem;margin-bottom:14px;">
+            <div class="mx-card p-4 h-100">
+                <h3 class="h3 mb-3">
                     <?php echo s(local_mamxanhapp_t('Tạo Lô Nông sản VietGAP Mới', 'Register New VietGAP Crop Batch')); ?>
                 </h3>
                 <form method="post" action="<?php echo (new moodle_url('/local/agriops/index.php'))->out(false); ?>" id="mx-create-batch-form">
@@ -103,18 +103,18 @@ echo $OUTPUT->header();
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_product_name"><?php echo s(local_mamxanhapp_t('Tên nông sản thương phẩm', 'Product Name')); ?></label>
-                        <input type="text" id="id_product_name" name="product_name" class="form-control" required placeholder="VD: Xà lách Thủy canh Đà Lạt / Sầu riêng Ri6" style="min-height:48px;border-radius:12px;">
+                        <input type="text" id="id_product_name" name="product_name" class="form-control" required placeholder="VD: Xà lách Thủy canh Đà Lạt / Sầu riêng Ri6">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_crop_variety"><?php echo s(local_mamxanhapp_t('Giống cây trồng / Mã lô giống', 'Seed / Cultivar Variety')); ?></label>
-                        <input type="text" id="id_crop_variety" name="crop_variety" class="form-control" required value="Giống F1 Chuẩn Sạch Bệnh" style="min-height:48px;border-radius:12px;">
+                        <input type="text" id="id_crop_variety" name="crop_variety" class="form-control" required value="Giống F1 Chuẩn Sạch Bệnh">
                     </div>
 
                     <div class="row">
                         <div class="col-6 mb-3">
                             <label class="form-label fw-bold" for="id_batch_region"><?php echo s(local_mamxanhapp_t('Vùng trồng', 'Region')); ?></label>
-                            <select id="id_batch_region" name="region" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;">
+                            <select id="id_batch_region" name="region" class="form-control">
                                 <option value="Lâm Đồng">Lâm Đồng</option>
                                 <option value="Đắk Lắk">Đắk Lắk</option>
                                 <option value="Đồng Nai">Đồng Nai</option>
@@ -122,16 +122,16 @@ echo $OUTPUT->header();
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label fw-bold" for="id_batch_area"><?php echo s(local_mamxanhapp_t('Diện tích lô (m²)', 'Batch Area (m²)')); ?></label>
-                            <input type="number" id="id_batch_area" name="area_m2" class="form-control" required value="1200" min="50" style="min-height:48px;border-radius:12px;">
+                            <input type="number" id="id_batch_area" name="area_m2" class="form-control fw-bold" required value="1200" min="50">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_expected_yield"><?php echo s(local_mamxanhapp_t('Sản lượng dự kiến (kg)', 'Expected Yield (kg)')); ?></label>
-                        <input type="number" id="id_expected_yield" name="expected_yield_kg" class="form-control" required value="2500" min="10" style="min-height:48px;border-radius:12px;">
+                        <input type="number" id="id_expected_yield" name="expected_yield_kg" class="form-control fw-bold" required value="2500" min="10">
                     </div>
 
-                    <button type="submit" id="mx-submit-batch-btn" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#1B4332;border-color:#1B4332;">
+                    <button type="submit" id="mx-submit-batch-btn" class="btn btn-primary w-100">
                         <?php echo s(local_mamxanhapp_t('Khởi tạo Lô & Sinh Mã QR Truy xuất', 'Create Batch & Generate Traceability QR')); ?>
                     </button>
                 </form>
@@ -140,13 +140,13 @@ echo $OUTPUT->header();
 
         <!-- Voice-Enabled Field Cultivation Log Form -->
         <div class="col-lg-7 mb-4">
-            <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
-                <h3 style="color:#1B4332;font-weight:800;font-size:1.25rem;margin-bottom:14px;">
+            <div class="mx-card p-4 h-100">
+                <h3 class="h3 mb-3">
                     <?php echo s(local_mamxanhapp_t('Ghi Nhật ký Canh tác Rảnh tay (Web Speech API)', 'Hands-Free Voice Field Diary (Web Speech API)')); ?>
                 </h3>
 
                 <?php if (empty($batches)): ?>
-                <div class="alert alert-info" style="border-radius:14px;">
+                <div class="alert alert-info" style="border-radius:8px;">
                     <?php echo s(local_mamxanhapp_t('Hãy khởi tạo ít nhất 1 Lô nông sản ở khung bên trái trước khi ghi nhật ký canh tác.', 'Please create a VietGAP batch on the left first to start logging diary entries.')); ?>
                 </div>
                 <?php else: ?>
@@ -158,7 +158,7 @@ echo $OUTPUT->header();
                     <div class="row">
                         <div class="col-md-7 mb-3">
                             <label class="form-label fw-bold" for="id_batchid"><?php echo s(local_mamxanhapp_t('Chọn Lô Nông sản VietGAP', 'Select VietGAP Batch')); ?></label>
-                            <select id="id_batchid" name="batchid" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;">
+                            <select id="id_batchid" name="batchid" class="form-control">
                                 <?php foreach ($batches as $b): ?>
                                 <option value="<?php echo (int)$b->id; ?>"><?php echo s($b->batch_code . ' — ' . $b->product_name); ?></option>
                                 <?php endforeach; ?>
@@ -166,7 +166,7 @@ echo $OUTPUT->header();
                         </div>
                         <div class="col-md-5 mb-3">
                             <label class="form-label fw-bold" for="id_activity_type"><?php echo s(local_mamxanhapp_t('Hạng mục công việc', 'Activity Type')); ?></label>
-                            <select id="id_activity_type" name="activity_type" class="form-control" style="min-height:48px;border-radius:12px;font-weight:700;">
+                            <select id="id_activity_type" name="activity_type" class="form-control">
                                 <option value="watering_fert"><?php echo s(local_mamxanhapp_t('Tưới nhỏ giọt & Bón phân A-B', 'Drip Irrigation & Fertigation')); ?></option>
                                 <option value="ipm_bio"><?php echo s(local_mamxanhapp_t('Phun sinh học IPM / Trichoderma', 'Biological IPM Spray')); ?></option>
                                 <option value="env_check"><?php echo s(local_mamxanhapp_t('Đo pH / EC & Kiểm tra nhà màng', 'pH / EC Sensor Check')); ?></option>
@@ -208,7 +208,7 @@ echo $OUTPUT->header();
                         <button type="button" class="btn btn-sm btn-light" style="border:1px solid #C8E6C9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Thu hoạch sáng mát 06:30, đưa vào phòng làm mát sơ bộ Pre-cooling 4°C đạt chuẩn VietGAP.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Thu hoạch', 'Harvest Template')); ?></button>
                     </div>
 
-                    <button type="submit" id="mx-submit-log-btn" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#2E7D32;border-color:#2E7D32;">
+                    <button type="submit" id="mx-submit-log-btn" class="btn btn-primary w-100">
                         <?php echo s(local_mamxanhapp_t('Lưu Nhật ký vào Sổ Điện tử VietGAP', 'Save Entry to Digital VietGAP Logbook')); ?>
                     </button>
                 </form>
@@ -218,34 +218,34 @@ echo $OUTPUT->header();
     </div>
 
     <!-- VietGAP Batches & QR Passport Cards -->
-    <section>
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.3rem;margin-bottom:16px;">
+    <section class="mt-2">
+        <h3 class="h3 mb-3">
             <?php echo s(local_mamxanhapp_t('Danh sách Lô Nông sản & Mã QR Truy xuất Nguồn gốc (' . count($batches) . ')', 'Active VietGAP Batches & Traceability QR Codes (' . count($batches) . ')')); ?>
         </h3>
         <div class="row">
             <?php foreach ($batches as $b):
                 $traceurl = (new moodle_url('/local/agriops/trace.php', ['code' => $b->batch_code]))->out(false);
-                $qrsvg = \local_mamxanhapp\qr_helper::render_svg($traceurl, 138, '#1B4332');
+                $qrsvg = \local_mamxanhapp\qr_helper::render_svg($traceurl, 138, '#1E3A2F');
                 $logs = $DB->get_records('local_agriops_log', ['batchid' => $b->id], 'log_time DESC', '*', 0, 3);
             ?>
             <div class="col-12 col-xl-6 mb-4">
-                <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:22px;padding:20px;height:100%;">
+                <div class="mx-card p-4 h-100">
                     <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
                         <div style="flex:1;min-width:200px;">
-                            <span style="display:inline-block;background:#D8F3DC;color:#1B4332;padding:4px 12px;border-radius:999px;font-weight:800;font-size:0.82rem;margin-bottom:8px;">
+                            <span class="badge mb-2" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;font-size:0.8rem;font-weight:700;">
                                 VietGAP: <?php echo s($b->batch_code); ?>
                             </span>
-                            <h4 style="color:#14281D;font-weight:800;font-size:1.15rem;margin-bottom:6px;"><?php echo s($b->product_name); ?></h4>
-                            <div style="font-size:0.88rem;color:#4E6358;margin-bottom:10px;">
+                            <h4 class="h4 mb-2"><?php echo s($b->product_name); ?></h4>
+                            <div class="small text-muted mb-3">
                                 <?php echo s($b->region); ?> • <?php echo number_format((int)$b->area_m2); ?> m² • <?php echo number_format((int)$b->expected_yield_kg); ?> kg
                             </div>
-                            <a href="<?php echo $traceurl; ?>" class="btn btn-outline-success btn-sm" style="min-height:42px;display:inline-flex;align-items:center;border-radius:12px;font-weight:700;border-width:2px;">
+                            <a href="<?php echo $traceurl; ?>" class="btn btn-secondary btn-sm">
                                 <?php echo s(local_mamxanhapp_t('Mở Trang Truy xuất QR Công khai', 'Open Public QR Traceability Page')); ?>
                             </a>
                         </div>
                         <div class="text-center">
                             <?php echo $qrsvg; ?>
-                            <div style="font-size:0.75rem;color:#2E7D32;font-weight:700;margin-top:4px;">SCAN VIETGAP</div>
+                            <div class="small text-muted fw-bold mt-1">SCAN VIETGAP</div>
                         </div>
                     </div>
 
