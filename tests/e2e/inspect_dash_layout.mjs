@@ -12,20 +12,49 @@ await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), page.c
 await page.goto('http://localhost:8090/my/index.php', { waitUntil: 'networkidle2' });
 
 const res = await page.evaluate(() => {
-    const aside = document.querySelector('aside.block-region');
-    const sec = document.querySelector('section.block-region');
-    const parent = sec?.parentElement;
+    const pw = document.getElementById('page-wrapper');
+    const drawer = document.getElementById('theme_boost-drawers-blocks');
+    const pageEl = document.getElementById('page');
+    const topOfScroll = document.getElementById('topofscroll');
+    const regionMainBox = document.getElementById('region-main-box');
+    const regionMain = document.getElementById('region-main');
+    const contentSec = document.querySelector('section[data-blockregion="content"]');
+    const sidePreAside = document.querySelector('aside[data-blockregion="side-pre"]');
+    const calBlock = document.querySelector('.block_calendar_month');
+
     return {
-        secParentTag: parent?.tagName,
-        secParentClass: parent?.className,
-        secParentStyle: parent ? window.getComputedStyle(parent).display : null,
-        secRegion: sec?.getAttribute('data-blockregion'),
-        asideRegion: aside?.getAttribute('data-blockregion'),
-        secWidth: sec?.offsetWidth,
-        asideWidth: aside?.offsetWidth,
-        parentWidth: parent?.offsetWidth
+        pwDisplay: window.getComputedStyle(pw).display,
+        drawer: {
+            display: window.getComputedStyle(drawer).display,
+            position: window.getComputedStyle(drawer).position,
+            width: drawer.offsetWidth,
+            height: drawer.offsetHeight,
+            classes: drawer.className
+        },
+        pageEl: {
+            width: pageEl.offsetWidth,
+            marginRight: window.getComputedStyle(pageEl).marginRight,
+            classes: pageEl.className
+        },
+        regionMain: {
+            width: regionMain.offsetWidth
+        },
+        contentSec: {
+            width: contentSec.offsetWidth,
+            maxWidth: window.getComputedStyle(contentSec).maxWidth,
+            flex: window.getComputedStyle(contentSec).flex
+        },
+        sidePreAside: {
+            width: sidePreAside?.offsetWidth,
+            maxWidth: sidePreAside ? window.getComputedStyle(sidePreAside).maxWidth : null,
+            flex: sidePreAside ? window.getComputedStyle(sidePreAside).flex : null
+        },
+        calBlock: {
+            width: calBlock?.offsetWidth,
+            htmlSnippet: calBlock?.outerHTML.substring(0, 300)
+        }
     };
 });
 
-console.log('BLOCK REGION PARENT DOM:', JSON.stringify(res, null, 2));
+console.log(JSON.stringify(res, null, 2));
 await browser.close();
