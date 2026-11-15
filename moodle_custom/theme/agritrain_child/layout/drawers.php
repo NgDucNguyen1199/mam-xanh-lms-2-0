@@ -38,11 +38,19 @@ if (strpos($CFG->additionalhtmlhead ?? '', '/manifest.json') === false) {
 
 $addblockbutton = $OUTPUT->addblockbutton();
 $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhapp_user_role_type() : 'farmer';
+$iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
+
+// Block direct student access to course participants list (/user/index.php)
+if (!$iscbktadmin && strpos($reqpath, '/user/index.php') !== false) {
+    if (function_exists('local_mamxanhapp_send_403_and_exit')) {
+        local_mamxanhapp_send_403_and_exit();
+    }
+}
 
 if ($PAGE->pagetype === 'my-index' || $issiteindex) {
     $blockdraweropen = false;
     $courseindexopen = false;
-} else if (isloggedin() && ($roletype === 'admin' || $roletype === 'cbkt')) {
+} else if (isloggedin() && $iscbktadmin) {
     $courseindexopen = (get_user_preferences('drawer-open-index', false) == true);
     $blockdraweropen = (get_user_preferences('drawer-open-block', false) == true);
 } else {
@@ -63,6 +71,9 @@ if ($issiteindex && !$PAGE->user_is_editing() && function_exists('theme_agritrai
 }
 
 $extraclasses = ['uses-drawers', 'mx-agritrain-body'];
+if (!$iscbktadmin) {
+    $extraclasses[] = 'mx-role-student';
+}
 if ($courseindexopen) {
     $extraclasses[] = 'drawer-open-index';
 }
@@ -89,6 +100,15 @@ $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
+    if (!$iscbktadmin) {
+        $pnode = $PAGE->secondarynav->find('participants', null);
+        if ($pnode) {
+            if (method_exists($pnode, 'set_show_in_secondary_navigation')) {
+                $pnode->set_show_in_secondary_navigation(false);
+            }
+            $pnode->remove();
+        }
+    }
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);

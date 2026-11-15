@@ -1416,6 +1416,11 @@ foreach ($allcourses as $ac) {
     rebuild_course_cache((int)$ac->id, true);
 }
 
+// Enforce student participant-list revocation & CBKT teacher role
+if (file_exists(__DIR__ . '/fix_participants_rbac.php')) {
+    require_once(__DIR__ . '/fix_participants_rbac.php');
+}
+
 echo "\n===================================================================\n";
 echo "ALL STAGES (P0 + P1 + P2 DB SETUP) COMPLETED SUCCESSFULLY!\n";
 echo "===================================================================\n";

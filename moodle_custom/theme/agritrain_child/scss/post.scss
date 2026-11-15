@@ -801,27 +801,19 @@ select.custom-select {
     }
 }
 
-// Refined Minimalist Floating Footer Help Button (?)
+// Hide Floating Footer Help Button (?) & Student Participants Secondary Nav Tab
+#page-footer .btn-footer-popover,
 .btn-footer-popover,
-#page-footer .btn-footer-popover {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    background-color: var(--mx-surface) !important;
-    border: 1px solid var(--mx-border-strong) !important;
-    color: var(--mx-text-muted) !important;
-    box-shadow: var(--mx-shadow-md) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.15s ease !important;
+.footer-content-popover {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
 
-    &:hover,
-    &:focus {
-        background-color: var(--mx-surface-muted) !important;
-        color: var(--mx-text-main) !important;
-        border-color: #94a3b8 !important;
-    }
+.mx-role-student .secondary-navigation [data-key="participants"],
+.mx-role-student .secondary-navigation li[data-key="participants"],
+.mx-role-student .secondary-navigation a[href*="/user/index.php"] {
+    display: none !important;
 }
 
 // -------------------------------------------------------------------
