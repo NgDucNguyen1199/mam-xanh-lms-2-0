@@ -442,7 +442,7 @@ echo $OUTPUT->header();
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead style="background:#E8F5E9;color:#1B4332;">
+                <thead>
                     <tr>
                         <th><?php echo s(local_mamxanhapp_t('Họ tên / Tài khoản', 'Farmer / Username')); ?></th>
                         <th><?php echo s(local_mamxanhapp_t('Vùng trồng & Diện tích', 'Region & Area')); ?></th>
@@ -465,34 +465,34 @@ echo $OUTPUT->header();
                     <?php foreach ($learnerrows as $row): ?>
                     <tr>
                         <td>
-                            <div style="font-weight:800;color:#14281D;"><?php echo s($row->fullname); ?></div>
-                            <div style="font-size:0.82rem;color:#546E7A;"><code><?php echo s($row->username); ?></code> • <?php echo s($row->farm_name); ?></div>
+                            <div style="font-weight:600;color:#0F172A;"><?php echo s($row->fullname); ?></div>
+                            <div style="font-size:0.82rem;color:#64748B;"><code><?php echo s($row->username); ?></code> • <?php echo s($row->farm_name); ?></div>
                         </td>
                         <td>
-                            <span style="display:inline-block;background:#E8F5E9;color:#1B4332;padding:3px 10px;border-radius:999px;font-size:0.82rem;font-weight:700;">
+                            <span style="display:inline-block;background:#F1F5F9;color:#334155;border:1px solid #E2E8F0;padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;">
                                 <?php echo s($row->region); ?>
                             </span>
-                            <div style="font-size:0.82rem;color:#455A64;margin-top:2px;"><?php echo number_format($row->area_m2); ?> m²</div>
+                            <div style="font-size:0.82rem;color:#64748B;margin-top:2px;"><?php echo number_format($row->area_m2); ?> m²</div>
                         </td>
-                        <td style="font-weight:600;"><?php echo s($row->crop); ?></td>
+                        <td style="font-weight:500;color:#1E293B;"><?php echo s($row->crop); ?></td>
                         <td class="text-center"><strong><?php echo (int)$row->completedmods; ?></strong></td>
                         <td class="text-center">
                             <?php if ($row->avgquiz !== null): ?>
-                                <span style="font-weight:800;color:<?php echo $row->avgquiz >= 70 ? '#2E7D32' : '#E65100'; ?>;"><?php echo s($row->avgquiz . '%'); ?></span>
+                                <span style="font-weight:700;color:<?php echo $row->avgquiz >= 70 ? '#166534' : '#B45309'; ?>;"><?php echo s($row->avgquiz . '%'); ?></span>
                             <?php else: ?>
                                 <span class="text-muted">--</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?php if ($row->avgrubric !== null): ?>
-                                <span style="font-weight:800;color:#1B4332;"><?php echo s($row->avgrubric . '/100'); ?></span>
+                                <span style="font-weight:700;color:#1E3A2F;"><?php echo s($row->avgrubric . '/100'); ?></span>
                             <?php else: ?>
                                 <span class="text-muted">--</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?php if ($row->certcount > 0): ?>
-                                <span style="background:#D8F3DC;color:#1B4332;padding:4px 10px;border-radius:999px;font-weight:800;font-size:0.82rem;">
+                                <span style="background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:999px;font-weight:700;font-size:0.8rem;">
                                     <?php echo (int)$row->certcount; ?>
                                 </span>
                             <?php else: ?>
@@ -500,7 +500,7 @@ echo $OUTPUT->header();
                             <?php endif; ?>
                         </td>
                         <td>
-                            <span style="font-size:0.85rem;font-weight:700;color:#1B4332;"><?php echo s($row->status); ?></span>
+                            <span style="font-size:0.84rem;font-weight:600;color:#166534;"><?php echo s($row->status); ?></span>
                         </td>
                     </tr>
                     <?php endforeach; ?>

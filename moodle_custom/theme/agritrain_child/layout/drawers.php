@@ -51,7 +51,7 @@ $addblockbutton = $OUTPUT->addblockbutton();
 $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhapp_user_role_type() : 'farmer';
 
 if ($PAGE->pagetype === 'my-index') {
-    $blockdraweropen = true;
+    $blockdraweropen = false;
     $courseindexopen = false;
 } else if (isloggedin() && ($roletype === 'admin' || $roletype === 'cbkt')) {
     $courseindexopen = (get_user_preferences('drawer-open-index', false) == true);

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <!-- Category definition -->
+  <question type="category">
+    <category>
+      <text>$course$/Ngan hang Cau hoi DAUTAY-CNC-01/Chuyen de Canh tac Dau tay va Hoa Cuc CNC</text>
+    </category>
+    <info format="html">
+      <text><![CDATA[Ngân hàng câu hỏi trắc nghiệm thực hành chuẩn VietGAP công nghệ cao Đà Lạt]]></text>
+    </info>
+    <idnumber>CAT_DAUTAY_CNC_01</idnumber>
+  </question>
+
+  <!-- Question 1 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q01: Nhiet do nha mang cho dau tay Da Lat</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Trong điều kiện nhà màng tại Đà Lạt (Lâm Đồng), dải nhiệt độ không khí tối ưu cho quá trình sinh trưởng dinh dưỡng, phân hóa mầm hoa và đậu quả của cây dâu tây là bao nhiêu?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Dâu tây là cây trồng ưa khí hậu ôn đới mát mẻ. Nhiệt độ ban ngày thích hợp từ 18 - 24 độ C, ban đêm cần hạ xuống 12 - 16 độ C để cây tích lũy đường và phát triển quả tối ưu.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_01</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Ban ngày từ 18 - 24 độ C, ban đêm từ 12 - 16 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Đây là biên độ nhiệt lý tưởng nhất giúp dâu tây phát triển khỏe mạnh và quả đạt độ ngọt cao.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Ban ngày từ 28 - 35 độ C, ban đêm từ 22 - 26 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Nhiệt độ trên 28 độ C gây cháy đầu lá và rụng hoa dâu tây.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Duy trì cố định 15 độ C cả ngày lẫn đêm]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Cây cần biên độ chênh lệch nhiệt ngày đêm để quang hợp và hô hấp hiệu quả.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Ban ngày từ 10 - 14 độ C, ban đêm dưới 8 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Nhiệt độ quá thấp khiến dâu tây ngừng sinh trưởng và phát sinh nấm bệnh.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 2 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q02: Dai pH toi uu cho gia the dau tay</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Khi canh tác dâu tây trên giá thể xơ dừa phối trộn perlite trong nhà màng công nghệ cao, dải pH tối ưu của dung dịch dinh dưỡng tưới nhỏ giọt là:</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Độ pH tối ưu cho rễ dâu tây hấp thu khoáng chất (đặc biệt là Sắt, Bo, Canxi) là từ 5,6 đến 6,2. Ngoài dải này rễ sẽ bị bó và thiếu vi lượng trầm trọng.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_02</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[pH từ 5,6 đến 6,2]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Khoảng pH hơi axit nhẹ này giúp ion vi lượng Fe2+, Zn2+, Mn2+ duy trì ở dạng cây dễ hòa tan và hấp thu.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[pH từ 4,0 đến 4,8 (axit mạnh)]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Axit mạnh làm cháy chóp rễ và gây ngộ độc nhôm/sắt cho cây.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[pH từ 7,5 đến 8,5 (kiềm)]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Ở môi trường kiềm, sắt và canxi bị kết tủa khiến lá cây úa vàng.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[pH trung tính tuyệt đối 7,0]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. pH 7,0 chưa phải là môi trường tối ưu cho cây dâu tây ôn đới.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 3 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q03: Chi so EC giai doan nuoi trai</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Chỉ số độ dẫn điện (EC - Electrical Conductivity) của dung dịch dinh dưỡng cấp cho cây dâu tây trong giai đoạn nuôi trái rộ tại Đà Lạt nên được duy trì ở mức nào?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Cây dâu tây rất nhạy cảm với nồng độ muối khoáng cao. Giai đoạn nuôi trái khuyến cáo EC từ 1,3 đến 1,6 mS/cm. Nếu EC vượt quá 1,8 mS/cm sẽ làm cháy mép lá và chai rễ.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_03</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[1,3 - 1,6 mS/cm]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Nồng độ này cung cấp đủ Kali và Canxi để quả mọng nước, chắc vỏ và có độ ngọt (Brix) cao.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[0,3 - 0,5 mS/cm]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Mức này quá nghèo dinh dưỡng khiến quả nhỏ và chậm lớn.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[2,8 - 3,5 mS/cm]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. EC trên 2,5 mS/cm gây ngộ độc mặn và làm cháy lá dâu tây.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Trên 4,0 mS/cm]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Mức này làm chết rễ cây hoàn toàn.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 4 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q04: Chieu sang nhan tao quang chu ky cho hoa cuc</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Mục đích chính của kỹ thuật thắp đèn bổ sung vào ban đêm (chiếu sáng nhân tạo ngắt đêm) trong canh tác hoa cúc công nghệ cao tại Đà Lạt là gì?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Hoa cúc là cây ngày ngắn. Việc thắp đèn ban đêm (ngắt quãng đêm dài) nhằm ức chế sự phân hóa mầm hoa sớm, kích thích cây kéo dài thân cành đạt chiều cao chuẩn xuất khẩu (80 - 100cm) trước khi cho nở hoa đồng loạt.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_04</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Ức chế phân hóa mầm hoa sớm, giúp thân cành vươn cao đạt chuẩn thương phẩm]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Thắp đèn 4-5 tiếng mỗi đêm trong 30-40 ngày đầu giúp cành hoa vươn dài, mập khỏe trước khi chuyển sang giai đoạn tạo nụ.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Kích thích hoa cúc nở ngay lập tức trong vòng 7 ngày]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Ánh sáng đêm ức chế nở hoa chứ không kích thích hoa nở sớm.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Diệt trừ các loại nấm mốc trong đất bằng tia cực tím]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Đèn dùng trong nhà màng là đèn LED/Compact thông thường không phải đèn UV tiệt trùng.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Tăng nhiệt độ không khí nhà màng lên 40 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Đèn thắp bổ sung tỏa rất ít nhiệt và không nhằm mục đích sưởi ấm.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 5 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q05: Phong tru sinh hoc Bo tri (Thrips palmi)</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Bọ trĩ (Thrips palmi) là đối tượng gây hại nguy hiểm nhất làm xoăn đọt dâu tây và thâm cánh hoa cúc. Phác đồ sinh học IPM hiệu quả và an toàn theo chuẩn VietGAP là:</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Quản lý bọ trĩ theo VietGAP ưu tiên bẫy dính màu vàng/xanh để theo dõi mật độ, thả thiên địch bọ xít bắt mồi Orius và phun chế phẩm nấm ký sinh Beauveria bassiana vào chiều mát.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_05</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Đặt bẫy dính màu xanh/vàng kết hợp thả bọ xít bắt mồi Orius và phun nấm sinh học Beauveria]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Giải pháp phối hợp thiên địch, bẫy dính và nấm ký sinh giúp kiểm soát mật độ bọ trĩ triệt để mà không tồn dư hóa chất độc hại.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Phun thuốc trừ sâu hóa học gốc clo hữu cơ liều gấp 3 lần bình thường]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Vi phạm nghiêm trọng tiêu chuẩn an toàn VietGAP và gây kháng thuốc.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Đóng kín toàn bộ cửa thông gió và tăng nhiệt độ nhà màng trên 45 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Biện pháp này làm chết cháy cây trồng trước khi diệt được bọ trĩ.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Không áp dụng biện pháp nào, để bọ trĩ tự biến mất tự nhiên]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Bọ trĩ sinh sản cực nhanh, nếu không can thiệp sẽ làm hỏng toàn bộ vườn.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 6 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q06: Phong ngua nam moc xam Botrytis cinerea</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Bệnh mốc xám do nấm <em>Botrytis cinerea</em> thường bùng phát trên quả dâu tây và đài hoa cúc trong điều kiện thời tiết nào tại Đà Lạt và cách phòng ngừa tối ưu là gì?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Nấm Botrytis cinerea phát triển mạnh khi độ ẩm không khí vượt trên 85% và nhiệt độ mát (15 - 20 độ C), đặc biệt trong mùa mưa Đà Lạt. Biện pháp cốt lõi là mở cửa thông gió, tỉa lá già thông thoáng và phun nấm đối kháng Trichoderma.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_06</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Phát triển khi ẩm độ > 85%; phòng ngừa bằng cách thông gió nhà màng, tỉa thông thoáng gốc và phun Trichoderma]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Giảm ẩm độ không khí xuống dưới 75% và dọn sạch tàn dư thực vật là chìa khóa chặn đứng bệnh mốc xám.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Chỉ phát triển khi thời tiết khô hạn độ ẩm < 40%]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Nấm mốc xám cần độ ẩm cao và giọt nước đọng để nảy mầm bào tử.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Tưới đẫm nước ướt toàn bộ lá và hoa vào buổi tối]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Tưới ướt ban đêm là nguyên nhân trực tiếp khiến nấm lan tràn dữ dội.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Phun muối ăn đậm đặc trực tiếp lên bông hoa dâu tây]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Muối gây cháy lá và rụng hoa hoàn toàn.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 7 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q07: Nguyen tac tach bon A va B trong Fertigation</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Trong hệ thống tưới dinh dưỡng tự động (Fertigation), vì sao bắt buộc phải tách riêng phân bón mẹ thành 2 bồn A và B đậm đặc?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Canxi nitrat (chứa Ca2+) trong bồn A khi gặp gốc sunfat (SO4 2-) hoặc phosphat (H2PO4 -) trong bồn B ở nồng độ cao sẽ lập tức phản ứng tạo kết tủa canxi sunfat (thạch cao CaSO4) hoặc canxi photphat Ca3(PO4)2 gây tắc nghẽn toàn bộ đầu tưới nhỏ giọt.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_07</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Để ngăn phản ứng kết tủa thạch cao (CaSO4) và canxi photphat gây tắc nghẽn đầu tưới nhỏ giọt bù áp]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Bồn A giữ Canxi và Sắt chelate; bồn B giữ Lân, Kali, Magie và Lưu huỳnh để tránh tạo kết tủa.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Chỉ nhằm phân biệt màu sắc cho công nhân dễ quan sát]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Đây là nguyên lý hóa học bắt buộc trong hệ thống châm phân tự động.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Để tăng áp suất của máy bơm lên gấp đôi]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Việc phân chia bồn không làm thay đổi áp suất máy bơm.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Để giảm chi phí mua bồn chứa]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Ngược lại nông hộ phải đầu tư 2 bồn chứa riêng biệt.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 8 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q08: Ky thuat bam ngon cho hoa cuc giong canh</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Đối với giống hoa cúc chùm cành công nghệ cao tại Đà Lạt, thời điểm và kỹ thuật bấm ngọn (ngắt ngọn) chuẩn xác là:</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Sau khi trồng cây con từ 15 đến 20 ngày, khi cây đạt từ 6 đến 8 lá thật và bén rễ vững chắc, tiến hành bấm ngọn chừa lại 3-4 chồi nách khỏe mạnh nhất để nuôi thành các cành hoa đồng đều.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_08</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Sau trồng 15 - 20 ngày khi cây có 6 - 8 lá thật, chừa lại 3 - 4 cành nhánh khỏe nhất]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Kỹ thuật này giúp phân tán dinh dưỡng đều cho các cành chùm hoa nở cùng lúc.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Bấm ngọn ngay khi vừa cắm cây con vào đất]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Cây con chưa bén rễ nếu bấm ngọn sẽ bị kiệt sức và thối gốc.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Đợi khi hoa nở to hết cỡ mới cắt ngọn cây]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Khi đó là thời điểm thu hoạch hoa thương phẩm, không còn là kỹ thuật bấm ngọn tạo tán.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Cắt sát mặt đất toàn bộ thân cây]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Hành động này làm hỏng toàn bộ luống hoa cúc.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 9 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q09: Khoang cach mang gia the dau tay treo</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Mô hình trồng dâu tây máng treo (cách mặt đất 0,8 - 1,2m) trong nhà màng Đà Lạt mang lại lợi thế vượt trội nào so với trồng dâu tây trực tiếp trên luống đất truyền thống?</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>Máng treo cách ly rễ cây khỏi nguồn nấm bệnh truyền từ đất, quả dâu tây buông thõng xuống không tiếp xúc với giá thể ẩm ướt giúp quả sạch bóng, giảm 80% tỷ lệ thối nhũn và thuận tiện cho việc tỉa lá, thu hoạch.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_09</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Cách ly mầm bệnh từ đất, quả buông rủ không chạm ẩm độ giúp sạch bệnh và năng suất cao]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Máng treo là mô hình chuẩn mực của nông nghiệp công nghệ cao Đà Lạt giúp nâng cao chất lượng quả và tạo không gian sinh thái cho du lịch canh nông.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Không cần cung cấp nước và phân bón cây vẫn tự lớn]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Máng treo bắt buộc phải có hệ thống tưới nhỏ giọt dinh dưỡng tự động.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Làm giảm nhiệt độ không khí nhà màng xuống dưới 0 độ C]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Vị trí treo không làm thay đổi khí hậu nhiệt độ đến mức âm độ.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Có thể tăng mật độ trồng lên 1.000 cây trên mỗi mét vuông]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Mật độ tối đa chỉ từ 8 - 12 cây/m2 để đảm bảo quang hợp.]]></text></feedback>
+    </answer>
+  </question>
+
+  <!-- Question 10 -->
+  <question type="multichoice">
+    <name>
+      <text>DAUTAY_Q10: Thoi gian cach ly PHI theo VietGAP</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Theo tiêu chuẩn VietGAP Trồng trọt (TCVN 11892-1:2017), nguyên tắc bắt buộc về Thời gian cách ly (Pre-Harvest Interval - PHI) trước khi thu hoạch quả dâu tây thương phẩm là:</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>VietGAP yêu cầu tuân thủ nghiêm ngặt thời gian cách ly theo khuyến cáo trên nhãn thuốc bảo vệ thực vật sinh học đã đăng ký, tuyệt đối không thu hoạch khi chưa hết thời gian cách ly và phải ghi chép nhật ký sản xuất đầy đủ để phục vụ truy xuất nguồn gốc QR.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>DAUTAY_10</idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <answer fraction="100" format="html">
+      <text><![CDATA[Tuân thủ nghiêm ngặt số ngày cách ly quy định trên nhãn thuốc và ghi chép nhật ký số truy xuất nguồn gốc]]></text>
+      <feedback format="html"><text><![CDATA[Chính xác! Đảm bảo thời gian cách ly là tiêu chí cốt lõi bảo vệ sức khỏe người tiêu dùng và giữ vững chứng nhận VietGAP.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Có thể phun thuốc trừ sâu hóa học ngay buổi sáng và thu hoạch bán vào buổi trưa cùng ngày]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Hành vi này vi phạm pháp luật và gây ngộ độc nghiêm trọng cho người tiêu dùng.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Chỉ cần rửa dâu tây bằng nước máy là không cần tuân thủ thời gian cách ly]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. Thuốc nội hấp thẩm thấu vào tế bào thịt quả không thể rửa trôi bằng nước thông thường.]]></text></feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[Thời gian cách ly là tùy ý người nông dân quyết định mà không cần ghi nhật ký]]></text>
+      <feedback format="html"><text><![CDATA[Chưa chính xác. VietGAP kiểm tra đột xuất nhật ký canh tác và mẫu quả ngẫu nhiên.]]></text></feedback>
+    </answer>
+  </question>
+</quiz>

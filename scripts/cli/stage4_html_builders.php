@@ -67,7 +67,7 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
 
         <!-- Native HTML5 Video Element with MP4, WebM & Default Vietnamese Subtitles -->
         <div style="border-radius:18px;overflow:hidden;border:2px solid #52B788;background:#000000;margin-bottom:14px;">
-            <video id="mx-player-{$uid}" class="mx-real-html5-video" controls playsinline preload="metadata" poster="{$posterurl}" style="width:100%;max-height:460px;display:block;margin:0 auto;background:#000;">
+            <video id="mx-player-{$uid}" class="mx-real-html5-video" width="900" height="506" controls playsinline preload="metadata" poster="{$posterurl}" style="width:100%;max-height:460px;display:block;margin:0 auto;background:#000;">
                 <source src="{$mp4url}" type="video/mp4">
                 <source src="{$webmurl}" type="video/webm">
                 <track kind="subtitles" src="{$vtturl}" srclang="vi" label="Phụ đề Kỹ thuật Tiếng Việt" default>

@@ -123,9 +123,12 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
 
             $meta = [$typename];
             if ($cm->modname === 'assign') {
-                $due = (int)$DB->get_field('assign', 'duedate', ['id' => $cm->instance]);
-                if ($due > 0) {
-                    $meta[] = ($en ? 'Due: ' : 'Hạn nộp: ') . userdate($due, $dfmt);
+                $arec = $DB->get_record('assign', ['id' => $cm->instance], 'allowsubmissionsfromdate,duedate');
+                if ($arec && (int)$arec->allowsubmissionsfromdate > 0) {
+                    $meta[] = ($en ? 'Opened: ' : 'Đã mở: ') . userdate((int)$arec->allowsubmissionsfromdate, $dfmt);
+                }
+                if ($arec && (int)$arec->duedate > 0) {
+                    $meta[] = ($en ? 'Due: ' : 'Đến hạn: ') . userdate((int)$arec->duedate, $dfmt);
                 }
             } else if ($cm->modname === 'quiz') {
                 $q = $DB->get_record('quiz', ['id' => $cm->instance], 'timelimit,timeclose');
@@ -156,11 +159,18 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
                     . s(theme_agritrain_child_clean_avail_info($cm->availableinfo ?: ($secinfo->availableinfo ?? ''), $en))
                     . '</div>';
             }
+            $inlinedesc = '';
+            if (!empty($cm->showdescription)) {
+                $rawdesc = trim($cm->get_formatted_content(['overflowdiv' => true, 'noclean' => true]));
+                if (trim(strip_tags($rawdesc)) !== '') {
+                    $inlinedesc = '<div class="activity-description mt-2">' . $rawdesc . '</div>';
+                }
+            }
 
             $rows .= '<li class="mx-act-row' . ($cmlocked ? ' mx-act-locked' : '') . '" data-mx-modname="' . s($cm->modname) . '">'
-                . '<img class="mx-act-icon" src="' . s($iconurl) . '" alt="" width="20" height="20">'
+                . '<img class="mx-act-icon" src="' . s($iconurl) . '" alt="" width="24" height="24">'
                 . '<div class="mx-act-main">' . $titlehtml
-                . '<div class="mx-act-meta">' . s(implode('  |  ', $meta)) . '</div>' . $availnote . '</div>'
+                . '<div class="mx-act-meta">' . s(implode('  |  ', $meta)) . '</div>' . $inlinedesc . $availnote . '</div>'
                 . '<div class="mx-act-status">' . $status . '</div>'
                 . '</li>';
         }

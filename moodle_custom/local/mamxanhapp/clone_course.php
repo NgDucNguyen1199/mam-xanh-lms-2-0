@@ -443,17 +443,17 @@ echo $OUTPUT->header();
         </div>
 
         <div class="col-12 col-lg-5 mb-4">
-            <section style="background:#F4FBF6;border:2px solid #B7E4C7;border-radius:24px;padding:22px;height:100%;">
-                <h4 style="color:#1B4332;font-weight:900;font-size:1.12rem;margin-bottom:12px;">
+            <section class="mx-card p-4 h-100">
+                <h4 class="h4 mb-3">
                     <?php echo s(local_mamxanhapp_t('Quy chuẩn Khóa học Mẫu được Bảo toàn 100% khi Nhân bản', '100% Preserved Master Course Blueprint')); ?>
                 </h4>
-                <ul style="padding-left:18px;line-height:1.75;color:#14281D;font-weight:600;margin-bottom:16px;">
+                <ul class="mb-3" style="padding-left:18px;line-height:1.75;color:#1E293B;">
                     <li><strong>Bước 1 (Chuyên đề 1):</strong> Video MP4 thực tế có phụ đề <code>.vtt</code> + Xem trực tiếp Sổ tay PDF kỹ thuật (<code>RESOURCELIB_DISPLAY_EMBED</code>).</li>
                     <li><strong>Bước 2 (Chuyên đề 2):</strong> Gói tương tác chuẩn <strong>H5P</strong> (<code>mod_h5pactivity</code>) + Gói bài giảng chuẩn <strong>SCORM 1.2</strong> (<code>mod_scorm</code>) — tự động mở khóa khi xong Bước 1.</li>
                     <li><strong>Bước 3 (Chuyên đề 3):</strong> Thực hành tại vườn <code>mod_fieldpractice</code> (Điểm danh QR xoay vòng + GPS + Rubric 4 tiêu chí) — mở khóa khi xong Bước 2.</li>
                     <li><strong>Bước 4 (Chuyên đề 4):</strong> Bài kiểm tra Quiz 12 câu (Ngân hàng câu hỏi đầy đủ) — đạt <code>&ge; 70%</code> tự động mở khóa Chứng nhận Số QR <code>HMAC-SHA256</code>.</li>
                 </ul>
-                <div style="background:#FFFFFF;border-radius:16px;padding:14px;border:1.5px solid #A5D6A7;font-size:0.88rem;color:#2E7D32;font-weight:700;">
+                <div class="p-3 rounded border" style="background:#F8FAFC;border-left:4px solid #1E3A2F !important;font-size:0.88rem;color:#334155;">
                     <?php echo s(local_mamxanhapp_t(
                         'Mẹo cho Cán bộ Kỹ thuật: Sau khi nhân bản, mọi ID điều kiện mở khóa tuần tự (Availability JSON) và Sổ điểm Gradebook đều được Moodle tự động ánh xạ sang lớp địa phương mới!',
                         'Tip: All Restrict Access module IDs and Gradebook categories are automatically remapped to the new local course!'
