@@ -115,9 +115,9 @@
                 {{/ismyindex}}
             </div>
 
-            {{^isdashboard}}
+            {{^hidefullheader}}
             {{{ output.full_header }}}
-            {{/isdashboard}}
+            {{/hidefullheader}}
 
             {{#secondarymoremenu}}
                 <div class="secondary-navigation d-print-none">
@@ -173,6 +173,9 @@
                                 </div>
                             </div>
                         {{/overflow}}
+
+                        <!-- Public Frontpage Portal UI (when on site-index) -->
+                        {{{ mxfrontpagehtml }}}
 
                         <!-- Custom Course Cards/Tiles UI (when viewing course) -->
                         {{{ mxcoursetileshtml }}}

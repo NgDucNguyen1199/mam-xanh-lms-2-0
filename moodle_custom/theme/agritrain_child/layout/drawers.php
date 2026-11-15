@@ -25,21 +25,10 @@ if (isloggedin() && !isguestuser() && !is_siteadmin() && in_array($reqpath, $adm
     }
 }
 
-// 3. Smart Post-Login & Home Routing for Farmers and CBKT
-// Note: /my/index.php is preserved for direct user access to standard customizable Dashboard
-if (isloggedin() && !isguestuser() && !$PAGE->user_is_editing()) {
-    $noredir = optional_param('noredir', 0, PARAM_INT);
-    if (!$noredir && in_array($PAGE->pagetype, ['site-index'], true)) {
-        $syscontext = context_system::instance();
-        if (!is_siteadmin()) {
-            if (has_capability('local/mamxanhapp:manage', $syscontext)) {
-                redirect(new moodle_url('/local/mamxanhapp/manage.php'));
-            } else {
-                redirect(new moodle_url('/local/mamxanhapp/index.php'));
-            }
-        }
-    }
-}
+// 3. Public Frontpage & Portal Routing
+// Both guests (!isloggedin() || isguestuser()) and logged-in users clicking "Mầm Xanh LMS 2.0"
+// or "Trang chủ" (/?redirect=0 or /) remain on the Public News & Academic Portal (site-index).
+$issiteindex = ($PAGE->pagetype === 'site-index');
 
 // 4. Inject PWA Manifest & Theme Meta via $CFG->additionalhtmlhead
 $pwatags = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1E3A2F"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
@@ -50,7 +39,7 @@ if (strpos($CFG->additionalhtmlhead ?? '', '/manifest.json') === false) {
 $addblockbutton = $OUTPUT->addblockbutton();
 $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhapp_user_role_type() : 'farmer';
 
-if ($PAGE->pagetype === 'my-index') {
+if ($PAGE->pagetype === 'my-index' || $issiteindex) {
     $blockdraweropen = false;
     $courseindexopen = false;
 } else if (isloggedin() && ($roletype === 'admin' || $roletype === 'cbkt')) {
@@ -61,10 +50,14 @@ if ($PAGE->pagetype === 'my-index') {
     $blockdraweropen = false;
 }
 
-// 5. Build Course Lesson Tiles/Cards HTML when viewing a course
+// 5. Build Course Lesson Tiles/Cards HTML (when viewing a course) & Public Frontpage Portal HTML (when on site-index)
 $mxcoursetileshtml = '';
 if (strpos($PAGE->pagetype, 'course-view-') === 0 && isset($COURSE->id) && (int)$COURSE->id !== SITEID && !$PAGE->user_is_editing()) {
     $mxcoursetileshtml = theme_agritrain_child_build_course_tiles_html($COURSE);
+}
+$mxfrontpagehtml = '';
+if ($issiteindex && !$PAGE->user_is_editing() && function_exists('theme_agritrain_child_build_frontpage_portal_html')) {
+    $mxfrontpagehtml = theme_agritrain_child_build_frontpage_portal_html();
 }
 
 $extraclasses = ['uses-drawers', 'mx-agritrain-body'];
@@ -73,6 +66,9 @@ if ($courseindexopen) {
 }
 if ($mxcoursetileshtml !== '') {
     $extraclasses[] = 'mx-has-course-tiles';
+}
+if ($issiteindex) {
+    $extraclasses[] = 'mx-site-index';
 }
 
 $blockshtml = $OUTPUT->blocks('side-pre');
@@ -170,6 +166,8 @@ $templatecontext = [
 
     // AgTech Smart UI Context
     'isdashboard'               => (strpos($curpath, '/local/mamxanhapp/index.php') !== false),
+    'issiteindex'               => $issiteindex,
+    'hidefullheader'            => ((strpos($curpath, '/local/mamxanhapp/index.php') !== false) || ($issiteindex && !$PAGE->user_is_editing())),
     'showsubnav'                => (isloggedin() && !isguestuser()),
     'lbl_subnav'                => $isen ? 'Learning tools' : 'Công cụ học tập',
     'isen'                      => $isen,
@@ -177,9 +175,22 @@ $templatecontext = [
     'langviurl'                 => $viurl->out(false),
     'langenurl'                 => $enurl->out(false),
     'mxcoursetileshtml'         => $mxcoursetileshtml,
+    'mxfrontpagehtml'           => $mxfrontpagehtml,
     'mxbackurl'                 => $mxbackurl,
     'mxbacklabel'               => $mxbacklabel,
     'mxhasback'                 => ($mxbackurl !== ''),
+
+    // Public Navbar & Frontpage Links
+    'mxhomeurl'                 => (new moodle_url('/', ['redirect' => 0]))->out(false),
+    'mxloginurl'                => (new moodle_url('/login/index.php'))->out(false),
+    'mxnewsanchor'              => $issiteindex ? '#mx-public-news' : (new moodle_url('/', ['redirect' => 0], 'mx-public-news'))->out(false),
+    'mxcoursesanchor'           => $issiteindex ? '#mx-public-courses' : (new moodle_url('/', ['redirect' => 0], 'mx-public-courses'))->out(false),
+    'mxcertlookupanchor'        => $issiteindex ? '#mx-public-cert-lookup' : (new moodle_url('/local/mamxanhcert/verify.php'))->out(false),
+    'lbl_pub_home'              => $isen ? 'Home' : 'Trang chủ',
+    'lbl_pub_news'              => $isen ? 'News & Notices' : 'Tin tức & Thông báo',
+    'lbl_pub_courses'           => $isen ? 'Training Programs' : 'Chương trình Tập huấn',
+    'lbl_pub_cert'              => $isen ? 'QR Certificate Lookup' : 'Tra cứu Chứng nhận QR',
+    'lbl_login_btn'             => $isen ? 'Log in' : 'Đăng nhập',
 
     // Secondary Subnav Links & Active States
     'iscbktadmin'               => $iscbktadmin,
