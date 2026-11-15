@@ -27,9 +27,9 @@ async function saveShot(page, filename, fullPage = false) {
 
     try {
         // ===================================================================
-        // TEST 1: INCOGNITO / GUEST VISIT TO http://localhost:8090/
+        // TEST 1: GUEST / UNAUTHENTICATED NAVBAR & PORTAL (http://localhost:8090/)
         // ===================================================================
-        console.log('--- 1. Testing Guest / Unauthenticated Access to http://localhost:8090/ ---');
+        console.log('--- 1. Testing Guest Navbar (No 4 Anchor Links) & News Portal ---');
         const guestContext = await browser.createBrowserContext();
         const guestPage = await guestContext.newPage();
         await guestPage.setViewport({ width: 1366, height: 768 });
@@ -38,21 +38,20 @@ async function saveShot(page, filename, fullPage = false) {
         await new Promise(r => setTimeout(r, 800));
 
         const guestMetrics = await guestPage.evaluate(() => {
+            const brand = document.querySelector('.navbar .navbar-brand')?.textContent.trim() || null;
+            const navLinks = Array.from(document.querySelectorAll('.navbar .primary-navigation .nav-link')).map(a => a.textContent.trim());
+            const langLinks = Array.from(document.querySelectorAll('.navbar .mx-navbar-lang-link')).map(a => a.textContent.trim());
             const loginBtn = document.querySelector('#mx-navbar-login-btn');
             const loginBtnStyle = loginBtn ? window.getComputedStyle(loginBtn) : null;
-            const pubNavLinks = Array.from(document.querySelectorAll('.mx-public-navbar-links .nav-link')).map(a => a.textContent.trim());
             const subnav = document.querySelector('.mx-subnav');
-            const heroTitle = document.querySelector('.mx-portal-hero-title')?.textContent.trim() || null;
-            const featuredTitle = document.querySelector('.mx-featured-title')?.textContent.trim() || null;
-            const newsTitles = Array.from(document.querySelectorAll('#mx-public-news h3')).map(h => h.textContent.trim());
-            const courseCodes = Array.from(document.querySelectorAll('#mx-public-courses .mx-pub-course-code')).map(c => c.textContent.trim());
-            const certLookupForm = !!document.querySelector('#mx-public-cert-lookup form.mx-lookup-form');
-            const imagesLoaded = Array.from(document.querySelectorAll('#mx-frontpage-portal img')).every(img => img.complete && img.naturalWidth > 0);
 
             return {
                 currentUrl: window.location.href,
+                brand,
+                navLinksCount: navLinks.length,
+                navLinks,
+                langLinks,
                 subnavPresent: !!subnav,
-                pubNavLinks,
                 loginBtn: loginBtn ? {
                     text: loginBtn.textContent.trim(),
                     href: loginBtn.getAttribute('href'),
@@ -62,84 +61,100 @@ async function saveShot(page, filename, fullPage = false) {
                     padding: loginBtnStyle.padding,
                     fontWeight: loginBtnStyle.fontWeight
                 } : null,
-                heroTitle,
-                featuredTitle,
-                newsCount: newsTitles.length,
-                newsTitles,
-                courseCount: courseCodes.length,
-                courseCodes,
-                certLookupForm,
-                imagesLoaded,
                 horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
             };
         });
 
-        console.log('[GUEST PORTAL METRICS]', JSON.stringify(guestMetrics, null, 2));
+        console.log('[GUEST NAVBAR METRICS]', JSON.stringify(guestMetrics, null, 2));
 
-        if (guestMetrics.currentUrl.includes('/login/index.php')) {
-            throw new Error(`FAIL: Guest was redirected to login page: ${guestMetrics.currentUrl}`);
+        if (guestMetrics.navLinksCount !== 0) {
+            throw new Error(`FAIL: Guest navbar should have 0 anchor links, found: ${guestMetrics.navLinks.join(', ')}`);
         }
         if (guestMetrics.subnavPresent) {
-            throw new Error('FAIL: .mx-subnav should be hidden for unauthenticated visitors');
-        }
-        if (!guestMetrics.loginBtn) {
-            throw new Error('FAIL: #mx-navbar-login-btn is missing on Navbar');
+            throw new Error('FAIL: .mx-subnav must not exist');
         }
 
-        // Capture required screenshot 80_public_news_landing_page.png (viewport + full page)
         await saveShot(guestPage, '80_public_news_landing_page.png', false);
-        await saveShot(guestPage, '80_public_news_landing_page_full.png', true);
-
-        // Test interactive Article Reader Modal before clicking Login
-        await guestPage.click('.js-open-mx-article[data-article-id="art1"]');
-        await new Promise(r => setTimeout(r, 400));
-        const modalVisible = await guestPage.evaluate(() => {
-            const m = document.getElementById('mx-article-reader-modal');
-            return m && m.style.display === 'flex' && document.getElementById('mx-modal-title')?.textContent.length > 10;
-        });
-        console.log('[ARTICLE MODAL OPENED]', modalVisible);
-        await saveShot(guestPage, '81_public_news_article_modal.png', false);
-        await guestPage.click('.mx-modal-close-btn');
-        await new Promise(r => setTimeout(r, 300));
+        await saveShot(guestPage, '82_minimalist_guest_navbar_portal.png', false);
 
         // ===================================================================
-        // TEST 2: CLICK "ĐĂNG NHẬP" ON NAVBAR -> SMOOTH REDIRECT TO /login/index.php
+        // TEST 2: CLICK "ĐĂNG NHẬP" -> LOG IN -> VERIFY UNIFIED SINGLE NAVBAR
         // ===================================================================
-        console.log('--- 2. Clicking "Đăng nhập" Button on Navbar ---');
+        console.log('--- 2. Clicking "Đăng nhập" & Logging In as nd_hoa_dalat ---');
         await Promise.all([
             guestPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }),
             guestPage.click('#mx-navbar-login-btn')
         ]);
-        const afterClickUrl = guestPage.url();
-        console.log('[AFTER NAVBAR LOGIN CLICK URL]', afterClickUrl);
-        if (!afterClickUrl.includes('/login/index.php')) {
-            throw new Error(`FAIL: Clicking #mx-navbar-login-btn did not navigate to /login/index.php (got ${afterClickUrl})`);
-        }
 
-        // ===================================================================
-        // TEST 3: LOGGED-IN USER VISITING FRONTPAGE (/?redirect=0)
-        // ===================================================================
-        console.log('--- 3. Testing Logged-In User Viewing Frontpage News Portal ---');
-        await guestPage.type('input[name="username"]', 'nd_hoa_dalat');
-        await guestPage.type('input[name="password"]', 'MX!Rau2026');
+        await guestPage.type('#username', 'nd_hoa_dalat');
+        await guestPage.type('#password', 'MX!Rau2026');
         await Promise.all([
             guestPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }),
-            guestPage.click('#loginbtn, button[type="submit"]')
+            guestPage.click('#loginbtn')
         ]);
 
+        // 2A. Check /my/index.php (Dashboard)
+        await guestPage.goto(`${BASE_URL}/my/index.php?lang=vi`, { waitUntil: 'networkidle2', timeout: 30000 });
+        await new Promise(r => setTimeout(r, 800));
+
+        const dashboardNavMetrics = await guestPage.evaluate(() => {
+            const topTabs = Array.from(document.querySelectorAll('.navbar .mx-unified-nav > .nav-item > .nav-link')).map(a => ({
+                text: a.textContent.trim(),
+                active: a.classList.contains('active')
+            }));
+            const dropdownItems = Array.from(document.querySelectorAll('.navbar .mx-ops-dropdown-menu .dropdown-item')).map(a => a.textContent.trim());
+            const subnav = document.querySelector('.mx-subnav');
+            const langLinks = Array.from(document.querySelectorAll('.navbar .mx-navbar-lang-link')).map(a => a.textContent.trim());
+            const calRect = document.querySelector('.block_calendar_month')?.getBoundingClientRect();
+
+            return {
+                url: window.location.href,
+                subnavPresent: !!subnav,
+                topTabs,
+                activeTabs: topTabs.filter(t => t.active).map(t => t.text),
+                dropdownItems,
+                langLinks,
+                calendarTopY: calRect ? Math.round(calRect.y) : null,
+                calendarWidth: calRect ? Math.round(calRect.width) : null,
+                horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+            };
+        });
+
+        console.log('[LOGGED-IN /my/index.php NAVBAR METRICS]', JSON.stringify(dashboardNavMetrics, null, 2));
+
+        if (dashboardNavMetrics.subnavPresent) {
+            throw new Error('FAIL: .mx-subnav should be completely removed when logged in');
+        }
+        if (dashboardNavMetrics.activeTabs.length !== 1 || dashboardNavMetrics.activeTabs[0] !== 'Bảng Điều khiển') {
+            throw new Error(`FAIL: Expected only 'Bảng Điều khiển' active on /my/index.php, got: ${JSON.stringify(dashboardNavMetrics.activeTabs)}`);
+        }
+
+        await saveShot(guestPage, '83_unified_single_navbar_dashboard.png', false);
+
+        // 2B. Check /?redirect=0 (Site Home when logged in)
         await guestPage.goto(`${BASE_URL}/?redirect=0`, { waitUntil: 'networkidle2', timeout: 30000 });
         await new Promise(r => setTimeout(r, 500));
+        const homeActiveTabs = await guestPage.evaluate(() =>
+            Array.from(document.querySelectorAll('.navbar .mx-unified-nav > .nav-item > .nav-link.active')).map(a => a.textContent.trim())
+        );
+        console.log('[LOGGED-IN /?redirect=0 ACTIVE TABS]', homeActiveTabs);
+        if (homeActiveTabs.length !== 1 || homeActiveTabs[0] !== 'Trang chủ') {
+            throw new Error(`FAIL: Expected only 'Trang chủ' active on /?redirect=0, got: ${JSON.stringify(homeActiveTabs)}`);
+        }
 
-        const loggedInPortal = await guestPage.evaluate(() => ({
-            url: window.location.href,
-            subnavPresent: !!document.querySelector('.mx-subnav'),
-            heroDashboardBtn: document.querySelector('#mx-hero-dashboard-btn')?.textContent.trim() || null,
-            portalPresent: !!document.querySelector('#mx-frontpage-portal')
-        }));
-        console.log('[LOGGED-IN PORTAL METRICS]', JSON.stringify(loggedInPortal, null, 2));
+        // 2C. Check /local/mamxanhapp/index.php (Smart Agriculture space)
+        await guestPage.goto(`${BASE_URL}/local/mamxanhapp/index.php`, { waitUntil: 'networkidle2', timeout: 30000 });
+        await new Promise(r => setTimeout(r, 500));
+        const mamxanhActiveTabs = await guestPage.evaluate(() =>
+            Array.from(document.querySelectorAll('.navbar .mx-unified-nav > .nav-item > .nav-link.active')).map(a => a.textContent.trim())
+        );
+        console.log('[LOGGED-IN /local/mamxanhapp/index.php ACTIVE TABS]', mamxanhActiveTabs);
+        if (mamxanhActiveTabs.length !== 1 || mamxanhActiveTabs[0] !== 'Không gian Nông nghiệp') {
+            throw new Error(`FAIL: Expected only 'Không gian Nông nghiệp' active on /local/mamxanhapp/index.php, got: ${JSON.stringify(mamxanhActiveTabs)}`);
+        }
 
         await guestContext.close();
-        console.log('ALL PUBLIC NEWS PORTAL & NAVBAR LOGIN E2E CHECKS PASSED!');
+        console.log('ALL SINGLE UNIFIED NAVBAR & ACTIVE STATE CHECKS PASSED!');
     } finally {
         await browser.close();
     }

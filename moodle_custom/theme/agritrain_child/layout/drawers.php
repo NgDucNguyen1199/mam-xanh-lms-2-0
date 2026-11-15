@@ -131,7 +131,21 @@ if ($PAGE->has_set_url()) {
 
 $curpath = $PAGE->has_set_url() ? ($PAGE->url->get_path() ?: '') : '';
 $iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
+$issiteadmin = is_siteadmin();
 $targetcourseid = (!empty($COURSE->id) && (int)$COURSE->id !== SITEID) ? (int)$COURSE->id : 2;
+
+$navhomeactive = $issiteindex;
+$navmyactive = ($PAGE->pagetype === 'my-index' || $curpath === '/my/' || $curpath === '/my/index.php');
+$navmycoursesactive = !$issiteindex && ($curpath === '/my/courses.php' || strpos($curpath, '/course/') !== false || !empty($PAGE->cm->id));
+$navmamxanhactive = (strpos($curpath, '/local/mamxanhapp/index.php') !== false);
+$navmanageactive = (strpos($curpath, '/local/mamxanhapp/manage.php') !== false);
+$navcloneractive = (strpos($curpath, '/local/mamxanhapp/clone_course.php') !== false);
+$navagriactive = (strpos($curpath, '/local/agriops/') !== false);
+$navcalcactive = (strpos($curpath, '/local/mamxanhapp/calculator.php') !== false);
+$navcertactive = (strpos($curpath, '/local/mamxanhcert/') !== false);
+$navprofactive = (strpos($curpath, '/local/farmerprofile/') !== false);
+$navadminactive = (strpos($curpath, '/admin/') !== false);
+$navopsdropdownactive = ($navagriactive || $navcalcactive || $navcertactive || $navprofactive || $navcloneractive || $navmanageactive || $navadminactive);
 
 $templatecontext = [
     'sitename'                  => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), 'escape' => false]),
@@ -192,34 +206,48 @@ $templatecontext = [
     'lbl_pub_cert'              => $isen ? 'QR Certificate Lookup' : 'Tra cứu Chứng nhận QR',
     'lbl_login_btn'             => $isen ? 'Log in' : 'Đăng nhập',
 
-    // Secondary Subnav Links & Active States
+    // Unified Single Navbar Links & Active States
     'iscbktadmin'               => $iscbktadmin,
+    'issiteadmin'               => $issiteadmin,
     'mxmyurl'                   => (new moodle_url('/my/index.php'))->out(false),
+    'mxmycoursesurl'            => (new moodle_url('/my/courses.php'))->out(false),
     'mxmamxanhurl'              => (new moodle_url('/local/mamxanhapp/index.php'))->out(false),
+    'mxmanageurl'               => (new moodle_url('/local/mamxanhapp/manage.php'))->out(false),
     'mxclonerurl'               => (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false),
     'mxcourseurl'               => (new moodle_url('/course/view.php', ['id' => $targetcourseid]))->out(false),
     'mxagriopsurl'              => (new moodle_url('/local/agriops/index.php'))->out(false),
     'mxcalcurl'                 => (new moodle_url('/local/mamxanhapp/calculator.php'))->out(false),
     'mxcerturl'                 => (new moodle_url('/local/mamxanhcert/index.php'))->out(false),
     'mxprofileurl'              => (new moodle_url('/local/farmerprofile/index.php'))->out(false),
+    'mxadminurl'                => (new moodle_url('/admin/search.php'))->out(false),
 
-    'navmyactive'               => ($PAGE->pagetype === 'my-index' || $curpath === '/my/' || $curpath === '/my/index.php'),
-    'navmamxanhactive'          => (strpos($curpath, '/local/mamxanhapp/index.php') !== false || strpos($curpath, '/local/mamxanhapp/manage.php') !== false),
-    'navcloneractive'           => (strpos($curpath, '/local/mamxanhapp/clone_course.php') !== false),
-    'navcourseactive'           => (strpos($curpath, '/course/view.php') !== false || !empty($PAGE->cm->id)),
-    'navagriactive'             => (strpos($curpath, '/local/agriops/') !== false),
-    'navcalcactive'             => (strpos($curpath, '/local/mamxanhapp/calculator.php') !== false),
-    'navcertactive'             => (strpos($curpath, '/local/mamxanhcert/') !== false),
-    'navprofactive'             => (strpos($curpath, '/local/farmerprofile/') !== false),
+    'navhomeactive'             => $navhomeactive,
+    'navmyactive'               => $navmyactive,
+    'navmycoursesactive'        => $navmycoursesactive,
+    'navmamxanhactive'          => $navmamxanhactive,
+    'navmanageactive'           => $navmanageactive,
+    'navcloneractive'           => $navcloneractive,
+    'navcourseactive'           => $navmycoursesactive,
+    'navagriactive'             => $navagriactive,
+    'navcalcactive'             => $navcalcactive,
+    'navcertactive'             => $navcertactive,
+    'navprofactive'             => $navprofactive,
+    'navadminactive'            => $navadminactive,
+    'navopsdropdownactive'      => $navopsdropdownactive,
 
-    'lbl_nav_my'                => $isen ? 'Dashboard' : 'Bảng điều khiển',
+    'lbl_nav_home'              => $isen ? 'Home' : 'Trang chủ',
+    'lbl_nav_my'                => $isen ? 'Dashboard' : 'Bảng Điều khiển',
+    'lbl_nav_mycourses'         => $isen ? 'My courses' : 'Các khoá học của tôi',
     'lbl_nav_mamxanh'           => $isen ? 'Smart Agriculture' : 'Không gian Nông nghiệp',
+    'lbl_nav_ops_dropdown'      => $isen ? 'Agri Operations' : 'Nghiệp vụ Nông nghiệp',
+    'lbl_nav_manage'            => $isen ? 'Training Management' : 'Quản lý Đào tạo',
     'lbl_nav_cloner'            => $isen ? 'Course Cloner' : 'Nhân bản khóa học',
     'lbl_nav_course'            => $isen ? 'Course' : 'Khóa học',
     'lbl_nav_agri'              => $isen ? 'VietGAP Log' : 'Nhật ký VietGAP',
     'lbl_nav_calc'              => $isen ? 'Tools' : 'Công cụ',
     'lbl_nav_cert'              => $isen ? 'Certificates' : 'Chứng nhận',
     'lbl_nav_prof'              => $isen ? 'Farm' : 'Nông hộ',
+    'lbl_nav_admin'             => $isen ? 'Site Administration' : 'Quản trị Hệ thống',
 ];
 
 echo $OUTPUT->render_from_template('theme_agritrain_child/drawers', $templatecontext);

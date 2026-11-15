@@ -15,27 +15,54 @@
         </a>
 
         {{#showsubnav}}
-            {{#primarymoremenu}}
-                <div class="primary-navigation">
-                    {{> core/moremenu}}
-                </div>
-            {{/primarymoremenu}}
-
-            {{# output.page_heading_menu}}
-                <ul class="navbar-nav d-none d-md-flex my-1 px-1">
-                    {{{ output.page_heading_menu }}}
+            <div class="primary-navigation d-none d-md-flex align-items-center h-100">
+                <ul class="nav more-nav navbar-nav mx-unified-nav h-100" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a role="menuitem" class="nav-link {{#navhomeactive}}active{{/navhomeactive}}" {{#navhomeactive}}aria-current="true"{{/navhomeactive}} href="{{{ mxhomeurl }}}">{{ lbl_nav_home }}</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a role="menuitem" class="nav-link {{#navmyactive}}active{{/navmyactive}}" {{#navmyactive}}aria-current="true"{{/navmyactive}} href="{{{ mxmyurl }}}">{{ lbl_nav_my }}</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a role="menuitem" class="nav-link {{#navmycoursesactive}}active{{/navmycoursesactive}}" {{#navmycoursesactive}}aria-current="true"{{/navmycoursesactive}} href="{{{ mxmycoursesurl }}}">{{ lbl_nav_mycourses }}</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a role="menuitem" class="nav-link {{#navmamxanhactive}}active{{/navmamxanhactive}}" {{#navmamxanhactive}}aria-current="true"{{/navmamxanhactive}} href="{{{ mxmamxanhurl }}}">{{ lbl_nav_mamxanh }}</a>
+                    </li>
+                    <li class="nav-item dropdown mx-nav-dropdown" role="none">
+                        <a role="menuitem" class="nav-link dropdown-toggle {{#navopsdropdownactive}}active{{/navopsdropdownactive}}" {{#navopsdropdownactive}}aria-current="true"{{/navopsdropdownactive}} href="#" id="mx-ops-dropdown" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ lbl_nav_ops_dropdown }}
+                        </a>
+                        <div class="dropdown-menu mx-ops-dropdown-menu" aria-labelledby="mx-ops-dropdown">
+                            <a class="dropdown-item {{#navagriactive}}active{{/navagriactive}}" href="{{{ mxagriopsurl }}}">{{ lbl_nav_agri }}</a>
+                            {{^iscbktadmin}}
+                            <a class="dropdown-item {{#navcalcactive}}active{{/navcalcactive}}" href="{{{ mxcalcurl }}}">{{ lbl_nav_calc }}</a>
+                            {{/iscbktadmin}}
+                            <a class="dropdown-item {{#navcertactive}}active{{/navcertactive}}" href="{{{ mxcerturl }}}">{{ lbl_nav_cert }}</a>
+                            {{^iscbktadmin}}
+                            <a class="dropdown-item {{#navprofactive}}active{{/navprofactive}}" href="{{{ mxprofileurl }}}">{{ lbl_nav_prof }}</a>
+                            {{/iscbktadmin}}
+                            {{#iscbktadmin}}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item {{#navmanageactive}}active{{/navmanageactive}}" href="{{{ mxmanageurl }}}">{{ lbl_nav_manage }}</a>
+                            <a class="dropdown-item {{#navcloneractive}}active{{/navcloneractive}}" href="{{{ mxclonerurl }}}">{{ lbl_nav_cloner }}</a>
+                            {{/iscbktadmin}}
+                            {{#issiteadmin}}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item {{#navadminactive}}active{{/navadminactive}}" href="{{{ mxadminurl }}}">{{ lbl_nav_admin }}</a>
+                            {{/issiteadmin}}
+                        </div>
+                    </li>
                 </ul>
-            {{/output.page_heading_menu}}
+            </div>
 
-            <div id="usernavigation" class="navbar-nav ms-auto h-100">
-                {{# output.search_box }}
-                    {{{ output.search_box }}}
-                    <div class="divider border-start h-75 align-self-center mx-1"></div>
-                {{/output.search_box}}
-                {{#langmenu}}
-                    {{> theme_boost/language_menu }}
-                    <div class="divider border-start h-75 align-self-center mx-1"></div>
-                {{/langmenu}}
+            <div id="usernavigation" class="navbar-nav ms-auto h-100 d-flex align-items-center">
+                <div class="mx-navbar-lang d-flex align-items-center me-2" aria-label="Language switcher">
+                    <a href="{{{ langviurl }}}" class="mx-navbar-lang-link {{#isvi}}active{{/isvi}}" id="mx-switch-vi">VI</a>
+                    <span class="mx-navbar-lang-sep" aria-hidden="true">|</span>
+                    <a href="{{{ langenurl }}}" class="mx-navbar-lang-link {{#isen}}active{{/isen}}" id="mx-switch-en">EN</a>
+                </div>
+                <div class="divider border-start h-50 align-self-center mx-1"></div>
                 {{{ output.navbar_plugin_output }}}
                 <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
                     {{#usermenu}}
@@ -47,27 +74,10 @@
         {{/showsubnav}}
 
         {{^showsubnav}}
-            <div class="primary-navigation d-none d-md-flex align-items-center h-100">
-                <ul class="nav more-nav navbar-nav mx-public-navbar-links h-100">
-                    <li class="nav-item" role="none">
-                        <a role="menuitem" class="nav-link {{#issiteindex}}active{{/issiteindex}}" href="{{{ mxhomeurl }}}">{{ lbl_pub_home }}</a>
-                    </li>
-                    <li class="nav-item" role="none">
-                        <a role="menuitem" class="nav-link" href="{{{ mxnewsanchor }}}">{{ lbl_pub_news }}</a>
-                    </li>
-                    <li class="nav-item" role="none">
-                        <a role="menuitem" class="nav-link" href="{{{ mxcoursesanchor }}}">{{ lbl_pub_courses }}</a>
-                    </li>
-                    <li class="nav-item" role="none">
-                        <a role="menuitem" class="nav-link {{#navcertactive}}active{{/navcertactive}}" href="{{{ mxcertlookupanchor }}}">{{ lbl_pub_cert }}</a>
-                    </li>
-                </ul>
-            </div>
-
             <div id="usernavigation" class="navbar-nav ms-auto h-100 d-flex align-items-center gap-3">
                 <div class="mx-navbar-lang d-flex align-items-center" aria-label="Language switcher">
                     <a href="{{{ langviurl }}}" class="mx-navbar-lang-link {{#isvi}}active{{/isvi}}" id="mx-switch-vi">VI</a>
-                    <span class="mx-navbar-lang-sep" aria-hidden="true">/</span>
+                    <span class="mx-navbar-lang-sep" aria-hidden="true">|</span>
                     <a href="{{{ langenurl }}}" class="mx-navbar-lang-link {{#isen}}active{{/isen}}" id="mx-switch-en">EN</a>
                 </div>
                 <div class="d-flex align-items-center usermenu-container" data-region="usermenu">
