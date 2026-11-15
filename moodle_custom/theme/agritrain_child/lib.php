@@ -71,7 +71,7 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
     $sectionblocks = [];
     $totalall = 0;
     $doneall = 0;
-    $dfmt = $en ? 'D, d M Y, H:i' : 'd/m/Y H:i';
+    $dfmt = $en ? '%a, %d %b %Y, %H:%M' : '%d/%m/%Y %H:%M';
 
     foreach ($sections as $secnum => $secinfo) {
         if (!$secinfo->visible && !has_capability('moodle/course:viewhiddensections', context_course::instance($course->id))) {

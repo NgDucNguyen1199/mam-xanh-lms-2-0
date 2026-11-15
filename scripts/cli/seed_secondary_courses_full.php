@@ -1420,6 +1420,10 @@ foreach ($allcourses as $ac) {
 if (file_exists(__DIR__ . '/fix_participants_rbac.php')) {
     require_once(__DIR__ . '/fix_participants_rbac.php');
 }
+// Enforce clean UTF-8 across all tables and standardized section summaries
+if (file_exists(__DIR__ . '/fix_utf8_question_marks.php')) {
+    require_once(__DIR__ . '/fix_utf8_question_marks.php');
+}
 
 echo "\n===================================================================\n";
 echo "ALL STAGES (P0 + P1 + P2 DB SETUP) COMPLETED SUCCESSFULLY!\n";
