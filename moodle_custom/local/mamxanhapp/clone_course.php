@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('do_clone', 0, PARAM
             // Create active Course Badge for cloned local course
             if (!$DB->record_exists('badge', ['courseid' => $newcourseid])) {
                 $now = time();
-                $DB->insert_record('badge', (object)[
+                $newbadgeid = $DB->insert_record('badge', (object)[
                     'name'            => 'Chứng nhận Tập huấn ' . $finalshort,
                     'description'     => 'Huy hiệu công nhận hoàn thành khóa tập huấn địa phương ' . $newfullname,
                     'timecreated'     => $now,
@@ -256,6 +256,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('do_clone', 0, PARAM
                     'imageauthorurl'  => $CFG->wwwroot,
                     'imagecaption'    => $finalshort,
                 ]);
+                $iconfile = $CFG->dirroot . '/pwa-icons/icon-192.png';
+                if (file_exists($iconfile)) {
+                    require_once($CFG->libdir . '/gdlib.php');
+                    $tmpicon = make_temp_directory('badges') . '/badge_' . $newbadgeid . '.png';
+                    @copy($iconfile, $tmpicon);
+                    process_new_icon(context_course::instance($newcourseid), 'badges', 'badgeimage', $newbadgeid, $tmpicon, true);
+                }
             }
 
             rebuild_course_cache($newcourseid, true);
@@ -340,10 +347,10 @@ echo $OUTPUT->header();
 
     <?php if ($cloneresult !== null): ?>
     <!-- Clone Success Result Card -->
-    <section id="mx-clone-success-card" class="mx-card p-4 mb-4" style="background:#F8FAFC !important;border-left:4px solid #1E3A2F !important;">
+    <section id="mx-clone-success-card" class="mx-card p-4 mb-4" style="background:#F9FAF9 !important;border-left:4px solid #234E3E !important;">
         <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
             <div>
-                <span class="badge mb-2" style="background:#DCFCE7;color:#166534;font-size:0.8rem;font-weight:700;">
+                <span class="badge mb-2" style="background:#EAF2EE;color:#234E3E;font-size:0.8rem;font-weight:700;">
                     <?php echo s(local_mamxanhapp_t('NHÂN BẢN THÀNH CÔNG 100%', 'CLONED SUCCESSFULLY 100%')); ?> • <?php echo s($cloneresult->elapsed . 's'); ?>
                 </span>
                 <h3 class="h3 mb-2">
@@ -396,7 +403,7 @@ echo $OUTPUT->header();
                         <select name="sourcecourseid" id="mx-clone-source" class="form-control" required>
                             <?php foreach ($rawcourses as $rc): ?>
                             <option value="<?php echo (int)$rc->id; ?>">
-                                [<?php echo s($rc->shortname); ?>] <?php echo s(format_string($rc->fullname)); ?>
+                                [<?php echo s($rc->shortname); ?>] <?php echo s($rc->fullname); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -453,7 +460,7 @@ echo $OUTPUT->header();
                     <li><strong>Bước 3 (Chuyên đề 3):</strong> Thực hành tại vườn <code>mod_fieldpractice</code> (Điểm danh QR xoay vòng + GPS + Rubric 4 tiêu chí) — mở khóa khi xong Bước 2.</li>
                     <li><strong>Bước 4 (Chuyên đề 4):</strong> Bài kiểm tra Quiz 12 câu (Ngân hàng câu hỏi đầy đủ) — đạt <code>&ge; 70%</code> tự động mở khóa Chứng nhận Số QR <code>HMAC-SHA256</code>.</li>
                 </ul>
-                <div class="p-3 rounded border" style="background:#F8FAFC;border-left:4px solid #1E3A2F !important;font-size:0.88rem;color:#334155;">
+                <div class="p-3 rounded border" style="background:#F9FAF9;border-left:4px solid #234E3E !important;font-size:0.88rem;color:#334155;">
                     <?php echo s(local_mamxanhapp_t(
                         'Mẹo cho Cán bộ Kỹ thuật: Sau khi nhân bản, mọi ID điều kiện mở khóa tuần tự (Availability JSON) và Sổ điểm Gradebook đều được Moodle tự động ánh xạ sang lớp địa phương mới!',
                         'Tip: All Restrict Access module IDs and Gradebook categories are automatically remapped to the new local course!'

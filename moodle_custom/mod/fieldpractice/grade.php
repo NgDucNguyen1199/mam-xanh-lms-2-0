@@ -72,31 +72,31 @@ echo $OUTPUT->header();
 
 <div class="mx-rubric-grading">
     <div class="d-flex flex-wrap justify-content-between mb-3" style="gap:10px;">
-        <a href="<?php echo (new moodle_url('/mod/fieldpractice/view.php', ['id' => $cm->id]))->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo (new moodle_url('/mod/fieldpractice/view.php', ['id' => $cm->id]))->out(false); ?>" class="btn btn-secondary">
             ← <?php echo s(local_mamxanhapp_t('Quay lại trang Thực hành', 'Back to Activity')); ?>
         </a>
-        <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;background:#1B4332;">
+        <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-primary" style="background:#234E3E;border-color:#234E3E;">
             <?php echo s(local_mamxanhapp_t('Về Trung tâm Báo cáo CBKT', 'Instructor Analytics Hub')); ?>
         </a>
     </div>
 
     <?php if ($savedmsg !== ''): ?>
-    <div class="alert alert-success" id="mx-rubric-saved-alert" style="border-radius:16px;font-weight:800;border:2px solid #2E7D32;">
+    <div class="alert alert-success" id="mx-rubric-saved-alert" style="border-radius:10px;font-weight:700;border:1px solid #234E3E;">
         <?php echo s($savedmsg); ?>
     </div>
     <?php endif; ?>
 
-    <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;">
-        <h3 style="color:#1B4332;font-weight:800;margin-bottom:6px;">
+    <div style="background:#FFF;border:1px solid #E6ECE9;border-radius:16px;padding:24px;">
+        <h3 style="color:#234E3E;font-weight:700;margin-bottom:6px;">
             <?php echo s(local_mamxanhapp_t('Chấm điểm Thực hành Tại vườn theo Rubric 4 Tiêu chí', '4-Criteria Field Practice Rubric Evaluation')); ?>
         </h3>
-        <p style="color:#4E6358;margin-bottom:18px;">
+        <p style="color:#52615B;margin-bottom:18px;">
             <strong><?php echo format_string($fp->name); ?></strong> — <?php echo s(local_mamxanhapp_t('Mỗi tiêu chí tối đa 25 điểm (Tổng 100 điểm, tự động ghi thẳng vào Sổ điểm Gradebook).', 'Each criterion is worth 0–25 pts (Total 100 pts, pushed directly to Moodle Gradebook).')); ?>
         </p>
 
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
-                <thead style="background:#E8F5E9;color:#1B4332;">
+                <thead style="background:#EAF2EE;color:#234E3E;">
                     <tr>
                         <th><?php echo s(local_mamxanhapp_t('Học viên Nông dân & GPS', 'Farmer & Check-in GPS')); ?></th>
                         <th style="min-width:105px;">TC1: Chuẩn bị (0-25)</th>
@@ -135,7 +135,7 @@ echo $OUTPUT->header();
                         <td><input form="<?php echo $formid; ?>" type="number" name="crit_quality" class="form-control" min="0" max="25" value="<?php echo $sub ? (int)$sub->crit_quality : 22; ?>" style="min-height:44px;font-weight:700;"></td>
                         <td><input form="<?php echo $formid; ?>" type="text" name="feedback" class="form-control" value="<?php echo s($sub->feedback ?? 'Thao tác pha dinh dưỡng và an toàn sinh học đúng chuẩn VietGAP.'); ?>" style="min-height:44px;"></td>
                         <td>
-                            <button form="<?php echo $formid; ?>" type="submit" class="btn btn-success mx-save-rubric-btn" data-username="<?php echo s($lu->username); ?>" style="min-height:46px;border-radius:12px;font-weight:800;white-space:nowrap;background:#1B4332;">
+                            <button form="<?php echo $formid; ?>" type="submit" class="btn btn-primary mx-save-rubric-btn" data-username="<?php echo s($lu->username); ?>" style="min-height:42px;border-radius:8px;font-weight:600;white-space:nowrap;background:#234E3E;border-color:#234E3E;">
                                 <?php echo s(local_mamxanhapp_t('Lưu điểm', 'Save')); ?>
                             </button>
                         </td>

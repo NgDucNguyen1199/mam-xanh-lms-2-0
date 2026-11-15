@@ -95,45 +95,45 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Chứng nhận ' . $cert->cert_code);
 $PAGE->set_heading('' . $cert->cert_code);
 
-$qrsvg = \local_mamxanhapp\qr_helper::render_svg($verifyurl, 150, '#1B4332');
+$qrsvg = \local_mamxanhapp\qr_helper::render_svg($verifyurl, 150, '#234E3E');
 
 echo $OUTPUT->header();
 ?>
 
 <div style="max-width:920px;margin:0 auto;">
     <div class="d-flex flex-wrap justify-content-between mb-3" style="gap:10px;">
-        <a href="<?php echo (new moodle_url('/local/mamxanhcert/index.php'))->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;">
+        <a href="<?php echo (new moodle_url('/local/mamxanhcert/index.php'))->out(false); ?>" class="btn btn-secondary">
             ← <?php echo s(local_mamxanhapp_t('Danh sách Chứng nhận', 'All Certificates')); ?>
         </a>
         <div class="d-flex flex-wrap" style="gap:10px;">
-            <a href="<?php echo (new moodle_url('/local/mamxanhcert/view.php', ['code' => $cert->cert_code, 'download' => 'pdf']))->out(false); ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;background:#1B4332;">
+            <a href="<?php echo (new moodle_url('/local/mamxanhcert/view.php', ['code' => $cert->cert_code, 'download' => 'pdf']))->out(false); ?>" class="btn btn-primary" style="background:#234E3E;border-color:#234E3E;">
                 <?php echo s(local_mamxanhapp_t('Tải Bản PDF Ký Số', 'Download Signed PDF')); ?>
             </a>
-            <button type="button" onclick="window.print()" class="btn btn-outline-secondary" style="min-height:48px;border-radius:14px;font-weight:700;">
+            <button type="button" onclick="window.print()" class="btn btn-secondary">
                 <?php echo s(local_mamxanhapp_t('In Chứng nhận', 'Print')); ?>
             </button>
         </div>
     </div>
 
-    <article style="background:linear-gradient(180deg,#FFFFFF 0%,#F7FCF8 100%);border:6px double #1B4332;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 16px 40px rgba(27,67,50,0.14);">
-        <div style="color:#2E7D32;font-weight:800;letter-spacing:0.08em;font-size:0.92rem;margin-bottom:6px;">
+    <article style="background:#FFFFFF;border:4px double #234E3E;border-radius:16px;padding:36px 28px;text-align:center;box-shadow:0 8px 28px rgba(15,23,42,0.08);">
+        <div style="color:#234E3E;font-weight:700;letter-spacing:0.08em;font-size:0.9rem;margin-bottom:6px;">
             HỆ THỐNG TẬP HUẤN NÔNG NGHIỆP CÔNG NGHỆ CAO • MẦM XANH LMS 2.0
         </div>
-        <h2 style="color:#1B4332;font-weight:900;font-size:2rem;margin-bottom:6px;">
+        <h2 style="color:#234E3E;font-weight:800;font-size:1.85rem;margin-bottom:6px;">
             <?php echo s(local_mamxanhapp_t('CHỨNG NHẬN HOÀN THÀNH KHÓA HỌC', 'CERTIFICATE OF COMPLETION')); ?>
         </h2>
-        <p style="color:#546E7A;margin-bottom:20px;"><?php echo s(local_mamxanhapp_t('Trân trọng trao tặng học viên nông nghiệp số:', 'Proudly presented to digital agriculture practitioner:')); ?></p>
+        <p style="color:#52615B;margin-bottom:20px;"><?php echo s(local_mamxanhapp_t('Trân trọng trao tặng học viên nông nghiệp số:', 'Proudly presented to digital agriculture practitioner:')); ?></p>
 
-        <div style="font-size:1.95rem;font-weight:900;color:#14281D;border-bottom:2px solid #A5D6A7;display:inline-block;padding:0 28px 6px;margin-bottom:18px;">
+        <div style="font-size:1.85rem;font-weight:800;color:#111A16;border-bottom:2px solid #E6ECE9;display:inline-block;padding:0 28px 6px;margin-bottom:18px;">
             <?php echo s(fullname($learner)); ?>
         </div>
 
-        <p style="color:#455A64;margin-bottom:6px;"><?php echo s(local_mamxanhapp_t('Đã hoàn thành xuất sắc chương trình tập huấn kỹ thuật:', 'For successfully completing the interactive technical training course:')); ?></p>
-        <h3 style="color:#2E7D32;font-weight:800;font-size:1.4rem;margin-bottom:16px;">
+        <p style="color:#52615B;margin-bottom:6px;"><?php echo s(local_mamxanhapp_t('Đã hoàn thành xuất sắc chương trình tập huấn kỹ thuật:', 'For successfully completing the interactive technical training course:')); ?></p>
+        <h3 style="color:#234E3E;font-weight:700;font-size:1.35rem;margin-bottom:16px;">
             <?php echo format_string($course->fullname); ?>
         </h3>
 
-        <div style="display:inline-flex;flex-wrap:wrap;justify-content:center;gap:14px;background:#E8F5E9;padding:10px 22px;border-radius:999px;font-weight:800;color:#1B4332;margin-bottom:24px;">
+        <div style="display:inline-flex;flex-wrap:wrap;justify-content:center;gap:14px;background:#EAF2EE;padding:10px 22px;border-radius:999px;font-weight:700;color:#234E3E;margin-bottom:24px;">
             <span><?php echo s(local_mamxanhapp_t('Điểm tổng kết: ', 'Final Score: ') . number_format((float)$cert->final_score, 1) . '%'); ?></span>
             <span>•</span>
             <span><?php echo date('d/m/Y', (int)$cert->timecreated); ?></span>
@@ -141,16 +141,16 @@ echo $OUTPUT->header();
             <span><?php echo s($cert->cert_code); ?></span>
         </div>
 
-        <div class="row align-items-center text-start" style="background:#FFF;border:1.5px solid #C8E6C9;border-radius:18px;padding:16px;margin:0;">
+        <div class="row align-items-center text-start" style="background:#F9FAF9;border:1px solid #E6ECE9;border-radius:12px;padding:16px;margin:0;">
             <div class="col-md-8 mb-3 mb-md-0">
-                <div style="font-weight:800;color:#1B4332;margin-bottom:4px;">
+                <div style="font-weight:700;color:#234E3E;margin-bottom:4px;">
                     <?php echo $isvalid ? 'CHỮ KÝ SỐ HỢP LỆ (HMAC-SHA256 VERIFIED)' : 'INVALID SIGNATURE'; ?>
                 </div>
-                <div style="font-size:0.8rem;word-break:break-all;color:#455A64;">
+                <div style="font-size:0.8rem;word-break:break-all;color:#52615B;">
                     <strong>HMAC-SHA256 Digest:</strong> <code><?php echo s($cert->hmac_signature); ?></code>
                 </div>
                 <div style="font-size:0.84rem;margin-top:6px;">
-                    <a href="<?php echo $verifyurl; ?>" style="color:#2E7D32;font-weight:700;"><?php echo s($verifyurl); ?></a>
+                    <a href="<?php echo $verifyurl; ?>" style="color:#234E3E;font-weight:700;"><?php echo s($verifyurl); ?></a>
                 </div>
             </div>
             <div class="col-md-4 text-center">

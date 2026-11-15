@@ -124,8 +124,8 @@ foreach ($courses as $course) {
         $completedcoursescount++;
         $statuskey = 'done';
         $statuslabel = local_mamxanhapp_t('Đã hoàn thành', 'Completed');
-        $statusbg = '#D8F3DC';
-        $statusfg = '#1B4332';
+        $statusbg = '#EAF2EE';
+        $statusfg = '#234E3E';
     } else if ($progress > 0 || $bestquizpct !== null) {
         $statuskey = 'learning';
         $statuslabel = local_mamxanhapp_t('Đang học (' . $progress . '%)', 'In Progress (' . $progress . '%)');
@@ -160,6 +160,8 @@ foreach ($courses as $course) {
         'statusfg'    => $statusfg,
         'courseurl'   => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(false),
         'firstcmurl'  => $firstcmurl->out(false),
+        'transcripturl' => (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $course->id]))->out(false),
+        'feedbackurl'   => (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['courseid' => $course->id]))->out(false),
     ];
 }
 
@@ -187,16 +189,30 @@ echo $OUTPUT->header();
             <h1 class="mx-page-title"><?php echo s(local_mamxanhapp_t('Khóa học của tôi', 'My courses')); ?></h1>
             <p class="mx-page-sub">
                 <?php echo s(local_mamxanhapp_t('Xin chào, ', 'Welcome, ') . fullname($USER)); ?>
-                <?php if ($farmname !== ''): ?>
-                    <span class="mx-sep">/</span> <?php echo s($farmname); ?>, <?php echo s($region); ?> (<?php echo number_format($aream2); ?> m²)
+                <?php if ($farmname !== ''):
+                    $regiondisp = $region;
+                    if ($en) {
+                        $rmap = ['Lâm Đồng' => 'Lam Dong', 'Đắk Lắk' => 'Dak Lak', 'Đồng Nai' => 'Dong Nai'];
+                        $regiondisp = $rmap[$region] ?? $region;
+                    }
+                ?>
+                    <span class="mx-sep">/</span> <?php echo s($farmname); ?>, <?php echo s($regiondisp); ?> (<?php echo number_format($aream2); ?> m²)
                 <?php endif; ?>
             </p>
         </div>
-        <?php if ($roletype === 'cbkt' || $roletype === 'admin'): ?>
-        <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="mx-btn mx-btn-outline">
-            <?php echo s(local_mamxanhapp_t('Trang quản lý giảng viên', 'Instructor hub')); ?>
-        </a>
-        <?php endif; ?>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?php echo (new moodle_url('/local/mamxanhapp/transcript.php'))->out(false); ?>" class="mx-btn mx-btn-outline">
+                <?php echo s(local_mamxanhapp_t('Bảng điểm Học thuật', 'Academic Transcript')); ?>
+            </a>
+            <a href="<?php echo (new moodle_url('/local/mamxanhapp/feedback_sheet.php'))->out(false); ?>" class="mx-btn mx-btn-outline">
+                <?php echo s(local_mamxanhapp_t('Phiếu Rubric & Nhận xét', 'Rubric Feedback Sheet')); ?>
+            </a>
+            <?php if ($roletype === 'cbkt' || $roletype === 'admin'): ?>
+            <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="mx-btn mx-btn-outline">
+                <?php echo s(local_mamxanhapp_t('Trang quản lý giảng viên', 'Instructor hub')); ?>
+            </a>
+            <?php endif; ?>
+        </div>
     </header>
 
     <section class="mx-summary" aria-label="<?php echo s(local_mamxanhapp_t('Tổng quan học tập', 'Learning summary')); ?>">
@@ -243,11 +259,19 @@ echo $OUTPUT->header();
                             <span><?php echo (int)$item->cdone . '/' . (int)$item->cmods; ?></span>
                         </div>
                     </div>
-                    <a href="<?php echo $item->courseurl; ?>" class="mx-btn mx-btn-primary mx-enter-course-btn">
-                        <?php echo $item->progress > 0
-                            ? s(local_mamxanhapp_t('Tiếp tục học', 'Continue'))
-                            : s(local_mamxanhapp_t('Bắt đầu học', 'Start')); ?>
-                    </a>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <a href="<?php echo $item->courseurl; ?>" class="mx-btn mx-btn-primary mx-enter-course-btn">
+                            <?php echo $item->progress > 0
+                                ? s(local_mamxanhapp_t('Tiếp tục học', 'Continue'))
+                                : s(local_mamxanhapp_t('Bắt đầu học', 'Start')); ?>
+                        </a>
+                        <a href="<?php echo $item->transcripturl; ?>" class="btn btn-sm btn-secondary">
+                            <?php echo s(local_mamxanhapp_t('Bảng điểm', 'Transcript')); ?>
+                        </a>
+                        <a href="<?php echo $item->feedbackurl; ?>" class="btn btn-sm btn-secondary">
+                            <?php echo s(local_mamxanhapp_t('Phiếu Rubric', 'Rubric')); ?>
+                        </a>
+                    </div>
                 </div>
             </article>
             <?php endforeach; ?>

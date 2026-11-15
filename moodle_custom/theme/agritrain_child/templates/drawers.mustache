@@ -150,6 +150,28 @@
                         <!-- Custom Course Cards/Tiles UI (when viewing course) -->
                         {{{ mxcoursetileshtml }}}
 
+                        {{#iscalendar}}
+                        <div class="mx-calendar-header-banner mb-3 p-3 rounded" style="background:#FFFFFF;border:1px solid #E6ECE9;">
+                            <h1 class="h3 mb-0" style="color:#234E3E;font-weight:700;">{{ str_calendar_heading }}</h1>
+                        </div>
+                        {{/iscalendar}}
+
+                        {{#isassignview}}
+                        <div class="mx-assign-vietgap-banner mb-3 p-3 rounded d-print-none" style="background:#EAF2EE;border:1px solid #E6ECE9;border-left:4px solid #234E3E;">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:12px;">
+                                <div style="flex:1;min-width:260px;">
+                                    <div class="fw-bold mb-1" style="color:#234E3E;font-size:0.95rem;">{{ str_assign_vietgap_title }}</div>
+                                    <div class="small" style="color:#334155;">{{ str_assign_vietgap_desc }}</div>
+                                </div>
+                                <div class="d-flex flex-wrap" style="gap:8px;">
+                                    <a href="{{{ mxexportloghtmlurl }}}" class="btn btn-sm btn-primary">{{ str_assign_export_html }}</a>
+                                    <a href="{{{ mxexportlogcsvurl }}}" class="btn btn-sm btn-secondary">{{ str_assign_export_csv }}</a>
+                                    <a href="{{{ mxagriopsurl }}}" class="btn btn-sm btn-secondary">{{ str_assign_open_agriops }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        {{/isassignview}}
+
                         {{{ output.main_content }}}
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
@@ -397,10 +419,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         b.style.setProperty('background-color', '#475569', 'important');
                     } else if (isFinish) {
                         labelText = isEn ? 'Finish Quiz' : 'Hoàn thành';
-                        b.style.setProperty('background-color', '#1e3a2f', 'important');
+                        b.style.setProperty('background-color', '#234E3E', 'important');
                     } else if (isNext) {
                         labelText = isEn ? 'Next Question' : 'Câu tiếp theo';
-                        b.style.setProperty('background-color', '#1e3a2f', 'important');
+                        b.style.setProperty('background-color', '#234E3E', 'important');
                     } else if (isRetry) {
                         labelText = isEn ? 'Retry' : 'Làm lại';
                         b.style.setProperty('background-color', '#475569', 'important');
@@ -409,14 +431,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         b.style.setProperty('background-color', '#0369a1', 'important');
                     } else if (isSummary) {
                         labelText = isEn ? 'View Results' : 'Xem kết quả';
-                        b.style.setProperty('background-color', '#1e3a2f', 'important');
+                        b.style.setProperty('background-color', '#234E3E', 'important');
                     } else if (aria !== '') {
                         labelText = aria;
-                        b.style.setProperty('background-color', '#1e3a2f', 'important');
+                        b.style.setProperty('background-color', '#234E3E', 'important');
                     } else {
                         // Intelligent fallback based on context: Next or Continue
                         labelText = isEn ? 'Continue' : 'Tiếp tục';
-                        b.style.setProperty('background-color', '#1e3a2f', 'important');
+                        b.style.setProperty('background-color', '#234E3E', 'important');
                     }
 
                     b.innerHTML = '<span class="h5p-theme-label" style="font-weight:700;font-size:0.9rem;letter-spacing:0.2px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">' + labelText + '</span>';

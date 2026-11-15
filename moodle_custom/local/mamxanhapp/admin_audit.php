@@ -34,7 +34,7 @@ try {
 
 echo $OUTPUT->header();
 ?>
-<div class="mx-admin-audit" style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;">
+<div class="mx-admin-audit" style="background:#FFF;border:2px solid #E6ECE9;border-radius:24px;padding:24px;">
     <div class="mb-3">
         <a href="<?php echo (new moodle_url('/local/mamxanhapp/manage.php'))->out(false); ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;">
             ← <?php echo s(local_mamxanhapp_t('Quay lại Trung tâm Điều hành', 'Back to Analytics Hub')); ?>
@@ -42,8 +42,8 @@ echo $OUTPUT->header();
     </div>
     <div class="row">
         <div class="col-md-4 mb-3">
-            <div style="background:#F1F8E9;border-radius:18px;padding:18px;height:100%;">
-                <h5 style="color:#1B4332;font-weight:800;">PHP 8.3 OPcache & JIT</h5>
+            <div style="background:#EAF2EE;border-radius:18px;padding:18px;height:100%;">
+                <h5 style="color:#234E3E;font-weight:800;">PHP 8.3 OPcache & JIT</h5>
                 <ul class="mb-0" style="line-height:1.8;">
                     <li>PHP: <strong><?php echo s(PHP_VERSION); ?></strong></li>
                     <li>OPcache Hit Rate: <strong><?php echo isset($stats['opcache_hit_rate']) ? round($stats['opcache_hit_rate'], 2) . '%' : 'Active'; ?></strong></li>
@@ -53,8 +53,8 @@ echo $OUTPUT->header();
             </div>
         </div>
         <div class="col-md-4 mb-3">
-            <div style="background:#F1F8E9;border-radius:18px;padding:18px;height:100%;">
-                <h5 style="color:#1B4332;font-weight:800;">Redis 7 In-Memory</h5>
+            <div style="background:#EAF2EE;border-radius:18px;padding:18px;height:100%;">
+                <h5 style="color:#234E3E;font-weight:800;">Redis 7 In-Memory</h5>
                 <ul class="mb-0" style="line-height:1.8;">
                     <li>Status: <strong><?php echo $redisok ? 'CONNECTED (OK)' : 'OFFLINE'; ?></strong></li>
                     <li>Session Handler: <code><?php echo s($CFG->session_handler_class ?? ''); ?></code></li>
@@ -64,8 +64,8 @@ echo $OUTPUT->header();
             </div>
         </div>
         <div class="col-md-4 mb-3">
-            <div style="background:#F1F8E9;border-radius:18px;padding:18px;height:100%;">
-                <h5 style="color:#1B4332;font-weight:800;">Bảo mật Chữ ký Số</h5>
+            <div style="background:#EAF2EE;border-radius:18px;padding:18px;height:100%;">
+                <h5 style="color:#234E3E;font-weight:800;"><?php echo s(local_mamxanhapp_t('Bảo mật Chữ ký Số', 'Digital Signature Security')); ?></h5>
                 <ul class="mb-0" style="line-height:1.8;">
                     <li>Algorithm: <strong>HMAC-SHA256</strong></li>
                     <li>Signing Secret: <strong>Configured (<?php echo strlen($CFG->mamxanh_hmac_secret ?? ''); ?> chars)</strong></li>

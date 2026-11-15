@@ -118,27 +118,27 @@ echo $OUTPUT->header();
                     <div class="row text-center mb-3">
                         <div class="col-6 mb-2">
                             <div class="p-3 bg-white rounded border">
-                                <div class="small text-muted fw-bold">EC MỤC TIÊU / TARGET EC</div>
-                                <div id="res-target-ec" class="h3 mb-0" style="color:#1E3A2F;">1.60 mS/cm</div>
+                                <div class="small text-muted fw-bold"><?php echo s(local_mamxanhapp_t('EC MỤC TIÊU', 'TARGET EC')); ?></div>
+                                <div id="res-target-ec" class="h3 mb-0" style="color:#234E3E;">1.60 mS/cm</div>
                             </div>
                         </div>
                         <div class="col-6 mb-2">
                             <div class="p-3 bg-white rounded border">
-                                <div class="small text-muted fw-bold">NGƯỠNG pH CHUẨN</div>
-                                <div id="res-target-ph" class="h3 mb-0" style="color:#166534;">5.8 - 6.2</div>
+                                <div class="small text-muted fw-bold"><?php echo s(local_mamxanhapp_t('NGƯỠNG pH CHUẨN', 'TARGET pH RANGE')); ?></div>
+                                <div id="res-target-ph" class="h3 mb-0" style="color:#234E3E;">5.8 - 6.2</div>
                             </div>
                         </div>
                     </div>
 
                     <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.95rem;">
-                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn A (Ca(NO3)2 + Fe-EDDHA):', 'Stock Solution A (Calcium + Iron):')); ?></strong> <span id="res-stock-a" class="fw-bold" style="color:#1E3A2F;">2.10 Lít</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn B (MKP + KNO3 + MgSO4 + Vi lượng):', 'Stock Solution B (NPK + Mg + Micro):')); ?></strong> <span id="res-stock-b" class="fw-bold" style="color:#1E3A2F;">2.10 Lít</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn A (Ca(NO3)2 + Fe-EDDHA):', 'Stock Solution A (Calcium + Iron):')); ?></strong> <span id="res-stock-a" class="fw-bold" style="color:#234E3E;">2.10 Lít</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Dung dịch mẹ Bồn B (MKP + KNO3 + MgSO4 + Vi lượng):', 'Stock Solution B (NPK + Mg + Micro):')); ?></strong> <span id="res-stock-b" class="fw-bold" style="color:#234E3E;">2.10 Lít</span></li>
                         <li><strong><?php echo s(local_mamxanhapp_t('Axit H3PO4 85% điều chỉnh pH dự kiến:', 'Estimated H3PO4 pH Down:')); ?></strong> <span id="res-acid" class="fw-bold text-danger">35 ml</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Tổng lượng nước tưới cả vườn/ngày:', 'Total Daily Irrigation Volume:')); ?></strong> <span id="res-daily-water" class="fw-bold" style="color:#1E3A2F;">3,500 Lít/ngày</span></li>
-                        <li><strong><?php echo s(local_mamxanhapp_t('Thời gian mở van nhỏ giọt (chia 4 lần/ngày):', 'Drip Valve Duration (4 pulses/day):')); ?></strong> <span id="res-drip-mins" class="fw-bold" style="color:#166534;">13 phút / lần</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Tổng lượng nước tưới cả vườn/ngày:', 'Total Daily Irrigation Volume:')); ?></strong> <span id="res-daily-water" class="fw-bold" style="color:#234E3E;">3,500 Lít/ngày</span></li>
+                        <li><strong><?php echo s(local_mamxanhapp_t('Thời gian mở van nhỏ giọt (chia 4 lần/ngày):', 'Drip Valve Duration (4 pulses/day):')); ?></strong> <span id="res-drip-mins" class="fw-bold" style="color:#234E3E;">13 phút / lần</span></li>
                     </ul>
 
-                    <div class="p-3 mt-3 bg-white rounded border" style="border-left: 4px solid #1E3A2F !important;">
+                    <div class="p-3 mt-3 bg-white rounded border" style="border-left: 4px solid #234E3E !important;">
                         <strong><?php echo s(local_mamxanhapp_t('Nguyên tắc vàng:', 'Safety Rule:')); ?></strong>
                         <span class="text-muted"><?php echo s(local_mamxanhapp_t(
                             'Tuyệt đối KHÔNG đổ trực tiếp Stock A vào Stock B đậm đặc (gây kết tủa thạch cao CaSO4 làm tắc béc nhỏ giọt). Pha loãng A vào bồn nước khuấy đều 3 phút rồi mới châm B.',
@@ -266,7 +266,7 @@ function mxSwitchToolTab(paneId, btnEl) {
     if (btnEl) {
         btnEl.classList.remove('btn-outline-success');
         btnEl.classList.add('btn-success', 'active');
-        btnEl.style.background = '#1B4332';
+        btnEl.style.background = '#234E3E';
     }
 }
 

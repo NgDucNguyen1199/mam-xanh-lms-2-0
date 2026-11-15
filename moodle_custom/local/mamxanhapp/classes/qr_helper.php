@@ -15,7 +15,7 @@ class qr_helper {
      * @param string $color Hex color for dark modules
      * @return string Inline <svg> markup
      */
-    public static function render_svg(string $payload, int $size = 180, string $color = '#1B4332'): string {
+    public static function render_svg(string $payload, int $size = 180, string $color = '#234E3E'): string {
         global $CFG;
         if (class_exists('\core_qrcode')) {
             $qrcode = new \core_qrcode($payload);
@@ -46,7 +46,7 @@ class qr_helper {
         }
 
         $escapedpayload = s($payload);
-        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $totalw . ' ' . $totalh . '" width="' . $size . '" height="' . $size . '" role="img" aria-label="QR: ' . $escapedpayload . '" shape-rendering="crispEdges" style="background:#FFFFFF;border-radius:12px;padding:6px;border:2px solid #D8F3DC;max-width:100%;height:auto;">'
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $totalw . ' ' . $totalh . '" width="' . $size . '" height="' . $size . '" role="img" aria-label="QR: ' . $escapedpayload . '" shape-rendering="crispEdges" style="background:#FFFFFF;border-radius:12px;padding:6px;border:2px solid #E6ECE9;max-width:100%;height:auto;">'
             . '<rect width="' . $totalw . '" height="' . $totalh . '" fill="#FFFFFF"/>'
             . '<path d="' . $path . '" fill="' . $color . '"/>'
             . '</svg>';

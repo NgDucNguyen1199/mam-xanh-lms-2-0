@@ -1,0 +1,204 @@
+{
+  "totalUrlsCrawled": 66,
+  "httpErrors": [],
+  "phpErrors": [],
+  "legacyColorHits": [],
+  "junkCourseHits": [],
+  "courseParityChecks": {
+    "2": {
+      "modCounts": {
+        "forum": 1,
+        "page": 4,
+        "resource": 5,
+        "h5pactivity": 2,
+        "scorm": 1,
+        "assign": 7,
+        "fieldpractice": 1,
+        "quiz": 1,
+        "attendance": 2
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": true
+    },
+    "3": {
+      "modCounts": {
+        "forum": 1,
+        "page": 3,
+        "resource": 1,
+        "h5pactivity": 1,
+        "scorm": 1,
+        "fieldpractice": 1,
+        "attendance": 2,
+        "assign": 6
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": true
+    },
+    "4": {
+      "modCounts": {
+        "forum": 1,
+        "page": 3,
+        "resource": 1,
+        "h5pactivity": 1,
+        "fieldpractice": 1,
+        "scorm": 1,
+        "quiz": 1,
+        "attendance": 2,
+        "assign": 3
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    },
+    "5": {
+      "modCounts": {
+        "forum": 1,
+        "page": 3,
+        "resource": 1,
+        "h5pactivity": 1,
+        "fieldpractice": 1,
+        "scorm": 1,
+        "quiz": 1,
+        "attendance": 2,
+        "assign": 3
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    },
+    "6": {
+      "modCounts": {
+        "forum": 1,
+        "page": 3,
+        "resource": 1,
+        "h5pactivity": 1,
+        "fieldpractice": 1,
+        "scorm": 1,
+        "quiz": 1,
+        "attendance": 2,
+        "assign": 3
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    },
+    "7": {
+      "modCounts": {
+        "forum": 1,
+        "page": 3,
+        "resource": 1,
+        "h5pactivity": 1,
+        "fieldpractice": 1,
+        "scorm": 1,
+        "quiz": 1,
+        "attendance": 2,
+        "assign": 3
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    },
+    "19": {
+      "modCounts": {
+        "forum": 1,
+        "resource": 1,
+        "page": 2,
+        "h5pactivity": 1,
+        "scorm": 1,
+        "attendance": 2,
+        "assign": 3,
+        "quiz": 1
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    },
+    "21": {
+      "modCounts": {
+        "forum": 1,
+        "resource": 1,
+        "page": 2,
+        "h5pactivity": 1,
+        "scorm": 1,
+        "attendance": 2,
+        "assign": 3,
+        "quiz": 1
+      },
+      "hasTheoryAtt": true,
+      "hasPracAtt": true,
+      "hasDisc1": true,
+      "hasDisc2": true,
+      "hasDueDates": true,
+      "hasOffTopicIpmFlashcards": false
+    }
+  },
+  "badgeImageChecks": [
+    {
+      "src": "http://localhost:8090/pluginfile.php/22/badges/badgeimage/2/f3",
+      "complete": true,
+      "naturalWidth": 512
+    },
+    {
+      "src": "http://localhost:8090/pluginfile.php/34/badges/badgeimage/4/f3",
+      "complete": true,
+      "naturalWidth": 512
+    },
+    {
+      "src": "http://localhost:8090/pluginfile.php/16/badges/badgeimage/1/f3",
+      "complete": true,
+      "naturalWidth": 512
+    },
+    {
+      "src": "http://localhost:8090/pluginfile.php/28/badges/badgeimage/3/f3",
+      "complete": true,
+      "naturalWidth": 512
+    }
+  ],
+  "bilingualChecks": {
+    "courseBackEn": true,
+    "lessonBackEn": true,
+    "manageEn": true,
+    "clonerNoDoubleAmp": true
+  },
+  "aplusFeatureChecks": {
+    "transcript": {
+      "hasWeightedComponents": true,
+      "hasPrintBtn": true
+    },
+    "feedbackSheet": {
+      "has4Criteria": true,
+      "hasInstructorFeedback": true
+    },
+    "vietgapExport": {
+      "hasHmacHash": true,
+      "hasDownloadBtn": true
+    },
+    "certChecklist": {
+      "has3StepChecklist": true
+    },
+    "calendarHeading": true
+  }
+}

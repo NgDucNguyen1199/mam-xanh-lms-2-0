@@ -61,7 +61,8 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
         return '';
     }
     require_once($CFG->libdir . '/completionlib.php');
-    $en = strpos(current_language(), 'en') === 0;
+    $reqlang = optional_param('lang', '', PARAM_ALPHA);
+    $en = ($reqlang === 'en') ? true : (($reqlang === 'vi') ? false : (strpos(current_language(), 'en') === 0));
 
     $modinfo = get_fast_modinfo($course, $USER->id);
     $completion = new completion_info($course);
@@ -202,12 +203,24 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
     }
 
     $overallpct = $totalall > 0 ? (int)round($doneall / $totalall * 100) : 0;
+    $transcripturl = (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $course->id]))->out(false);
+    $feedbackurl = (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['courseid' => $course->id]))->out(false);
+    $certurl = (new moodle_url('/local/mamxanhcert/index.php', ['courseid' => $course->id]))->out(false);
+    $exportlogurl = (new moodle_url('/local/agriops/export_log.php', ['courseid' => $course->id, 'format' => 'html']))->out(false);
+
     $overall = '<section id="mx-learning-path-stepper" class="mx-course-overall" aria-label="'
         . s($en ? 'Course progress' : 'Tiến độ khóa học') . '">'
         . '<div class="mx-overall-row"><span class="mx-overall-label">' . s($en ? 'Course progress' : 'Tiến độ khóa học') . '</span>'
         . '<span class="mx-overall-pct">' . $overallpct . '%</span></div>'
         . '<div class="mx-bar"><div class="mx-bar-fill" style="width:' . $overallpct . '%;"></div></div>'
-        . '<div class="mx-overall-sub">' . s($doneall . ' / ' . $totalall . ' ' . ($en ? 'activities completed' : 'hoạt động đã hoàn thành')) . '</div>'
+        . '<div class="d-flex flex-wrap justify-content-between align-items-center mt-2" style="gap:10px;">'
+        . '<div class="mx-overall-sub mb-0">' . s($doneall . ' / ' . $totalall . ' ' . ($en ? 'activities completed' : 'hoạt động đã hoàn thành')) . '</div>'
+        . '<div class="d-flex flex-wrap" style="gap:8px;">'
+        . '<a href="' . $transcripturl . '" class="btn btn-sm btn-secondary">' . s($en ? 'Academic Transcript (Print)' : 'Bảng điểm Học thuật (In A4)') . '</a>'
+        . '<a href="' . $feedbackurl . '" class="btn btn-sm btn-secondary">' . s($en ? 'Rubric & Feedback Sheet' : 'Phiếu Chấm Rubric & Nhận xét') . '</a>'
+        . '<a href="' . $exportlogurl . '" class="btn btn-sm btn-secondary">' . s($en ? 'Export VietGAP Report' : 'Xuất Báo cáo Nhật ký VietGAP') . '</a>'
+        . '<a href="' . $certurl . '" class="btn btn-sm btn-primary">' . s($en ? 'Certificate Checklist & QR' : 'Điều kiện & Chứng nhận QR') . '</a>'
+        . '</div></div>'
         . '</section>';
 
     return '<div class="mx-course-tiles-wrapper">' . $overall . implode('', $sectionblocks) . '</div>';
@@ -221,7 +234,8 @@ function theme_agritrain_child_build_course_tiles_html(stdClass $course): string
 function theme_agritrain_child_build_frontpage_portal_html(): string {
     global $DB;
 
-    $en = strpos(current_language(), 'en') === 0;
+    $reqlang = optional_param('lang', '', PARAM_ALPHA);
+    $en = ($reqlang === 'en') ? true : (($reqlang === 'vi') ? false : (strpos(current_language(), 'en') === 0));
     $isloggedinuser = (isloggedin() && !isguestuser());
     $loginurl = (new moodle_url('/login/index.php'))->out(false);
     $myurl = (new moodle_url('/my/index.php'))->out(false);
@@ -655,4 +669,79 @@ function theme_agritrain_child_build_frontpage_portal_html(): string {
         . '</div>';
 
     return $html;
+}
+
+/**
+ * Build a clean, instant server-rendered academic course catalog for /my/courses.php.
+ */
+function theme_agritrain_child_build_my_courses_html(): string {
+    global $CFG, $USER;
+    if (!isloggedin() || isguestuser()) {
+        return '';
+    }
+    require_once($CFG->libdir . '/completionlib.php');
+    $reqlang = optional_param('lang', '', PARAM_ALPHA);
+    $en = ($reqlang === 'en') ? true : (($reqlang === 'vi') ? false : (strpos(current_language(), 'en') === 0));
+
+    $courses = enrol_get_my_courses(['id', 'fullname', 'shortname', 'summary', 'visible', 'enablecompletion']);
+    if (empty($courses)) {
+        return '';
+    }
+
+    $cards = '';
+    foreach ($courses as $c) {
+        if ((int)$c->id === SITEID || $c->shortname === 'MASTER-AGRITECH-TPL') {
+            continue;
+        }
+        $modinfo = get_fast_modinfo($c, $USER->id);
+        $completion = new completion_info($c);
+        $cmods = 0;
+        $cdone = 0;
+        foreach ($modinfo->get_cms() as $cm) {
+            if (!$cm->uservisible || $cm->modname === 'label') {
+                continue;
+            }
+            $cmods++;
+            if ($completion->is_enabled($cm)) {
+                $cdata = $completion->get_data($cm, false, $USER->id);
+                if (!empty($cdata->completionstate) && (int)$cdata->completionstate !== COMPLETION_INCOMPLETE) {
+                    $cdone++;
+                }
+            }
+        }
+        $pct = $cmods > 0 ? (int)round(($cdone / $cmods) * 100) : 0;
+        $courseurl = (new moodle_url('/course/view.php', ['id' => $c->id]))->out(false);
+        $trurl = (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $c->id]))->out(false);
+        $fburl = (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['courseid' => $c->id]))->out(false);
+
+        $summary = trim(strip_tags(format_text($c->summary ?? '', FORMAT_HTML)));
+        if (core_text::strlen($summary) > 130) {
+            $summary = core_text::substr($summary, 0, 127) . '...';
+        }
+
+        $cards .= '<article class="mx-pub-course-card" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:10px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;">'
+            . '<div>'
+            . '<div class="d-flex justify-content-between align-items-center mb-2">'
+            . '<span class="badge" style="background:#EAF2EE;color:#234E3E;border:1px solid #E6ECE9;font-weight:700;">' . s($c->shortname) . '</span>'
+            . '<span class="small text-muted fw-bold">' . $cdone . '/' . $cmods . ' ' . s($en ? 'completed' : 'hoàn thành') . ' (' . $pct . '%)</span>'
+            . '</div>'
+            . '<h3 class="h5 fw-bold mb-2"><a href="' . $courseurl . '" style="color:#0F172A;text-decoration:none;">' . s($c->fullname) . '</a></h3>'
+            . '<p class="small text-muted mb-3">' . s($summary) . '</p>'
+            . '</div>'
+            . '<div>'
+            . '<div class="mx-bar mb-3"><div class="mx-bar-fill" style="width:' . $pct . '%;"></div></div>'
+            . '<div class="d-flex flex-wrap" style="gap:8px;">'
+            . '<a href="' . $courseurl . '" class="btn btn-sm btn-primary">' . s($en ? 'Enter Course' : 'Vào lớp học') . '</a>'
+            . '<a href="' . $trurl . '" class="btn btn-sm btn-secondary">' . s($en ? 'Transcript' : 'Bảng điểm') . '</a>'
+            . '<a href="' . $fburl . '" class="btn btn-sm btn-secondary">' . s($en ? 'Rubric' : 'Phiếu Rubric') . '</a>'
+            . '</div>'
+            . '</div>'
+            . '</article>';
+    }
+
+    return '<section class="mx-mycourses-catalog mt-2 mb-4">'
+        . '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;">'
+        . $cards
+        . '</div>'
+        . '</section>';
 }

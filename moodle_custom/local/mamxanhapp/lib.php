@@ -5,6 +5,17 @@ defined('MOODLE_INTERNAL') || die();
  * Check whether current active language is English.
  */
 function local_mamxanhapp_is_en(): bool {
+    global $SESSION;
+    $req = optional_param('lang', '', PARAM_ALPHA);
+    if ($req === 'en') {
+        return true;
+    }
+    if ($req === 'vi') {
+        return false;
+    }
+    if (isset($SESSION) && !empty($SESSION->lang)) {
+        return strpos((string)$SESSION->lang, 'en') === 0;
+    }
     return strpos(current_language(), 'en') === 0;
 }
 
@@ -82,7 +93,7 @@ function local_mamxanhapp_send_403_and_exit(string $msgvi = '', string $msgen = 
     echo '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;">403</div>';
     echo '<h2 style="color:#B71C1C;font-weight:800;margin-bottom:0.75rem;">' . s($title) . '</h2>';
     echo '<p style="font-size:1.05rem;color:#3E2723;margin-bottom:1.5rem;">' . s($desc) . '</p>';
-    echo '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg" style="min-height:48px;border-radius:14px;font-weight:700;background:#1B4332;border-color:#1B4332;">' . s($btnlabel) . '</a>';
+    echo '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg" style="min-height:48px;border-radius:14px;font-weight:700;background:#234E3E;border-color:#234E3E;">' . s($btnlabel) . '</a>';
     echo '</div>';
     echo $OUTPUT->footer();
     exit;

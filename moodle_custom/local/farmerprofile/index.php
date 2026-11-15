@@ -145,7 +145,7 @@ echo $OUTPUT->header();
                             </button>
                         </div>
                     </div>
-                    <div id="mx-gps-status" class="small fw-bold mb-3" style="color:#166534;"></div>
+                    <div id="mx-gps-status" class="small fw-bold mb-3" style="color:#234E3E;"></div>
 
                     <button type="submit" class="btn btn-primary w-100">
                         <?php echo s(local_mamxanhapp_t('Lưu Hồ sơ & Đồng bộ Cohort Vùng trồng', 'Save Profile & Sync Regional Cohort')); ?>

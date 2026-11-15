@@ -78,35 +78,35 @@ $PAGE->set_heading(format_string($course->fullname));
 $courseurl = (new moodle_url('/course/view.php', ['id' => $course->id]))->out(false);
 $gradeurl = (new moodle_url('/mod/fieldpractice/grade.php', ['id' => $cm->id]))->out(false);
 $checkinqrurl = (new moodle_url('/mod/fieldpractice/view.php', ['id' => $cm->id, 'qtoken' => $currenttoken]))->out(false);
-$qrsvg = \local_mamxanhapp\qr_helper::render_svg($checkinqrurl, 150, '#1B4332');
+$qrsvg = \local_mamxanhapp\qr_helper::render_svg($checkinqrurl, 150, '#234E3E');
 
 echo $OUTPUT->header();
 ?>
 
 <div class="mx-fieldpractice-view">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
-        <a href="<?php echo $courseurl; ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo $courseurl; ?>" class="btn btn-secondary">
             <?php echo s(local_mamxanhapp_t('← Quay lại khóa học', '← Back to Course')); ?>
         </a>
         <?php if ($cangrade): ?>
-        <a href="<?php echo $gradeurl; ?>" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;background:#1B4332;">
+        <a href="<?php echo $gradeurl; ?>" class="btn btn-primary" style="background:#234E3E;border-color:#234E3E;">
             <?php echo s(local_mamxanhapp_t('Mở Bảng Chấm điểm Rubric 4 Tiêu chí (CBKT)', 'Open 4-Criteria Rubric Grading (Instructor)')); ?>
         </a>
         <?php endif; ?>
     </div>
 
     <?php if ($msg !== ''): ?>
-    <div class="alert alert-<?php echo $msgtype; ?>" style="border-radius:16px;font-weight:700;">
+    <div class="alert alert-<?php echo $msgtype; ?>" style="border-radius:10px;font-weight:600;">
         <?php echo s($msg); ?>
     </div>
     <?php endif; ?>
 
     <!-- Activity Intro & Station Info -->
-    <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;margin-bottom:20px;">
-        <span style="display:inline-block;background:#E8F5E9;color:#1B4332;padding:5px 14px;border-radius:999px;font-weight:800;font-size:0.85rem;margin-bottom:8px;">
+    <div style="background:#FFF;border:1px solid #E6ECE9;border-radius:16px;padding:24px;margin-bottom:20px;">
+        <span style="display:inline-block;background:#EAF2EE;color:#234E3E;padding:5px 14px;border-radius:999px;font-weight:700;font-size:0.84rem;margin-bottom:8px;">
             <?php echo s($fp->location_name . ' (' . $fp->target_lat . ', ' . $fp->target_lng . ')'); ?>
         </span>
-        <h3 style="color:#1B4332;font-weight:800;margin-bottom:10px;"><?php echo format_string($fp->name); ?></h3>
+        <h3 style="color:#234E3E;font-weight:700;margin-bottom:10px;"><?php echo format_string($fp->name); ?></h3>
         <?php if (!empty($fp->intro)): ?>
         <div class="mx-lesson-content" style="line-height:1.65;color:#263238;">
             <?php echo format_module_intro('fieldpractice', $fp, $cm->id); ?>
@@ -117,17 +117,17 @@ echo $OUTPUT->header();
     <div class="row">
         <!-- Rotating QR Check-in Station -->
         <div class="col-lg-6 mb-4">
-            <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
-                <h4 style="color:#1B4332;font-weight:800;margin-bottom:12px;">
+            <div style="background:#FFF;border:1px solid #E6ECE9;border-radius:16px;padding:24px;height:100%;">
+                <h4 style="color:#234E3E;font-weight:700;margin-bottom:12px;">
                     <?php echo s(local_mamxanhapp_t('Điểm danh Thực hành Bằng QR Xoay vòng & GPS', 'Rotating QR & GPS Garden Check-In')); ?>
                 </h4>
 
-                <div class="d-flex align-items-center mb-3" style="gap:16px;background:#F4FBF6;padding:14px;border-radius:18px;">
+                <div class="d-flex align-items-center mb-3" style="gap:16px;background:#F9FAF9;border:1px solid #E6ECE9;padding:14px;border-radius:12px;">
                     <div><?php echo $qrsvg; ?></div>
                     <div>
-                        <div style="font-size:0.84rem;color:#4E6358;font-weight:700;"><?php echo s(local_mamxanhapp_t('Mã QR phiên 5 phút hiện tại:', 'Active 5-Min Rotating Code:')); ?></div>
-                        <div style="font-size:1.75rem;font-weight:900;letter-spacing:0.12em;color:#1B4332;"><?php echo s($currenttoken); ?></div>
-                        <small class="text-success fw-bold"><?php echo s(local_mamxanhapp_t('Quét QR hoặc bấm điền nhanh bên dưới', 'Scan QR or tap auto-fill below')); ?></small>
+                        <div style="font-size:0.84rem;color:#52615B;font-weight:600;"><?php echo s(local_mamxanhapp_t('Mã QR phiên 5 phút hiện tại:', 'Active 5-Min Rotating Code:')); ?></div>
+                        <div style="font-size:1.65rem;font-weight:800;letter-spacing:0.12em;color:#234E3E;"><?php echo s($currenttoken); ?></div>
+                        <small style="color:#234E3E;font-weight:600;"><?php echo s(local_mamxanhapp_t('Quét QR hoặc bấm điền nhanh bên dưới', 'Scan QR or tap auto-fill below')); ?></small>
                     </div>
                 </div>
 
@@ -137,26 +137,26 @@ echo $OUTPUT->header();
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_checkin_code"><?php echo s(local_mamxanhapp_t('Mã phiên điểm danh (6 ký tự)', 'Rotating Attendance Code')); ?></label>
-                        <input type="text" id="id_checkin_code" name="checkin_code" class="form-control" required value="<?php echo s($qtoken ?: $currenttoken); ?>" style="min-height:48px;border-radius:12px;font-weight:800;letter-spacing:0.08em;">
+                        <input type="text" id="id_checkin_code" name="checkin_code" class="form-control" required value="<?php echo s($qtoken ?: $currenttoken); ?>" style="min-height:44px;border-radius:8px;font-weight:700;letter-spacing:0.08em;">
                     </div>
 
                     <div class="row">
                         <div class="col-6 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lat">GPS Lat</label>
-                            <input type="text" id="id_fp_lat" name="gps_lat" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lat : $fp->target_lat); ?>" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_fp_lat" name="gps_lat" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lat : $fp->target_lat); ?>" style="min-height:44px;border-radius:8px;">
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lng">GPS Lng</label>
-                            <input type="text" id="id_fp_lng" name="gps_lng" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lng : $fp->target_lng); ?>" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_fp_lng" name="gps_lng" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lng : $fp->target_lng); ?>" style="min-height:44px;border-radius:8px;">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_checkin_note"><?php echo s(local_mamxanhapp_t('Ghi chú ca thực hành / Lô thực nghiệm', 'Field Session Note')); ?></label>
-                        <input type="text" id="id_checkin_note" name="checkin_note" class="form-control" value="<?php echo s($mysub->checkin_note ?? 'Đã có mặt đầy đủ bảo hộ và dụng cụ đo pH/EC'); ?>" style="min-height:48px;border-radius:12px;">
+                        <input type="text" id="id_checkin_note" name="checkin_note" class="form-control" value="<?php echo s($mysub->checkin_note ?? 'Đã có mặt đầy đủ bảo hộ và dụng cụ đo pH/EC'); ?>" style="min-height:44px;border-radius:8px;">
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100" style="min-height:50px;border-radius:14px;font-weight:800;background:#1B4332;">
+                    <button type="submit" class="btn btn-primary w-100" style="min-height:46px;border-radius:8px;font-weight:600;background:#234E3E;border-color:#234E3E;">
                         <?php echo s(local_mamxanhapp_t('Xác nhận Điểm danh Tại Vườn', 'Confirm Garden Check-In')); ?>
                     </button>
                 </form>
@@ -165,24 +165,23 @@ echo $OUTPUT->header();
 
         <!-- 4-Criteria Rubric Scorecard -->
         <div class="col-lg-6 mb-4">
-            <div style="background:#FFF;border:2px solid #DCEEE0;border-radius:24px;padding:24px;height:100%;">
-                <h4 style="color:#1B4332;font-weight:800;margin-bottom:14px;">
+            <div style="background:#FFF;border:1px solid #E6ECE9;border-radius:16px;padding:24px;height:100%;">
+                <h4 style="color:#234E3E;font-weight:700;margin-bottom:14px;">
                     <?php echo s(local_mamxanhapp_t('Phiếu Kết quả Chấm điểm Rubric 4 Tiêu chí', '4-Criteria Field Rubric Scorecard')); ?>
                 </h4>
 
                 <?php if (!$mysub || $mysub->total_grade === null): ?>
-                <div style="background:#F8FCF9;border:1.5px dashed #81C784;border-radius:18px;padding:24px;text-align:center;">
-                    <div style="font-size:2.4rem;margin-bottom:8px;"></div>
-                    <div style="font-weight:700;color:#1B4332;margin-bottom:6px;">
+                <div style="background:#F9FAF9;border:1px dashed #E6ECE9;border-radius:12px;padding:24px;text-align:center;">
+                    <div style="font-weight:600;color:#234E3E;margin-bottom:6px;">
                         <?php echo $mysub
                             ? s(local_mamxanhapp_t('Đã điểm danh lúc ' . date('H:i d/m/Y', (int)$mysub->checkin_time) . ' — Đang chờ Cán bộ kỹ thuật chấm Rubric.', 'Checked in — Waiting for Instructor Rubric evaluation.'))
                             : s(local_mamxanhapp_t('Hãy điểm danh tại vườn để Cán bộ kỹ thuật chấm điểm thực hành.', 'Check in at the garden to receive your 4-criteria Rubric grade.')); ?>
                     </div>
                 </div>
                 <?php else: ?>
-                <div style="background:#E8F5E9;border-radius:18px;padding:16px;text-align:center;margin-bottom:16px;">
-                    <div style="font-size:0.85rem;font-weight:700;color:#2E7D32;"><?php echo s(local_mamxanhapp_t('TỔNG ĐIỂM THỰC HÀNH (ĐÃ ĐỒNG BỘ GRADEBOOK)', 'TOTAL RUBRIC SCORE (SYNCED TO GRADEBOOK)')); ?></div>
-                    <div style="font-size:2.2rem;font-weight:900;color:#1B4332;"><?php echo number_format((float)$mysub->total_grade, 1); ?> / 100</div>
+                <div style="background:#EAF2EE;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
+                    <div style="font-size:0.84rem;font-weight:700;color:#234E3E;"><?php echo s(local_mamxanhapp_t('TỔNG ĐIỂM THỰC HÀNH (ĐÃ ĐỒNG BỘ GRADEBOOK)', 'TOTAL RUBRIC SCORE (SYNCED TO GRADEBOOK)')); ?></div>
+                    <div style="font-size:2.1rem;font-weight:800;color:#234E3E;"><?php echo number_format((float)$mysub->total_grade, 1); ?> / 100</div>
                 </div>
 
                 <div class="table-responsive">
@@ -209,7 +208,7 @@ echo $OUTPUT->header();
                 </div>
 
                 <?php if (!empty($mysub->feedback)): ?>
-                <div style="background:#F4FBF6;border-left:4px solid #2E7D32;padding:12px 14px;border-radius:10px;font-size:0.92rem;">
+                <div style="background:#F9FAF9;border-left:4px solid #234E3E;padding:12px 14px;border-radius:8px;font-size:0.92rem;">
                     <strong><?php echo s(local_mamxanhapp_t('Nhận xét của Cán bộ kỹ thuật:', 'Instructor Feedback:')); ?></strong><br>
                     <?php echo s($mysub->feedback); ?>
                 </div>
@@ -220,7 +219,7 @@ echo $OUTPUT->header();
     </div>
 
     <div class="mt-2">
-        <a href="<?php echo $courseurl; ?>" class="btn btn-outline-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:700;border-width:2px;">
+        <a href="<?php echo $courseurl; ?>" class="btn btn-secondary">
             <?php echo s(local_mamxanhapp_t('← Quay lại khóa học', '← Back to Course')); ?>
         </a>
     </div>

@@ -284,7 +284,13 @@ echo $OUTPUT->header();
                 </p>
             </div>
             <div class="d-flex flex-wrap" style="gap:10px;">
-                <a href="<?php echo (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false); ?>" id="mx-open-cloner-btn" class="btn btn-primary">
+                <a href="<?php echo (new moodle_url('/local/mamxanhapp/transcript.php'))->out(false); ?>" class="btn btn-primary">
+                    <?php echo s(local_mamxanhapp_t('Bảng điểm Tổng hợp', 'Academic Transcript')); ?>
+                </a>
+                <a href="<?php echo (new moodle_url('/local/mamxanhapp/feedback_sheet.php'))->out(false); ?>" class="btn btn-secondary">
+                    <?php echo s(local_mamxanhapp_t('Phiếu Đánh giá Rubric', 'Rubric Evaluation Sheet')); ?>
+                </a>
+                <a href="<?php echo (new moodle_url('/local/mamxanhapp/clone_course.php'))->out(false); ?>" id="mx-open-cloner-btn" class="btn btn-secondary">
                     <?php echo s(local_mamxanhapp_t('Nhân bản Khóa học Địa phương (1-Click)', '1-Click Local Course Cloner')); ?>
                 </a>
                 <a href="<?php echo $csvurl->out(false); ?>" id="mx-export-csv-btn" class="btn btn-secondary">
@@ -308,27 +314,27 @@ echo $OUTPUT->header();
             <div class="mx-stat-card">
                 <div class="mx-stat-label"><?php echo s(local_mamxanhapp_t('Nông dân & Diện tích', 'Farmers & Total Area')); ?></div>
                 <div class="mx-stat-value"><?php echo (int)$totalfarmers; ?> <small class="text-muted fw-normal" style="font-size:0.9rem;">(<?php echo number_format($totalaream2 / 10000, 2); ?> ha)</small></div>
-                <div class="mx-stat-sub"><?php echo number_format($totalaream2); ?> m² VietGAP</div>
+                <div class="mx-stat-sub"><?php echo number_format($totalaream2); ?> <?php echo s(local_mamxanhapp_t('m² VietGAP', 'sq.m VietGAP')); ?></div>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
             <div class="mx-stat-card">
                 <div class="mx-stat-label"><?php echo s(local_mamxanhapp_t('Điểm Quiz Lý thuyết TB', 'Avg Quiz Theory Score')); ?></div>
-                <div class="mx-stat-value" style="color:#166534;"><?php echo s($avgquizglobal); ?></div>
+                <div class="mx-stat-value" style="color:#234E3E;"><?php echo s($avgquizglobal); ?></div>
                 <div class="text-muted small"><?php echo count($allquizscores) . ' ' . s(local_mamxanhapp_t('lượt nộp bài hoàn tất', 'graded quiz submissions')); ?></div>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
             <div class="mx-stat-card">
                 <div class="mx-stat-label"><?php echo s(local_mamxanhapp_t('Điểm Thực hành Rubric TB', 'Avg Garden Rubric Score')); ?></div>
-                <div class="mx-stat-value" style="color:#1E3A2F;"><?php echo s($avgrubricglobal); ?></div>
+                <div class="mx-stat-value" style="color:#234E3E;"><?php echo s($avgrubricglobal); ?></div>
                 <div class="text-muted small"><?php echo count($allrubricscores) . ' ' . s(local_mamxanhapp_t('phiếu chấm thực địa', 'graded field rubrics')); ?></div>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
             <div class="mx-stat-card">
                 <div class="mx-stat-label"><?php echo s(local_mamxanhapp_t('Chứng nhận QR & Lô VietGAP', 'QR Certs & VietGAP Lots')); ?></div>
-                <div class="mx-stat-value" style="color:#166534;"><?php echo (int)$totalcerts; ?> / <?php echo (int)$totalbatches; ?></div>
+                <div class="mx-stat-value" style="color:#234E3E;"><?php echo (int)$totalcerts; ?> / <?php echo (int)$totalbatches; ?></div>
                 <div class="mx-stat-sub">HMAC-SHA256 Verified</div>
             </div>
         </div>
@@ -343,19 +349,19 @@ echo $OUTPUT->header();
                 </h4>
                 <?php
                 $maxreg = max(1, max(array_column($regionstats, 'count')));
-                $regcolors = ['Lâm Đồng' => '#1E3A2F', 'Đắk Lắk' => '#166534', 'Đồng Nai' => '#334155'];
+                $reglabelsEn = ['Lâm Đồng' => 'Lam Dong', 'Đắk Lắk' => 'Dak Lak', 'Đồng Nai' => 'Dong Nai'];
                 foreach ($regionstats as $rname => $st):
                     $barpct = (int)round(($st['count'] / $maxreg) * 100);
                     $ravg = $st['quizcnt'] > 0 ? round($st['quizsum'] / $st['quizcnt'], 1) . '%' : '--';
-                    $col = $regcolors[$rname] ?? '#1E3A2F';
+                    $dispReg = $en ? ($reglabelsEn[$rname] ?? $rname) : $rname;
                 ?>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between small fw-bold mb-1">
-                        <span><?php echo s($rname); ?> (<?php echo (int)$st['count']; ?> <?php echo s(local_mamxanhapp_t('hộ', 'farms')); ?> • <?php echo number_format($st['area']); ?> m²)</span>
-                        <span style="color:#1E3A2F;">Quiz TB: <?php echo s($ravg); ?></span>
+                        <span><?php echo s($dispReg); ?> (<?php echo (int)$st['count']; ?> <?php echo s(local_mamxanhapp_t('hộ', 'farms')); ?> • <?php echo number_format($st['area']); ?> <?php echo s(local_mamxanhapp_t('m²', 'sq.m')); ?>)</span>
+                        <span style="color:#234E3E;"><?php echo s(local_mamxanhapp_t('Quiz TB: ', 'Avg Quiz: ') . $ravg); ?></span>
                     </div>
-                    <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;">
-                        <div style="width:<?php echo max(8, $barpct); ?>%;height:100%;background:<?php echo $col; ?>;border-radius:4px;"></div>
+                    <div style="height:8px;background:#EAF2EE;border-radius:4px;overflow:hidden;">
+                        <div style="width:<?php echo max(8, $barpct); ?>%;height:100%;background:#234E3E;border-radius:4px;"></div>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -375,10 +381,10 @@ echo $OUTPUT->header();
                 <div class="mb-3">
                     <div class="d-flex justify-content-between small fw-bold mb-1">
                         <span><strong><?php echo s($c->shortname); ?></strong> — <?php echo s(\core_text::substr($c->fullname, 0, 38)); ?></span>
-                        <span style="color:#166534;"><?php echo $ccount > 0 ? ($cavg . '% (' . $ccount . ')') : s(local_mamxanhapp_t('Sẵn sàng', 'Ready')); ?></span>
+                        <span style="color:#234E3E;"><?php echo $ccount > 0 ? ($cavg . '% (' . $ccount . ')') : s(local_mamxanhapp_t('Sẵn sàng', 'Ready')); ?></span>
                     </div>
-                    <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;">
-                        <div style="width:<?php echo max(6, (int)$cavg); ?>%;height:100%;background:#1E3A2F;border-radius:4px;"></div>
+                    <div style="height:8px;background:#EAF2EE;border-radius:4px;overflow:hidden;">
+                        <div style="width:<?php echo max(6, (int)$cavg); ?>%;height:100%;background:#234E3E;border-radius:4px;"></div>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -387,7 +393,7 @@ echo $OUTPUT->header();
     </section>
 
     <!-- Quick 1-Click Master Course Cloner Banner -->
-    <section class="mx-card p-4 mb-4" style="background:#F8FAFC !important;">
+    <section class="mx-card p-4 mb-4" style="background:#F9FAF9 !important;">
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:14px;">
             <div>
                 <h4 class="h4 mb-1">
@@ -429,7 +435,12 @@ echo $OUTPUT->header();
                 <?php echo s(local_mamxanhapp_t('Bảng Tổng hợp Tiến độ & Điểm số Học viên Nông dân', 'Master Farmer Learner Progress & Gradebook Report')); ?>
             </h4>
             <div class="d-flex flex-wrap" style="gap:8px;">
-                <?php foreach (['' => local_mamxanhapp_t('Tất cả vùng', 'All Regions'), 'Lâm Đồng' => 'Lâm Đồng', 'Đắk Lắk' => 'Đắk Lắk', 'Đồng Nai' => 'Đồng Nai'] as $rk => $rl):
+                <?php foreach ([
+                    '' => local_mamxanhapp_t('Tất cả vùng', 'All Regions'),
+                    'Lâm Đồng' => local_mamxanhapp_t('Lâm Đồng', 'Lam Dong'),
+                    'Đắk Lắk' => local_mamxanhapp_t('Đắk Lắk', 'Dak Lak'),
+                    'Đồng Nai' => local_mamxanhapp_t('Đồng Nai', 'Dong Nai'),
+                ] as $rk => $rl):
                     $active = ($regionfilter === $rk);
                     $furl = new moodle_url('/local/mamxanhapp/manage.php', $rk !== '' ? ['region' => $rk] : []);
                 ?>
@@ -470,29 +481,29 @@ echo $OUTPUT->header();
                         </td>
                         <td>
                             <span style="display:inline-block;background:#F1F5F9;color:#334155;border:1px solid #E2E8F0;padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;">
-                                <?php echo s($row->region); ?>
+                                <?php echo s($en ? ($reglabelsEn[$row->region] ?? $row->region) : $row->region); ?>
                             </span>
-                            <div style="font-size:0.82rem;color:#64748B;margin-top:2px;"><?php echo number_format($row->area_m2); ?> m²</div>
+                            <div style="font-size:0.82rem;color:#64748B;margin-top:2px;"><?php echo number_format($row->area_m2); ?> <?php echo s(local_mamxanhapp_t('m²', 'sq.m')); ?></div>
                         </td>
                         <td style="font-weight:500;color:#1E293B;"><?php echo s($row->crop); ?></td>
                         <td class="text-center"><strong><?php echo (int)$row->completedmods; ?></strong></td>
                         <td class="text-center">
                             <?php if ($row->avgquiz !== null): ?>
-                                <span style="font-weight:700;color:<?php echo $row->avgquiz >= 70 ? '#166534' : '#B45309'; ?>;"><?php echo s($row->avgquiz . '%'); ?></span>
+                                <span style="font-weight:700;color:<?php echo $row->avgquiz >= 70 ? '#234E3E' : '#B45309'; ?>;"><?php echo s($row->avgquiz . '%'); ?></span>
                             <?php else: ?>
                                 <span class="text-muted">--</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?php if ($row->avgrubric !== null): ?>
-                                <span style="font-weight:700;color:#1E3A2F;"><?php echo s($row->avgrubric . '/100'); ?></span>
+                                <span style="font-weight:700;color:#234E3E;"><?php echo s($row->avgrubric . '/100'); ?></span>
                             <?php else: ?>
                                 <span class="text-muted">--</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?php if ($row->certcount > 0): ?>
-                                <span style="background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:999px;font-weight:700;font-size:0.8rem;">
+                                <span style="background:#EAF2EE;color:#234E3E;padding:3px 10px;border-radius:999px;font-weight:700;font-size:0.8rem;">
                                     <?php echo (int)$row->certcount; ?>
                                 </span>
                             <?php else: ?>
@@ -500,7 +511,15 @@ echo $OUTPUT->header();
                             <?php endif; ?>
                         </td>
                         <td>
-                            <span style="font-size:0.84rem;font-weight:600;color:#166534;"><?php echo s($row->status); ?></span>
+                            <div style="font-size:0.84rem;font-weight:600;color:#234E3E;margin-bottom:4px;"><?php echo s($row->status); ?></div>
+                            <div class="d-flex flex-wrap" style="gap:4px;">
+                                <a href="<?php echo (new moodle_url('/local/mamxanhapp/transcript.php', ['userid' => $row->userid]))->out(false); ?>" class="btn btn-sm btn-secondary" style="font-size:0.74rem;padding:2px 8px;">
+                                    <?php echo s(local_mamxanhapp_t('Bảng điểm', 'Transcript')); ?>
+                                </a>
+                                <a href="<?php echo (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['userid' => $row->userid]))->out(false); ?>" class="btn btn-sm btn-secondary" style="font-size:0.74rem;padding:2px 8px;">
+                                    <?php echo s(local_mamxanhapp_t('Rubric', 'Rubric')); ?>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>

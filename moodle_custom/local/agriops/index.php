@@ -203,9 +203,9 @@ echo $OUTPUT->header();
 
                     <!-- 1-Tap Quick Field Diary Chips -->
                     <div class="d-flex flex-wrap mb-3" style="gap:6px;">
-                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #C8E6C9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Đã tưới nhỏ giọt dinh dưỡng A-B sáng sớm, pH 6.0, EC 1.6 mS/cm, cây phát triển khỏe.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Tưới A-B', 'Fertigation Template')); ?></button>
-                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #C8E6C9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Phun chế phẩm nấm đối kháng Trichoderma + Bacillus subtilis phòng nấm rễ, cách ly 0 ngày.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Phun Sinh học', 'Bio-IPM Template')); ?></button>
-                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #C8E6C9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Thu hoạch sáng mát 06:30, đưa vào phòng làm mát sơ bộ Pre-cooling 4°C đạt chuẩn VietGAP.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Thu hoạch', 'Harvest Template')); ?></button>
+                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #E6ECE9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Đã tưới nhỏ giọt dinh dưỡng A-B sáng sớm, pH 6.0, EC 1.6 mS/cm, cây phát triển khỏe.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Tưới A-B', 'Fertigation Template')); ?></button>
+                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #E6ECE9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Phun chế phẩm nấm đối kháng Trichoderma + Bacillus subtilis phòng nấm rễ, cách ly 0 ngày.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Phun Sinh học', 'Bio-IPM Template')); ?></button>
+                        <button type="button" class="btn btn-sm btn-light" style="border:1px solid #E6ECE9;border-radius:999px;font-weight:600;" onclick="document.getElementById('id_log_notes').value='Thu hoạch sáng mát 06:30, đưa vào phòng làm mát sơ bộ Pre-cooling 4°C đạt chuẩn VietGAP.'">+ <?php echo s(local_mamxanhapp_t('Mẫu Thu hoạch', 'Harvest Template')); ?></button>
                     </div>
 
                     <button type="submit" id="mx-submit-log-btn" class="btn btn-primary w-100">
@@ -219,29 +219,44 @@ echo $OUTPUT->header();
 
     <!-- VietGAP Batches & QR Passport Cards -->
     <section class="mt-2">
-        <h3 class="h3 mb-3">
-            <?php echo s(local_mamxanhapp_t('Danh sách Lô Nông sản & Mã QR Truy xuất Nguồn gốc (' . count($batches) . ')', 'Active VietGAP Batches & Traceability QR Codes (' . count($batches) . ')')); ?>
-        </h3>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
+            <h3 class="h3 mb-0">
+                <?php echo s(local_mamxanhapp_t('Danh sách Lô Nông sản & Mã QR Truy xuất Nguồn gốc (' . count($batches) . ')', 'Active VietGAP Batches & Traceability QR Codes (' . count($batches) . ')')); ?>
+            </h3>
+            <div class="d-flex flex-wrap" style="gap:8px;">
+                <a href="<?php echo (new moodle_url('/local/agriops/export_log.php', ['format' => 'html']))->out(false); ?>" class="btn btn-primary btn-sm">
+                    <?php echo s(local_mamxanhapp_t('Xuất Hồ sơ Nhật ký Nộp bài Thực hành (HTML)', 'Export VietGAP Log Report for Assignment (HTML)')); ?>
+                </a>
+                <a href="<?php echo (new moodle_url('/local/agriops/export_log.php', ['format' => 'csv']))->out(false); ?>" class="btn btn-secondary btn-sm">
+                    <?php echo s(local_mamxanhapp_t('Tải Nhật ký CSV', 'Download CSV Log')); ?>
+                </a>
+            </div>
+        </div>
         <div class="row">
             <?php foreach ($batches as $b):
                 $traceurl = (new moodle_url('/local/agriops/trace.php', ['code' => $b->batch_code]))->out(false);
-                $qrsvg = \local_mamxanhapp\qr_helper::render_svg($traceurl, 138, '#1E3A2F');
+                $qrsvg = \local_mamxanhapp\qr_helper::render_svg($traceurl, 138, '#234E3E');
                 $logs = $DB->get_records('local_agriops_log', ['batchid' => $b->id], 'log_time DESC', '*', 0, 3);
             ?>
             <div class="col-12 col-xl-6 mb-4">
                 <div class="mx-card p-4 h-100">
                     <div class="d-flex flex-wrap justify-content-between align-items-start" style="gap:16px;">
                         <div style="flex:1;min-width:200px;">
-                            <span class="badge mb-2" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;font-size:0.8rem;font-weight:700;">
+                            <span class="badge mb-2" style="background:#EAF2EE;color:#234E3E;border:1px solid #E6ECE9;font-size:0.8rem;font-weight:700;">
                                 VietGAP: <?php echo s($b->batch_code); ?>
                             </span>
                             <h4 class="h4 mb-2"><?php echo s($b->product_name); ?></h4>
                             <div class="small text-muted mb-3">
                                 <?php echo s($b->region); ?> • <?php echo number_format((int)$b->area_m2); ?> m² • <?php echo number_format((int)$b->expected_yield_kg); ?> kg
                             </div>
-                            <a href="<?php echo $traceurl; ?>" class="btn btn-secondary btn-sm">
-                                <?php echo s(local_mamxanhapp_t('Mở Trang Truy xuất QR Công khai', 'Open Public QR Traceability Page')); ?>
-                            </a>
+                            <div class="d-flex flex-wrap" style="gap:8px;">
+                                <a href="<?php echo $traceurl; ?>" class="btn btn-secondary btn-sm">
+                                    <?php echo s(local_mamxanhapp_t('Mở Trang Truy xuất QR Công khai', 'Open Public QR Traceability Page')); ?>
+                                </a>
+                                <a href="<?php echo (new moodle_url('/local/agriops/export_log.php', ['batchid' => $b->id, 'format' => 'html']))->out(false); ?>" class="btn btn-primary btn-sm">
+                                    <?php echo s(local_mamxanhapp_t('Xuất Hồ sơ Lô này', 'Export Batch Log')); ?>
+                                </a>
+                            </div>
                         </div>
                         <div class="text-center">
                             <?php echo $qrsvg; ?>
@@ -250,15 +265,15 @@ echo $OUTPUT->header();
                     </div>
 
                     <?php if (!empty($logs)): ?>
-                    <hr style="border-color:#E8F5E9;">
+                    <hr style="border-color:#E6ECE9;">
                     <div style="font-size:0.88rem;">
-                        <strong style="color:#1B4332;"><?php echo s(local_mamxanhapp_t('Nhật ký gần nhất:', 'Recent Field Logs:')); ?></strong>
+                        <strong style="color:#234E3E;"><?php echo s(local_mamxanhapp_t('Nhật ký gần nhất:', 'Recent Field Logs:')); ?></strong>
                         <ul class="mb-0 mt-1" style="padding-left:18px;line-height:1.6;">
                             <?php foreach ($logs as $lg): ?>
                             <li>
                                 <span class="text-muted">[<?php echo userdate($lg->log_time, '%d/%m %H:%M'); ?>]</span>
                                 <?php echo s($lg->notes); ?>
-                                <small class="text-success fw-bold">(pH <?php echo s($lg->ph_val); ?>, EC <?php echo s($lg->ec_val); ?>, PHI <?php echo (int)$lg->phi_days; ?>d<?php echo !empty($lg->voice_input) ? ' ' : ''; ?>)</small>
+                                <small class="fw-bold" style="color:#234E3E;">(pH <?php echo s($lg->ph_val); ?>, EC <?php echo s($lg->ec_val); ?>, PHI <?php echo (int)$lg->phi_days; ?>d)</small>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -280,8 +295,8 @@ function mxStartVoiceDiary() {
 
     if (!SpeechRecognition) {
         statusEl.textContent = isEn
-            ? 'ℹBrowser voice engine unavailable in headless mode; please use quick template chips below.'
-            : 'ℹTrình duyệt hiện tại chưa bật mic giọng nói; bạn có thể chạm các nút Mẫu câu nhanh bên dưới.';
+            ? 'Browser voice engine unavailable in headless mode; please use quick template chips below.'
+            : 'Trình duyệt hiện tại chưa bật mic giọng nói; bạn có thể chạm các nút Mẫu câu nhanh bên dưới.';
         return;
     }
 
@@ -295,7 +310,7 @@ function mxStartVoiceDiary() {
         var text = event.results[0][0].transcript;
         notesEl.value = (notesEl.value ? notesEl.value + ' ' : '') + text;
         document.getElementById('id_voice_input').value = '1';
-        statusEl.style.color = '#2E7D32';
+        statusEl.style.color = '#234E3E';
         statusEl.textContent = isEn ? 'Voice captured successfully!' : 'Đã nhận diện giọng nói thành công!';
     };
     rec.onerror = function(err) {

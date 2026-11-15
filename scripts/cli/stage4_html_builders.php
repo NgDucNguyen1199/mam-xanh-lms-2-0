@@ -31,9 +31,9 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
     $cardsHtml = '';
     foreach ($cfg['infographic_cards'] as $card) {
         $cardsHtml .= '<div class="col-12 col-md-4 mb-3">'
-            . '<div style="background:#FFFFFF;border:2px solid #C8E6C9;border-radius:18px;padding:18px;height:100%;box-shadow:0 4px 12px rgba(27,67,50,0.05);">'
-            . '<div style="font-size:2rem;margin-bottom:8px;">' . $card['icon'] . '</div>'
-            . '<h4 style="color:#1B4332;font-weight:800;font-size:1.08rem;margin-bottom:8px;">' . htmlspecialchars($card['title']) . '</h4>'
+            . '<div style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:14px;padding:18px;height:100%;box-shadow:0 4px 12px rgba(35,78,62,0.05);">'
+            . '<div style="font-size:1.5rem;margin-bottom:8px;">' . $card['icon'] . '</div>'
+            . '<h4 style="color:#234E3E;font-weight:700;font-size:1.05rem;margin-bottom:8px;">' . htmlspecialchars($card['title']) . '</h4>'
             . '<div style="font-size:0.94rem;color:#263238;line-height:1.6;">' . $card['body'] . '</div>'
             . '</div>'
             . '</div>';
@@ -44,10 +44,10 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
         $scaleHtml .= '<div style="margin-bottom:12px;">'
             . '<div class="d-flex justify-content-between" style="font-weight:700;font-size:0.92rem;margin-bottom:4px;">'
             . '<span>' . htmlspecialchars($bar['label']) . '</span>'
-            . '<span style="color:#1B4332;font-weight:800;">' . htmlspecialchars($bar['range']) . '</span>'
+            . '<span style="color:#234E3E;font-weight:700;">' . htmlspecialchars($bar['range']) . '</span>'
             . '</div>'
-            . '<div style="height:14px;background:#E8F5E9;border-radius:999px;overflow:hidden;">'
-            . '<div style="width:' . (int)$bar['pct'] . '%;height:100%;background:' . $bar['color'] . ';border-radius:999px;"></div>'
+            . '<div style="height:12px;background:#EAF2EE;border-radius:999px;overflow:hidden;">'
+            . '<div style="width:' . (int)$bar['pct'] . '%;height:100%;background:#234E3E;border-radius:999px;"></div>'
             . '</div>'
             . '</div>';
     }
@@ -55,19 +55,19 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
     return <<<HTML
 <div class="mx-digital-lesson" id="mx-vid-{$uid}">
     <!-- Real Local HTML5 Video Player (MP4 + WebM + Vietnamese WebVTT Subtitles — Zero YouTube Block) -->
-    <div style="background:linear-gradient(145deg,#102A1E,#1B4332);color:#FFFFFF;border-radius:24px;padding:22px;margin-bottom:24px;box-shadow:0 14px 32px rgba(20,40,29,0.22);">
+    <div style="background:#FFFFFF;color:#111A16;border:1px solid #E6ECE9;border-radius:16px;padding:22px;margin-bottom:24px;box-shadow:0 4px 16px rgba(15,23,42,0.05);">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:8px;">
-            <span style="background:#2E7D32;color:#FFF;padding:5px 14px;border-radius:999px;font-weight:800;font-size:0.84rem;">
-                VIDEO THỰC TẾ NÔNG NGHIỆP CNC (HTML5 MP4 + PHỤ ĐỀ VIỆT) • {$cfg['duration']}
+            <span style="background:#EAF2EE;color:#234E3E;padding:5px 14px;border-radius:999px;font-weight:700;font-size:0.82rem;">
+                BÀI GIẢNG VIDEO THỰC TẾ HIỆN TRƯỜNG • {$cfg['duration']}
             </span>
-            <span style="color:#B7E4C7;font-size:0.86rem;font-weight:700;">Phát Trực tiếp Mượt mà 100% (Không phụ thuộc YouTube)</span>
+            <span style="color:#52615B;font-size:0.84rem;font-weight:600;">Phụ đề Kỹ thuật Tiếng Việt • Lâm Đồng</span>
         </div>
 
-        <h3 style="color:#FFFFFF;font-weight:800;font-size:1.35rem;margin-bottom:14px;">{$cfg['video_title']}</h3>
+        <h3 style="color:#111A16;font-weight:700;font-size:1.25rem;margin-bottom:14px;">{$cfg['video_title']}</h3>
 
         <!-- Native HTML5 Video Element with MP4, WebM & Default Vietnamese Subtitles -->
-        <div style="border-radius:18px;overflow:hidden;border:2px solid #52B788;background:#000000;margin-bottom:14px;">
-            <video id="mx-player-{$uid}" class="mx-real-html5-video" width="900" height="506" controls playsinline preload="metadata" poster="{$posterurl}" style="width:100%;max-height:460px;display:block;margin:0 auto;background:#000;">
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E6ECE9;background:#0B1120;margin-bottom:14px;">
+            <video id="mx-player-{$uid}" class="mx-real-html5-video" width="900" height="506" controls playsinline preload="metadata" poster="{$posterurl}" style="width:100%;max-height:508px;display:block;margin:0 auto;background:#0B1120;">
                 <source src="{$mp4url}" type="video/mp4">
                 <source src="{$webmurl}" type="video/webm">
                 <track kind="subtitles" src="{$vtturl}" srclang="vi" label="Phụ đề Kỹ thuật Tiếng Việt" default>
@@ -76,39 +76,39 @@ function mamxanh_build_video_infographic_html(array $cfg): string {
         </div>
 
         <!-- Synchronized Technical Chapter Summary Below Video -->
-        <div id="mx-stage-{$uid}" style="background:#0B1F16;border:2px solid #40916C;border-radius:18px;padding:18px;margin-bottom:14px;">
-            <div class="d-flex align-items-center" style="gap:14px;">
-                <div id="mx-vicon-{$uid}" style="font-size:2.4rem;line-height:1;">{$cfg['chapters'][0]['icon']}</div>
+        <div id="mx-stage-{$uid}" style="background:#F9FAF9;border:1px solid #E6ECE9;border-radius:12px;padding:16px;margin-bottom:14px;">
+            <div class="d-flex align-items-center" style="gap:12px;">
+                <div id="mx-vicon-{$uid}" style="font-size:1.5rem;line-height:1;">{$cfg['chapters'][0]['icon']}</div>
                 <div>
-                    <div id="mx-vchap-{$uid}" style="color:#95D5B2;font-weight:800;font-size:0.86rem;text-transform:uppercase;">Tóm tắt Kỹ thuật Phần 1 / 3 • {$cfg['chapters'][0]['time']}</div>
-                    <h4 id="mx-vhead-{$uid}" style="color:#FFFFFF;font-weight:800;font-size:1.15rem;margin:4px 0;">{$cfg['chapters'][0]['title']}</h4>
+                    <div id="mx-vchap-{$uid}" style="color:#234E3E;font-weight:700;font-size:0.82rem;text-transform:uppercase;">Tóm tắt Kỹ thuật Phần 1 / 3 • {$cfg['chapters'][0]['time']}</div>
+                    <h4 id="mx-vhead-{$uid}" style="color:#111A16;font-weight:700;font-size:1.08rem;margin:4px 0;">{$cfg['chapters'][0]['title']}</h4>
                 </div>
             </div>
-            <p id="mx-vdesc-{$uid}" style="color:#E8F5E9;font-size:0.98rem;line-height:1.6;margin:10px 0;">{$cfg['chapters'][0]['desc']}</p>
-            <div style="height:8px;background:rgba(255,255,255,0.15);border-radius:999px;overflow:hidden;">
-                <div id="mx-vbar-{$uid}" style="width:33%;height:100%;background:#52B788;transition:width 0.4s ease;"></div>
+            <p id="mx-vdesc-{$uid}" style="color:#334155;font-size:0.95rem;line-height:1.6;margin:8px 0;">{$cfg['chapters'][0]['desc']}</p>
+            <div style="height:6px;background:#E6ECE9;border-radius:999px;overflow:hidden;">
+                <div id="mx-vbar-{$uid}" style="width:33%;height:100%;background:#234E3E;transition:width 0.4s ease;"></div>
             </div>
         </div>
 
-        <!-- Video Chapter Seek Controls (>=48px WCAG AAA) -->
+        <!-- Video Chapter Seek Controls -->
         <div class="d-flex flex-wrap" style="gap:10px;">
-            <button type="button" class="btn btn-success" style="min-height:48px;border-radius:12px;font-weight:800;background:#2E7D32;" onclick="mxPlayVideoChapter_{$uid}(0, 0)">Phần 1: {$cfg['chapters'][0]['short']}</button>
-            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(1, 8)">Phần 2: {$cfg['chapters'][1]['short']}</button>
-            <button type="button" class="btn btn-outline-light" style="min-height:48px;border-radius:12px;font-weight:700;" onclick="mxPlayVideoChapter_{$uid}(2, 16)">Phần 3: {$cfg['chapters'][2]['short']}</button>
+            <button type="button" class="btn btn-primary" style="min-height:42px;border-radius:8px;font-weight:600;background:#234E3E;border-color:#234E3E;" onclick="mxPlayVideoChapter_{$uid}(0, 0)">Phần 1: {$cfg['chapters'][0]['short']}</button>
+            <button type="button" class="btn btn-secondary" style="min-height:42px;border-radius:8px;font-weight:600;" onclick="mxPlayVideoChapter_{$uid}(1, 8)">Phần 2: {$cfg['chapters'][1]['short']}</button>
+            <button type="button" class="btn btn-secondary" style="min-height:42px;border-radius:8px;font-weight:600;" onclick="mxPlayVideoChapter_{$uid}(2, 16)">Phần 3: {$cfg['chapters'][2]['short']}</button>
         </div>
     </div>
 
     <!-- HTML5 / Bootstrap Infographic Cards -->
-    <div style="background:#F4FBF6;border:2px solid #B7E4C7;border-radius:24px;padding:22px;margin-bottom:22px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.28rem;margin-bottom:16px;">
+    <div style="background:#F9FAF9;border:1px solid #E6ECE9;border-radius:16px;padding:22px;margin-bottom:22px;">
+        <h3 style="color:#234E3E;font-weight:700;font-size:1.2rem;margin-bottom:16px;">
             Infographic Kỹ thuật Trọng tâm: {$cfg['infographic_title']}
         </h3>
         <div class="row">
             {$cardsHtml}
         </div>
 
-        <div style="background:#FFFFFF;border-radius:18px;padding:18px;border:1.5px solid #C8E6C9;margin-top:8px;">
-            <h4 style="color:#1B4332;font-weight:800;font-size:1.08rem;margin-bottom:12px;">Thang Đo Thông Số Chuẩn Thực Địa</h4>
+        <div style="background:#FFFFFF;border-radius:12px;padding:18px;border:1px solid #E6ECE9;margin-top:8px;">
+            <h4 style="color:#234E3E;font-weight:700;font-size:1.05rem;margin-bottom:12px;">Thang Đo Thông Số Chuẩn Thực Địa</h4>
             {$scaleHtml}
         </div>
     </div>
@@ -165,42 +165,42 @@ function mamxanh_build_slidedeck_html(string $code, string $decktitle, array $sl
                     . htmlspecialchars($opt)
                     . '</button>';
             }
-            $quizHtml = '<div style="background:#F1F8E9;border:2px solid #81C784;border-radius:16px;padding:16px;margin-top:16px;">'
-                . '<div style="font-weight:800;color:#1B4332;margin-bottom:10px;">Câu hỏi Tình huống Thực tế: ' . htmlspecialchars($q['question']) . '</div>'
+            $quizHtml = '<div style="background:#EAF2EE;border:1px solid #E6ECE9;border-radius:12px;padding:16px;margin-top:16px;">'
+                . '<div style="font-weight:700;color:#234E3E;margin-bottom:10px;">Câu hỏi Tình huống Thực tế: ' . htmlspecialchars($q['question']) . '</div>'
                 . $optsHtml
-                . '<div id="' . $qid . '_fb" style="display:none;margin-top:8px;padding:10px 14px;border-radius:12px;font-weight:700;"></div>'
+                . '<div id="' . $qid . '_fb" style="display:none;margin-top:8px;padding:10px 14px;border-radius:10px;font-weight:700;"></div>'
                 . '</div>';
         }
 
         $slidesHtml .= '<div class="mx-slide-item-' . $uid . '" data-idx="' . $i . '" style="display:' . $display . ';">'
             . '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
-            . '<span style="background:#D8F3DC;color:#1B4332;padding:5px 14px;border-radius:999px;font-weight:800;font-size:0.85rem;">Slide ' . $num . ' / ' . $total . '</span>'
-            . '<span style="font-size:0.85rem;color:#2E7D32;font-weight:700;">' . htmlspecialchars($s['tag'] ?? 'Kỹ thuật chuẩn') . '</span>'
+            . '<span style="background:#EAF2EE;color:#234E3E;padding:5px 14px;border-radius:999px;font-weight:700;font-size:0.85rem;">Slide ' . $num . ' / ' . $total . '</span>'
+            . '<span style="font-size:0.85rem;color:#234E3E;font-weight:700;">' . htmlspecialchars($s['tag'] ?? 'Kỹ thuật chuẩn') . '</span>'
             . '</div>'
-            . '<h3 style="color:#1B4332;font-weight:800;font-size:1.35rem;margin-bottom:12px;">' . htmlspecialchars($s['title']) . '</h3>'
-            . '<div style="font-size:1.02rem;line-height:1.7;color:#14281D;">' . $s['body'] . '</div>'
+            . '<h3 style="color:#234E3E;font-weight:700;font-size:1.3rem;margin-bottom:12px;">' . htmlspecialchars($s['title']) . '</h3>'
+            . '<div style="font-size:1.0rem;line-height:1.7;color:#111A16;">' . $s['body'] . '</div>'
             . $diagram
             . $quizHtml
             . '</div>';
     }
 
     return <<<HTML
-<div class="mx-interactive-deck" style="background:#FFFFFF;border:2.5px solid #1B4332;border-radius:24px;padding:24px;box-shadow:0 12px 28px rgba(27,67,50,0.10);">
-    <div style="border-bottom:2px solid #E8F5E9;padding-bottom:12px;margin-bottom:18px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
-        <strong style="color:#1B4332;font-size:1.05rem;">{$decktitle}</strong>
-        <div style="height:10px;width:180px;background:#E8F5E9;border-radius:999px;overflow:hidden;">
-            <div id="mx-sprog-{$uid}" style="width:14%;height:100%;background:#2E7D32;transition:width 0.25s ease;"></div>
+<div class="mx-interactive-deck" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(15,23,42,0.05);">
+    <div style="border-bottom:1px solid #E6ECE9;padding-bottom:12px;margin-bottom:18px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+        <strong style="color:#234E3E;font-size:1.05rem;">{$decktitle}</strong>
+        <div style="height:8px;width:180px;background:#EAF2EE;border-radius:999px;overflow:hidden;">
+            <div id="mx-sprog-{$uid}" style="width:14%;height:100%;background:#234E3E;transition:width 0.25s ease;"></div>
         </div>
     </div>
 
     {$slidesHtml}
 
-    <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top:2px solid #E8F5E9;gap:12px;">
-        <button type="button" id="mx-sprev-{$uid}" class="btn btn-outline-success" style="min-height:50px;border-radius:14px;font-weight:800;padding:0 20px;border-width:2px;" onclick="mxMoveSlide_{$uid}(-1)">
+    <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top:1px solid #E6ECE9;gap:12px;">
+        <button type="button" id="mx-sprev-{$uid}" class="btn btn-secondary" style="min-height:44px;border-radius:8px;font-weight:600;padding:0 18px;" onclick="mxMoveSlide_{$uid}(-1)">
             ← Slide trước
         </button>
-        <span id="mx-sindicator-{$uid}" style="font-weight:800;color:#1B4332;">1 / {$total}</span>
-        <button type="button" id="mx-snext-{$uid}" class="btn btn-success" style="min-height:50px;border-radius:14px;font-weight:800;padding:0 20px;background:#1B4332;" onclick="mxMoveSlide_{$uid}(1)">
+        <span id="mx-sindicator-{$uid}" style="font-weight:700;color:#234E3E;">1 / {$total}</span>
+        <button type="button" id="mx-snext-{$uid}" class="btn btn-primary" style="min-height:44px;border-radius:8px;font-weight:600;padding:0 18px;background:#234E3E;border-color:#234E3E;" onclick="mxMoveSlide_{$uid}(1)">
             Slide tiếp theo →
         </button>
     </div>
@@ -228,10 +228,10 @@ if (!window.mxCheckSlideScenario) {
         if (!fb) return;
         fb.style.display = 'block';
         if (isRight === 1) {
-            fb.style.background = '#D8F3DC';
-            fb.style.color = '#1B4332';
+            fb.style.background = '#EAF2EE';
+            fb.style.color = '#234E3E';
             fb.innerHTML = 'Chính xác! ' + explain;
-            btn.style.background = '#1B4332';
+            btn.style.background = '#234E3E';
             btn.style.color = '#FFFFFF';
         } else {
             fb.style.background = '#FFEBEE';
@@ -254,19 +254,19 @@ function mamxanh_build_flashcards_accordion_html(string $code, array $cards, arr
     foreach ($cards as $idx => $c) {
         $cid = "{$uid}_fc_{$idx}";
         $cardsHtml .= '<div class="col-12 col-md-6 mb-3">'
-            . '<div id="' . $cid . '" style="background:#FFFFFF;border:2px solid #2E7D32;border-radius:20px;padding:20px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;box-shadow:0 6px 18px rgba(27,67,50,0.07);" onclick="mxFlipCard(\'' . $cid . '\')">'
+            . '<div id="' . $cid . '" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:14px;padding:20px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;box-shadow:0 4px 12px rgba(15,23,42,0.05);" onclick="mxFlipCard(\'' . $cid . '\')">'
             . '<div class="mx-fc-front">'
-            . '<span style="background:#FFF8E1;color:#E65100;padding:4px 12px;border-radius:999px;font-weight:800;font-size:0.8rem;">MẶT TRƯỚC: NHẬN DIỆN TRIỆU CHỨNG</span>'
-            . '<h4 style="color:#1B4332;font-weight:800;margin:12px 0 8px;">' . $c['icon'] . ' ' . htmlspecialchars($c['front_title']) . '</h4>'
+            . '<span style="background:#FFF8E1;color:#B45309;padding:4px 12px;border-radius:999px;font-weight:700;font-size:0.8rem;">MẶT TRƯỚC: NHẬN DIỆN TRIỆU CHỨNG</span>'
+            . '<h4 style="color:#234E3E;font-weight:700;margin:12px 0 8px;">' . $c['icon'] . ' ' . htmlspecialchars($c['front_title']) . '</h4>'
             . '<p style="color:#37474F;line-height:1.6;margin:0;">' . htmlspecialchars($c['front_symptom']) . '</p>'
             . '</div>'
-            . '<div class="mx-fc-back" style="display:none;background:#F1F8E9;border-radius:14px;padding:14px;">'
-            . '<span style="background:#1B4332;color:#FFF;padding:4px 12px;border-radius:999px;font-weight:800;font-size:0.8rem;">MẶT SAU: PHÁC ĐỒ SINH HỌC IPM</span>'
-            . '<h4 style="color:#1B4332;font-weight:800;margin:10px 0 6px;">' . htmlspecialchars($c['front_title']) . '</h4>'
-            . '<div style="color:#14281D;line-height:1.6;font-size:0.95rem;">' . $c['back_protocol'] . '</div>'
+            . '<div class="mx-fc-back" style="display:none;background:#EAF2EE;border-radius:12px;padding:14px;">'
+            . '<span style="background:#234E3E;color:#FFF;padding:4px 12px;border-radius:999px;font-weight:700;font-size:0.8rem;">MẶT SAU: PHÁC ĐỒ SINH HỌC IPM</span>'
+            . '<h4 style="color:#234E3E;font-weight:700;margin:10px 0 6px;">' . htmlspecialchars($c['front_title']) . '</h4>'
+            . '<div style="color:#111A16;line-height:1.6;font-size:0.95rem;">' . $c['back_protocol'] . '</div>'
             . '</div>'
             . '<div class="mt-3 text-end">'
-            . '<span class="btn btn-sm btn-outline-success" style="min-height:40px;display:inline-flex;align-items:center;border-radius:10px;font-weight:800;">Chạm để lật thẻ xem phác đồ</span>'
+            . '<span class="btn btn-sm btn-secondary" style="min-height:36px;display:inline-flex;align-items:center;border-radius:8px;font-weight:600;">Chạm để lật thẻ xem phác đồ</span>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -276,8 +276,8 @@ function mamxanh_build_flashcards_accordion_html(string $code, array $cards, arr
     foreach ($accordions as $ai => $acc) {
         $aid = "{$uid}_acc_{$ai}";
         $open = ($ai === 0) ? 'block' : 'none';
-        $accHtml .= '<div style="border:2px solid #C8E6C9;border-radius:16px;margin-bottom:10px;overflow:hidden;background:#FFFFFF;">'
-            . '<button type="button" onclick="mxToggleAcc(\'' . $aid . '\')" style="width:100%;min-height:52px;background:#E8F5E9;border:none;padding:12px 18px;text-align:left;font-weight:800;color:#1B4332;display:flex;justify-content:space-between;align-items:center;">'
+        $accHtml .= '<div style="border:1px solid #E6ECE9;border-radius:12px;margin-bottom:10px;overflow:hidden;background:#FFFFFF;">'
+            . '<button type="button" onclick="mxToggleAcc(\'' . $aid . '\')" style="width:100%;min-height:48px;background:#EAF2EE;border:none;padding:12px 18px;text-align:left;font-weight:700;color:#234E3E;display:flex;justify-content:space-between;align-items:center;">'
             . '<span>' . htmlspecialchars($acc['title']) . '</span>'
             . '<span>▾</span>'
             . '</button>'
@@ -290,22 +290,22 @@ function mamxanh_build_flashcards_accordion_html(string $code, array $cards, arr
     return <<<HTML
 <div class="mx-flashcards-module">
     <div style="margin-bottom:24px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.3rem;margin-bottom:8px;">
+        <h3 style="color:#234E3E;font-weight:700;font-size:1.25rem;margin-bottom:8px;">
             Thẻ Lật Tương Tác (Flashcards): Nhận diện Sâu bệnh & Phác đồ Sinh học IPM
         </h3>
-        <p style="color:#4E6358;margin-bottom:16px;">Chạm vào từng thẻ bệnh hại bên dưới để lật sang mặt sau xem phác đồ xử lý sinh học chuẩn VietGAP:</p>
+        <p style="color:#52615B;margin-bottom:16px;">Chạm vào từng thẻ bệnh hại bên dưới để lật sang mặt sau xem phác đồ xử lý sinh học chuẩn VietGAP:</p>
         <div class="row">
             {$cardsHtml}
         </div>
     </div>
 
-    <div style="background:#F4FBF6;border:2px solid #B7E4C7;border-radius:22px;padding:20px;">
-        <h3 style="color:#1B4332;font-weight:800;font-size:1.25rem;margin-bottom:14px;">
+    <div style="background:#F9FAF9;border:1px solid #E6ECE9;border-radius:16px;padding:20px;">
+        <h3 style="color:#234E3E;font-weight:700;font-size:1.2rem;margin-bottom:14px;">
             Cẩm nang Mở rộng (Accordion): Thực hành Truy xuất Nguồn gốc Mã QR VietGAP
         </h3>
         {$accHtml}
         <div class="mt-3">
-            <a href="/local/agriops/index.php" class="btn btn-success" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;font-weight:800;background:#1B4332;">
+            <a href="/local/agriops/index.php" class="btn btn-primary" style="min-height:44px;display:inline-flex;align-items:center;border-radius:8px;font-weight:600;background:#234E3E;border-color:#234E3E;">
                 Mở Sổ Nhật ký Điện tử & Tạo Mã QR VietGAP Thực tế →
             </a>
         </div>

@@ -14,7 +14,7 @@ $reqlang = optional_param('lang', '', PARAM_ALPHA);
 if (($reqlang === 'vi' || $reqlang === 'en') && isset($SESSION) && is_object($SESSION)) {
     $SESSION->lang = $reqlang;
 }
-$isen = strpos(current_language(), 'en') === 0;
+$isen = ($reqlang === 'en') ? true : (($reqlang === 'vi') ? false : (strpos(current_language(), 'en') === 0));
 
 // 2. Strict 403 RBAC check on core admin endpoints for non-admins
 $reqpath = $PAGE->has_set_url() ? ($PAGE->url->get_path() ?: '') : ($_SERVER['SCRIPT_NAME'] ?? '');
@@ -31,7 +31,7 @@ if (isloggedin() && !isguestuser() && !is_siteadmin() && in_array($reqpath, $adm
 $issiteindex = ($PAGE->pagetype === 'site-index');
 
 // 4. Inject PWA Manifest & Theme Meta via $CFG->additionalhtmlhead
-$pwatags = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1E3A2F"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
+$pwatags = '<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#234E3E"><link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">';
 if (strpos($CFG->additionalhtmlhead ?? '', '/manifest.json') === false) {
     $CFG->additionalhtmlhead = ($CFG->additionalhtmlhead ?? '') . $pwatags;
 }
@@ -54,6 +54,8 @@ if ($PAGE->pagetype === 'my-index' || $issiteindex) {
 $mxcoursetileshtml = '';
 if (strpos($PAGE->pagetype, 'course-view-') === 0 && isset($COURSE->id) && (int)$COURSE->id !== SITEID && !$PAGE->user_is_editing()) {
     $mxcoursetileshtml = theme_agritrain_child_build_course_tiles_html($COURSE);
+} else if ($PAGE->pagetype === 'my-index' && strpos($reqpath, '/my/courses.php') !== false && function_exists('theme_agritrain_child_build_my_courses_html')) {
+    $mxcoursetileshtml = theme_agritrain_child_build_my_courses_html();
 }
 $mxfrontpagehtml = '';
 if ($issiteindex && !$PAGE->user_is_editing() && function_exists('theme_agritrain_child_build_frontpage_portal_html')) {
@@ -114,10 +116,10 @@ if (!empty($PAGE->cm->id) && isset($COURSE->id) && (int)$COURSE->id !== SITEID) 
     $mxshowtts = true;
     $mxbackurl = (new moodle_url('/course/view.php', ['id' => $COURSE->id]))->out(false);
     $cname = format_string($COURSE->shortname ?: $COURSE->fullname);
-    $mxbacklabel = $isen ? "← Quay lại: {$cname}" : "← Quay lại: {$cname}";
+    $mxbacklabel = $isen ? "← Back to: {$cname}" : "← Quay lại: {$cname}";
 } else if (strpos($PAGE->pagetype, 'course-view-') === 0 && isset($COURSE->id) && (int)$COURSE->id !== SITEID) {
     $mxbackurl = (new moodle_url('/my/index.php'))->out(false);
-    $mxbacklabel = $isen ? '← Quay lại Bảng điều khiển' : '← Quay lại Bảng điều khiển';
+    $mxbacklabel = $isen ? '← Back to Dashboard' : '← Quay lại Bảng điều khiển';
 }
 
 // 7. Language Switcher URLs preserving query parameters
@@ -145,7 +147,19 @@ $navcalcactive = (strpos($curpath, '/local/mamxanhapp/calculator.php') !== false
 $navcertactive = (strpos($curpath, '/local/mamxanhcert/') !== false);
 $navprofactive = (strpos($curpath, '/local/farmerprofile/') !== false);
 $navadminactive = (strpos($curpath, '/admin/') !== false);
-$navopsdropdownactive = ($navagriactive || $navcalcactive || $navcertactive || $navprofactive || $navcloneractive || $navmanageactive || $navadminactive);
+$navtranscriptactive = (strpos($curpath, '/local/mamxanhapp/transcript.php') !== false);
+$navfeedbackactive = (strpos($curpath, '/local/mamxanhapp/feedback_sheet.php') !== false);
+$navopsdropdownactive = ($navagriactive || $navcalcactive || $navcertactive || $navprofactive || $navcloneractive || $navmanageactive || $navadminactive || $navtranscriptactive || $navfeedbackactive);
+
+$iscalendar = (strpos($curpath, '/calendar/view.php') !== false || strpos($PAGE->pagetype, 'calendar-') === 0);
+$caltime = optional_param('time', time(), PARAM_INT);
+$strcalendarheading = $isen
+    ? 'Academic Schedule & Deadlines — ' . date('F Y', $caltime)
+    : 'Lịch Học thuật & Hạn nộp Bài — Tháng ' . date('m/Y', $caltime);
+
+$isassignview = (strpos($curpath, '/mod/assign/view.php') !== false);
+$mxexportloghtmlurl = (new moodle_url('/local/agriops/export_log.php', ['format' => 'html', 'courseid' => $targetcourseid]))->out(false);
+$mxexportlogcsvurl = (new moodle_url('/local/agriops/export_log.php', ['format' => 'csv', 'courseid' => $targetcourseid]))->out(false);
 
 $templatecontext = [
     'sitename'                  => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), 'escape' => false]),
@@ -220,6 +234,8 @@ $templatecontext = [
     'mxcerturl'                 => (new moodle_url('/local/mamxanhcert/index.php'))->out(false),
     'mxprofileurl'              => (new moodle_url('/local/farmerprofile/index.php'))->out(false),
     'mxadminurl'                => (new moodle_url('/admin/search.php'))->out(false),
+    'mxtranscripturl'           => (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $targetcourseid]))->out(false),
+    'mxfeedbackurl'             => (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['courseid' => $targetcourseid]))->out(false),
 
     'navhomeactive'             => $navhomeactive,
     'navmyactive'               => $navmyactive,
@@ -233,6 +249,8 @@ $templatecontext = [
     'navcertactive'             => $navcertactive,
     'navprofactive'             => $navprofactive,
     'navadminactive'            => $navadminactive,
+    'navtranscriptactive'       => $navtranscriptactive,
+    'navfeedbackactive'         => $navfeedbackactive,
     'navopsdropdownactive'      => $navopsdropdownactive,
 
     'lbl_nav_home'              => $isen ? 'Home' : 'Trang chủ',
@@ -248,6 +266,21 @@ $templatecontext = [
     'lbl_nav_cert'              => $isen ? 'Certificates' : 'Chứng nhận',
     'lbl_nav_prof'              => $isen ? 'Farm' : 'Nông hộ',
     'lbl_nav_admin'             => $isen ? 'Site Administration' : 'Quản trị Hệ thống',
+    'lbl_nav_transcript'        => $isen ? 'Academic Transcript' : 'Bảng điểm Học thuật',
+    'lbl_nav_feedback'          => $isen ? 'Rubric & Feedback Sheet' : 'Phiếu Chấm Rubric',
+
+    'iscalendar'                => $iscalendar,
+    'str_calendar_heading'      => $strcalendarheading,
+    'isassignview'              => $isassignview,
+    'mxexportloghtmlurl'        => $mxexportloghtmlurl,
+    'mxexportlogcsvurl'         => $mxexportlogcsvurl,
+    'str_assign_vietgap_title'  => $isen ? 'VietGAP Cultivation Log Integration (Practical Submission)' : 'Liên thông Nhật ký Canh tác VietGAP (Nộp bài Thực hành)',
+    'str_assign_vietgap_desc'   => $isen
+        ? 'Export your verified VietGAP field diary from AgriOps as a standardized practical report (.html or .csv) to attach to your assignment submission.'
+        : 'Trích xuất dữ liệu Nhật ký đồng ruộng điện tử VietGAP của nông hộ thành Báo cáo Thực hành chuẩn hóa (.html hoặc .csv có mã xác thực) để đính kèm khi nộp bài.',
+    'str_assign_export_html'    => $isen ? 'Export VietGAP Report (.HTML)' : 'Xuất Báo cáo Nhật ký (.HTML)',
+    'str_assign_export_csv'     => $isen ? 'Export Raw Data (.CSV)' : 'Tải Dữ liệu Nhật ký (.CSV)',
+    'str_assign_open_agriops'   => $isen ? 'Open VietGAP Logbook' : 'Mở Sổ Nhật ký VietGAP',
 ];
 
 echo $OUTPUT->render_from_template('theme_agritrain_child/drawers', $templatecontext);
