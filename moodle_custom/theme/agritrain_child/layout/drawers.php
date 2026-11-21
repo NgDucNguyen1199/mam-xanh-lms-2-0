@@ -41,7 +41,7 @@ $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhap
 $iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
 
 // Block direct student access to course participants list (/user/index.php)
-if (!$iscbktadmin && strpos($reqpath, '/user/index.php') !== false) {
+if (!$iscbktadmin && $reqpath === '/user/index.php') {
     if (function_exists('local_mamxanhapp_send_403_and_exit')) {
         local_mamxanhapp_send_403_and_exit();
     }

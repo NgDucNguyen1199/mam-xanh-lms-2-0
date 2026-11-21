@@ -1,0 +1,259 @@
+=== PAGE 1 ===
+ 
+1
+Trường Đại học Đà Lạt 
+Khoa Công Nghệ Thông Tin 
+---oOo--- 
+ 
+MỘT SỐ QUI ĐỊNH VỀ HÌNH THỨC TRÌNH BÀY  
+BÁO CÁO ĐỒ ÁN 
+ 
+1. CẤU TRÚC CỦA BÀI BÁO CÁO ĐỒ ÁN  
+ Bìa chính và bìa phụ của đồ án (mẫu M01). 
+ Trang nhận xét của GVHD (mẫu M02). 
+ Lời cảm ơn. 
+ Đề cương thực hiện đồ án ( có chữ kí của giáo viên hướng dẫn (theo mẫu M03)). 
+ Mục lục. 
+ Bảng các hình vẽ, ký hiệu, chữ viết tắt (nếu có) xếp theo thứ tự bảng chữ cái. Không lạm 
+dụng chữ viết tắt, các từ tiếng Anh thông dụng. Không viết tắt những cụm từ dài hoặc cụm 
+từ ít xuất hiện trong đồ án. 
+ Tóm tắt của đồ án : trình bày tóm tắt vấn đề nghiên cứu, các hướng tiếp cận, cách giải 
+quyết vấn đề và một số kết quả đạt được. 
+ Nội dung của đồ án (xem phần Bố cục) 
+2. BỐ CỤC NỘI DUNG CỦA ĐỒ ÁN  
+ Nội dung đồ án trình bày trong khoảng 40 trang đến 80 trang giấy  A4  (không kể các 
+trang bìa, lời cảm ơn, mục lục, tài liệu tham khảo, phụ lục…) 
+ theo trình tự như sau: 
+o MỞ ĐẦU: Trình bày lí do chọn đề tài, mục đích, đối tượng, phương pháp và 
+phạm vi nghiên cứu. 
+o Chƣơng 1 : TỔNG QUAN  
+Phân tích đánh giá các hướng nghiên cứu của đề tài, nêu những vấn đề còn tồn tại, 
+chỉ ra những vấn đề mà đề tài cần tập trung, nghiên cứu giải quyết. 
+o Các chƣơng tiếp theo : 
+Trình bày chi tiết các kết quả nghiên cứu 
+o KẾT LUẬN: Tóm tắt kết quả đạt được, những đóng góp mới và những đề xuất 
+mới. Phần kết luận cần ngắn gọn, không có lời bàn và bình luận thêm. 
+o HƢỚNG PHÁT TRIỂN: Giới thiệu những hướng nghiên cứu tiếp theo. 
+o DANH MỤC TÀI LIỆU THAM KHẢO: Chỉ bao gồm các tài liệu được trích 
+dẫn, sử dụng và đề cập tới để bàn luận trong đồ án.  
+o PHỤ LỤC. 
+3. HÌNH THỨC TRÌNH BÀY 
+ Bản báo cáo đồ án phải được trình bày ngắn gọn, rõ ràng, mạch lạc, sạch sẽ, không được 
+tẩy xóa, có đánh số trang, đánh số bảng biểu, hình vẽ, đồ thị. Nội dung phân thành các 
+chương. 
+ Font chữ Unicode: Times New Roman, kích thước(size) 13pt. 
+ Dãn dòng (line spacing) đặt ở chế độ 1.5 lines. Canh đều hai bên. 
+ Lề trên 2.5 cm, lề dưới 2.5 cm, lề trái 3.5 cm, lề phải 2 cm. Đánh số trang ở giữa bên dưới. 
+ Các bảng biểu trình bày theo chiều ngang khổ giấy thì đầu bảng là lề trái của trang.  
+ Số thứ tự của các chương, mục được đánh số bằng hệ thống số Ả-rập, không dùng số La 
+mã. Các mục và tiểu mục được đánh số bằng các nhóm hai hoặc ba chữ số, cách nhau một 
+dấu chấm: số thứ nhất chỉ số chương, chỉ số thứ hai chỉ số mục, số thứ ba chỉ số tiểu mục. 
+Ví dụ: 
+Chương 3 … 
+ 
+ 
+3.1. … 
+ 
+ 
+ 
+3.1.1. … 
+ 
+ 
+ 
+3.1.2. … 
+
+=== PAGE 2 ===
+ 
+2
+ 
+ 
+3.2. … 
+ Qui ước ghi tài liệu tham khảo: 
+o Đánh số thứ tự tài liệu tham khảo theo thứ tự từ điển. 
+o Bài đăng tạp chí: Tên tác giả, tên bài báo, tên tạp chí, tập, số, năm và các trang. 
+o Ví dụ: Kumar S, Superconvergence of a ..., IMA Journal of Numerial Analysis (7), 
+1987, pp. 313 - 325.  
+o Bài báo cáo hội nghị: Tên tác giả, Tên bài báo, Tên hội nghị, tên tuyển tập các báo 
+cáo, nơi và thời gian tổ chức các trang. Ví dụ: B.K. Paradopop, Fuzzy sets and 
+fuzzy realational structures as Chu spaces, Proceedings of the First International 
+Workshop on ..., Thessaloniki, Greece, Oct. 16-20, 1998, pp…. 
+o  Sách: Tên tác giả, tên sách, lần xuất bản, nhà xuất bản, nơi xuất bản, năm xuất 
+bản. Ví dụ: A.N.Tikhonov, Solutions of Ill-Posed Problems, Willey, NewYork, 
+1997. 
+4. NỘP BÁO CÁO ĐỒ ÁN 
+1. Nộp bản báo cáo đồ án chính thức: 
+o Thời gian: xem chi tiết lịch thi. 
+o Bản in :  
+ Một ( 01 ) cuốn đồ án đóng bìa (mẫu M01). 
+o Đĩa CD hoặc DVD: Một ( 01 ) Đĩa CD hoặc DVD phải để trong bìa  mềm 
+2. Nội dung và cấu trúc của đĩa CD hoặc DVD: 
+o Ghi nhãn Đĩa CD hoặc DVD gồm các thông tin: Tên đề tài, tên SV thực hiện, tên 
+GV hướng dẫn, …  (mẫu M04) 
+o Nội dung đĩa CD hoặc DVD chứa: 
+ Tài liệu văn bản của đồ án (file word) 
+ Tài liệu trình bày (file PowerPoint) 
+ Tập tin nguồn chương trình 
+ Cơ sở dữ liệu. 
+ Tập tin hướng dẫn sử dụng chương trình 
+o Cấu trúc đĩa CD hoặc DVD: 
+ Thư mục <Tên phần mềm>: gồm ba thư mục  
+ SETUP: chứa các tập tin dùng để install chương trình thi hành, các 
+tập tin chứa dữ liệu thử tương ứng với kết quả đã báo. Trong trường 
+hợp vì lý do chính đáng, không thể lưu tất cả các thành phần cần 
+thiết để có thể cài đặt, sinh viên cần có hướng dẫn cụ thể, có sơ đồ 
+triển khai, để có thể setup được hệ thống khi cần thiết. 
+ SOURCE: chứa các tập tin nguồn, các tập tin dữ liệu thử. 
+ DATABASE : chứa cơ sở dữ liệu tương ứng. 
+ Thư mục THESIS: chứa các tập tin tài liệu văn bản của đồ án. 
+ Thư mục gốc phải có tập tin hướng dẫn sử dụng cho việc sử dụng đĩa CD 
+hoặc DVD, có đầy đủ thông tin liên lạc với nhóm tác giả (email, điện 
+thoại). 
+ 
+
+=== PAGE 3 ===
+ 
+3
+5.  CÁC MẪU: 
+ 
+(mẫu M01): MẪU BÌA ĐỒ ÁN 
+ 
+TRƯỜNG ĐẠI HỌC ĐÀ LẠT 
+KHOA CÔNG NGHỆ THÔNG TIN 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+BÁO CÁO ĐỒ ÁN CHUYÊN NGÀNH 
+TÊN ĐỀ TÀI ĐỒ ÁN 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Giáo viên hướng dẫn:  <Họ và Tên GVHD> 
+   Sinh viên thực hiên: <MSSV> - <Họ và Tên sinh viên> 
+                                    <MSSV> - <Họ và Tên sinh viên> 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Đà Lạt, tháng/năm 
+ 
+
+=== PAGE 4 ===
+ 
+4
+ 
+(mẫu M04):MẪU BÌA CD hoặc DVD 
+ 
+ 
+Trường Đại học Đà Lạt 
+Khoa Công nghệ Thông tin 
+  
+ 
+BÁO CÁO ĐỒ ÁN CHUYÊN NGÀNH 
+TÊN ĐỀ TÀI ĐỒ ÁN 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Sinh viên thực hiện: 
+Họ Tên SV  – MSSV  
+. . . 
+ 
+Giáo viên HD: 
+Họ Tên GVHD 
+
+=== PAGE 5 ===
+ 
+5
+(mẫu M02): MẪU TRANG NHẬN XÉT CỦA GIÁO VIÊN HƢỚNG DẪN 
+ 
+ 
+ 
+NHẬN XÉT CỦA GIÁO VIÊN HƢỚNG DẪN 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+……………………………………………………………………………… 
+Đà Lạt, ngày ….. tháng …… năm …… 
+ 
+Giáo viên hướng dẫn 
+ 
+[Ký tên và ghi rõ họ tên] 
+ 
+ 
+
+=== PAGE 6 ===
+ 
+6
+(mẫu M03): 
+Trường Đại học Đà Lạt 
+Khoa Công Nghệ Thông Tin 
+ 
+ĐỀ CƢƠNG THỰC HIỆN ĐỒ ÁN  
+ 
+( Sinh viên tham khảo tại địa chỉ http://www.viewdocsonline.com/document/flw2b1 ) 
+ 
+ 
+Sinh viên chú ý:  
+ Sinh viên đăng ký học phần đồ án chuyên ngành (CT2198 – CT228) thì dùng các 
+mẫu này. 
+ Sinh viên đăng ký học phần đồ án (CT2118 – CT199 – Hệ đại học) và (CT0018 – 
+CT045 – Hệ cao đẳng)  thì sẽ không có chữ “Chuyên ngành” trong các mẫu trên. 

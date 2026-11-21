@@ -145,6 +145,12 @@ echo $OUTPUT->header();
                             'NEVER mix concentrated Stock A and Stock B directly (causes CaSO4 precipitation & emitter clogging). Dissolve A into water tank first, stir 3 mins, then add B.'
                         )); ?></span>
                     </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary w-100" onclick="mxSendRecipeToVietgapLog()">
+                            <?php echo s(local_mamxanhapp_t('Ghi Công thức Pha này vào Sổ Nhật ký VietGAP →', 'Send Fertigation Recipe to VietGAP Field Diary →')); ?>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -338,6 +344,21 @@ function mxDiagnoseLeaf(code) {
     document.getElementById('mx-diag-cause').textContent = pack[1];
     document.getElementById('mx-diag-action').innerHTML = pack[2];
 }
+
+function mxSendRecipeToVietgapLog() {
+    var ecText = (document.getElementById('res-target-ec').textContent || '1.60').replace(/[^0-9.]/g, '');
+    var phRaw = (document.getElementById('res-target-ph').textContent || '6.0').split('-')[0].trim();
+    var stockA = document.getElementById('res-stock-a').textContent || '2.10 Lít';
+    var stockB = document.getElementById('res-stock-b').textContent || '2.10 Lít';
+    var acid = document.getElementById('res-acid').textContent || '35 ml';
+    var mins = document.getElementById('res-drip-mins').textContent || '13 phút / lần';
+    var notes = 'Đã pha dinh dưỡng A-B theo Máy tính Fertigation: Bồn A ' + stockA + ', Bồn B ' + stockB + ', H3PO4 ' + acid + '; tưới nhỏ giọt ' + mins + '.';
+    var url = '/local/agriops/index.php?prefill_ec=' + encodeURIComponent(ecText) +
+              '&prefill_ph=' + encodeURIComponent(phRaw) +
+              '&prefill_notes=' + encodeURIComponent(notes);
+    window.location.href = url;
+}
+
 document.addEventListener('DOMContentLoaded', mxRunFertCalc);
 </script>
 

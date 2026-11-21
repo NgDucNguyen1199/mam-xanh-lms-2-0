@@ -141,7 +141,7 @@ select.custom-select {
     padding: 8px 12px !important;
     font-size: 0.92rem !important;
     color: var(--mx-text-main) !important;
-    min-height: 40px !important;
+    min-height: 44px !important;
 
     &:focus {
         border-color: var(--mx-primary) !important;
@@ -159,7 +159,7 @@ select.custom-select {
     font-weight: 600 !important;
     font-size: 0.88rem !important;
     padding: 8px 16px !important;
-    min-height: 40px !important;
+    min-height: 44px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -187,7 +187,7 @@ select.custom-select {
     font-weight: 500 !important;
     font-size: 0.88rem !important;
     padding: 8px 16px !important;
-    min-height: 40px !important;
+    min-height: 44px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -201,6 +201,17 @@ select.custom-select {
         border-color: #94a3b8 !important;
         color: var(--mx-text-main) !important;
     }
+}
+
+.btn-sm,
+.mx-btn,
+.mx-tool-tab,
+.mx-news-read-link,
+.mx-sample-code {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 // -------------------------------------------------------------------
@@ -812,7 +823,7 @@ select.custom-select {
 
 .mx-role-student .secondary-navigation [data-key="participants"],
 .mx-role-student .secondary-navigation li[data-key="participants"],
-.mx-role-student .secondary-navigation a[href*="/user/index.php"] {
+.mx-role-student .secondary-navigation a[href*="/user/index.php"]:not([href*="/grade/"]) {
     display: none !important;
 }
 
@@ -1675,6 +1686,20 @@ select.custom-select {
                 color: var(--mx-text-main) !important;
             }
         }
+    }
+}
+
+// Ensure Page Header Activity Icon also uses Harmonious Botanical Palette (never Moodle default pink)
+#page-header .activityiconcontainer,
+.page-header-image .activityiconcontainer,
+.activityiconcontainer {
+    background-color: var(--mx-accent-soft) !important;
+    border: 1px solid #d5e5dc !important;
+    border-radius: var(--mx-radius-md) !important;
+
+    .activityicon,
+    img {
+        filter: none !important;
     }
 }
 

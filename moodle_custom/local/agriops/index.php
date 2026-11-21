@@ -18,6 +18,9 @@ $PAGE->set_heading(local_mamxanhapp_t('Quản lý Lô Nông sản VietGAP & Nh�
 $userid = (int)$USER->id;
 $canaudit = is_siteadmin() || has_capability('local/agriops:audit', $syscontext);
 $flashmsg = '';
+$prefillph = optional_param('prefill_ph', '6.0', PARAM_TEXT);
+$prefillec = optional_param('prefill_ec', '1.6', PARAM_TEXT);
+$prefillnotes = optional_param('prefill_notes', '', PARAM_TEXT);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_sesskey();
@@ -179,11 +182,11 @@ echo $OUTPUT->header();
                     <div class="row">
                         <div class="col-4 mb-3">
                             <label class="form-label fw-bold" for="id_ph_val">pH</label>
-                            <input type="text" id="id_ph_val" name="ph_val" class="form-control" value="6.0" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_ph_val" name="ph_val" class="form-control" value="<?php echo s($prefillph); ?>" style="min-height:48px;border-radius:12px;">
                         </div>
                         <div class="col-4 mb-3">
                             <label class="form-label fw-bold" for="id_ec_val">EC (mS/cm)</label>
-                            <input type="text" id="id_ec_val" name="ec_val" class="form-control" value="1.6" style="min-height:48px;border-radius:12px;">
+                            <input type="text" id="id_ec_val" name="ec_val" class="form-control" value="<?php echo s($prefillec); ?>" style="min-height:48px;border-radius:12px;">
                         </div>
                         <div class="col-4 mb-3">
                             <label class="form-label fw-bold" for="id_phi_days"><?php echo s(local_mamxanhapp_t('Cách ly PHI (ngày)', 'PHI (days)')); ?></label>
@@ -193,12 +196,12 @@ echo $OUTPUT->header();
 
                     <div class="mb-2 d-flex flex-wrap justify-content-between align-items-center" style="gap:8px;">
                         <label class="form-label fw-bold mb-0" for="id_log_notes"><?php echo s(local_mamxanhapp_t('Nội dung nhật ký thực địa', 'Field Diary Notes')); ?></label>
-                        <button type="button" id="mx-voice-btn" onclick="mxStartVoiceDiary()" class="btn btn-outline-danger btn-sm" style="min-height:42px;border-radius:999px;font-weight:800;padding:0 16px;border-width:2px;">
+                        <button type="button" id="mx-voice-btn" onclick="mxStartVoiceDiary()" class="btn btn-outline-danger btn-sm" style="min-height:44px;border-radius:999px;font-weight:800;padding:0 16px;border-width:2px;">
                             <?php echo s(local_mamxanhapp_t('Bấm để Đọc bằng Giọng nói', 'Tap to Dictate by Voice')); ?>
                         </button>
                     </div>
 
-                    <textarea id="id_log_notes" name="notes" rows="3" class="form-control mb-2" required placeholder="<?php echo s(local_mamxanhapp_t('Bấm nút Micro để nói hoặc chạm mẫu câu nhanh bên dưới...', 'Tap Mic to speak or choose a quick field template below...')); ?>" style="border-radius:14px;"></textarea>
+                    <textarea id="id_log_notes" name="notes" rows="3" class="form-control mb-2" required placeholder="<?php echo s(local_mamxanhapp_t('Bấm nút Micro để nói hoặc chạm mẫu câu nhanh bên dưới...', 'Tap Mic to speak or choose a quick field template below...')); ?>" style="border-radius:14px;"><?php echo s($prefillnotes); ?></textarea>
                     <div id="mx-voice-status" style="font-size:0.84rem;color:#C62828;font-weight:700;margin-bottom:8px;"></div>
 
                     <!-- 1-Tap Quick Field Diary Chips -->

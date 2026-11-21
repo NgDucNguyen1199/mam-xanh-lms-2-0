@@ -12,17 +12,17 @@
         "resource": 5,
         "h5pactivity": 2,
         "scorm": 1,
-        "assign": 7,
+        "assign": 5,
         "fieldpractice": 1,
-        "quiz": 1,
-        "attendance": 2
+        "attendance": 2,
+        "quiz": 1
       },
       "hasTheoryAtt": true,
       "hasPracAtt": true,
       "hasDisc1": true,
       "hasDisc2": true,
       "hasDueDates": true,
-      "hasOffTopicIpmFlashcards": true
+      "hasOffTopicIpmFlashcards": false
     },
     "3": {
       "modCounts": {
@@ -33,14 +33,15 @@
         "scorm": 1,
         "fieldpractice": 1,
         "attendance": 2,
-        "assign": 6
+        "assign": 4,
+        "quiz": 1
       },
       "hasTheoryAtt": true,
       "hasPracAtt": true,
       "hasDisc1": true,
       "hasDisc2": true,
       "hasDueDates": true,
-      "hasOffTopicIpmFlashcards": true
+      "hasOffTopicIpmFlashcards": false
     },
     "4": {
       "modCounts": {
@@ -122,9 +123,10 @@
       "modCounts": {
         "forum": 1,
         "resource": 1,
-        "page": 2,
+        "page": 3,
         "h5pactivity": 1,
         "scorm": 1,
+        "fieldpractice": 1,
         "attendance": 2,
         "assign": 3,
         "quiz": 1
@@ -140,9 +142,10 @@
       "modCounts": {
         "forum": 1,
         "resource": 1,
-        "page": 2,
+        "page": 3,
         "h5pactivity": 1,
         "scorm": 1,
+        "fieldpractice": 1,
         "attendance": 2,
         "assign": 3,
         "quiz": 1

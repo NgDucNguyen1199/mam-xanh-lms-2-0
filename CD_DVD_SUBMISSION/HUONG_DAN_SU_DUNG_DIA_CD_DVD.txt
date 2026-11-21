@@ -1,0 +1,127 @@
+================================================================================
+TRƯỜNG ĐẠI HỌC ĐÀ LẠT - KHOA CÔNG NGHỆ THÔNG TIN
+BỘ MÔN CÔNG NGHỆ THÔNG TIN
+HỒ SƠ NỘP ĐĨA CD/DVD ĐỒ ÁN TỐT NGHIỆP ĐẠI HỌC
+================================================================================
+
+TÊN ĐỀ TÀI:
+XÂY DỰNG HỆ THỐNG QUẢN LÝ HỌC TẬP VÀ TẬP HUẤN KỸ THUẬT CANH TÁC
+NÔNG NGHIỆP CÔNG NGHỆ CAO TRÊN NỀN TẢNG MOODLE
+(MẦM XANH LMS 2.0)
+
+CÁN BỘ HƯỚNG DẪN KHOA HỌC:
+- Thạc sĩ Trần Ngô Như Khánh (Email: khanhtnn@dlu.edu.vn)
+
+DANH SÁCH NHÓM SINH VIÊN THỰC HIỆN:
+1. Nguyễn Đức Nguyên (Trưởng nhóm)
+   - MSSV: 2212429 | Lớp: CTK46 - Ngành Công nghệ Thông tin
+   - Email: 2212429@dlu.edu.vn | Điện thoại: 0912.345.678
+   - Phụ trách: Kiến trúc hệ thống, Backend Moodle, Tối ưu CSDL, Bảo mật HMAC-SHA256 & CLI.
+
+2. Mai Xuân Trưởng
+   - MSSV: 2212484 | Lớp: CTK46 - Ngành Công nghệ Thông tin
+   - Email: 2212484@dlu.edu.vn | Điện thoại: 0923.456.789
+   - Phụ trách: Thiết kế Giao diện Minimalist UI/UX, Theme Agritrain, Plugin mod_fieldpractice & Sơ đồ UML.
+
+3. Nguyễn Ngọc Tuệ Quang
+   - MSSV: 2212447 | Lớp: CTK46 - Ngành Công nghệ Thông tin
+   - Email: 2212447@dlu.edu.vn | Điện thoại: 0934.567.890
+   - Phụ trách: Số hóa 8 khóa học (SCORM, H5P), Plugin local_agriops, Kiểm thử Puppeteer 66 URLs & Đóng gói.
+
+Thời gian hoàn thành: Đà Lạt, tháng 11/2026
+
+================================================================================
+1. CẤU TRÚC THƯ MỤC TRÊN ĐĨA CD / DVD
+================================================================================
+Đĩa CD/DVD được tổ chức theo đúng quy định mục 4.2 của Khoa CNTT - Trường ĐH Đà Lạt:
+
+CD_DVD_SUBMISSION/
+├── BIA_CD_DVD_MAU_M04.docx          : File Word in nhãn đĩa theo mẫu chuẩn M04
+├── HUONG_DAN_SU_DUNG_DIA_CD_DVD.txt : Hướng dẫn chi tiết sử dụng đĩa và thông tin tác giả
+│
+├── THESIS/                          : Thư mục chứa tài liệu văn bản của đồ án
+│   ├── BAO_CAO_DO_AN_TOT_NGHIEP_DLU.docx : Báo cáo đồ án tốt nghiệp chính thức (~65-80 trang Word)
+│   └── BAO_CAO_THUYET_TRINH_SLIDES.pptx : File PowerPoint báo cáo bảo vệ trước Hội đồng (17 slides)
+│
+└── MamXanhLMS/                      : Thư mục phần mềm chính
+    ├── SETUP/                       : Chứa các tệp và chỉ dẫn cài đặt hệ thống thực thi
+    │   ├── docker-compose.yml       : Cấu hình điều phối 5 container ảo hóa vi dịch vụ
+    │   ├── Dockerfile               : Chỉ dẫn đóng gói môi trường thực thi PHP 8.3 + Apache
+    │   ├── docker/                  : Tệp cấu hình chi tiết Caddy 2 proxy, PHP tối ưu, Redis & MariaDB
+    │   ├── DEMO_COURSE_KIT/         : Bộ tài liệu và khóa học mẫu kiểm thử
+    │   └── HUONG_DAN_TRIEN_KHAI_SETUP.txt : Hướng dẫn chi tiết triển khai máy chủ
+    │
+    ├── SOURCE/                      : Chứa toàn bộ tập tin mã nguồn dự án
+    │   ├── moodle_custom/           : Mã nguồn tùy biến gồm 5 plugin nông nghiệp và theme
+    │   │   ├── local/mamxanhcert/   : Plugin cấp chứng chỉ số & tra cứu bảo mật HMAC-SHA256
+    │   │   ├── mod/fieldpractice/   : Plugin nộp bài tập thực địa có tọa độ GPS & chấm Rubric
+    │   │   ├── local/agriops/       : Plugin nhật ký canh tác điện tử & hộ chiếu VietGAP
+    │   │   ├── local/mamxanhapp/    : Plugin bảng điểm học thuật, cloner khóa học & công cụ tính
+    │   │   ├── local/farmerprofile/ : Plugin hồ sơ nông hộ & vùng canh tác
+    │   │   └── theme/agritrain_child/ : Theme giao diện công thái học Minimalist Off-White
+    │   └── scripts/                 : Bộ kịch bản tự động hóa CLI (seed dữ liệu, sửa lỗi UTF-8, kiểm thử)
+    │
+    └── DATABASE/                    : Cơ sở dữ liệu tương ứng của đồ án
+        └── mamxanh_lms_db_backup.sql: Bản sao lưu CSDL đầy đủ (12.1 MB, chuẩn mã utf8mb4)
+
+================================================================================
+2. HƯỚNG DẪN CÀI ĐẶT VÀ VẬN HÀNH HỆ THỐNG TRONG 60 GIÂY
+================================================================================
+Hệ thống được đóng gói hoàn chỉnh bằng Docker Turbo, có thể khởi chạy nhanh trên
+bất kỳ máy tính nào chạy Windows, macOS hoặc Linux.
+
+YÊU CẦU MÔI TRƯỜNG:
+- Đã cài đặt Docker Desktop (Windows/macOS) hoặc Docker Engine & Docker Compose (Linux).
+- Tối thiểu 4 GB RAM trống và mở sẵn cổng 8090.
+
+QUY TRÌNH 4 BƯỚC KHỞI CHẠY:
+Bước 1: Mở Terminal hoặc PowerShell, chuyển vào thư mục MamXanhLMS/SETUP/:
+    cd CD_DVD_SUBMISSION/MamXanhLMS/SETUP
+
+Bước 2: Khởi chạy toàn bộ hệ thống bằng một câu lệnh:
+    docker compose up -d --build
+    (Hệ thống sẽ tự động khởi động 5 dịch vụ: Caddy 2, PHP 8.3 + Apache, MariaDB 10.11, Redis 7 và Cron Worker)
+
+Bước 3: Nạp cơ sở dữ liệu mẫu từ bản sao lưu:
+    docker compose exec -T db mysql -u moodleuser -pMX!Pass2026 moodledb < ../DATABASE/mamxanh_lms_db_backup.sql
+
+Bước 4: Mở trình duyệt web và truy cập vào địa chỉ:
+    http://localhost:8090
+
+================================================================================
+3. DANH SÁCH TÀI KHOẢN TRẢI NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG
+================================================================================
+Quý Thầy Cô trong Hội đồng có thể sử dụng các tài khoản mẫu sau để kiểm tra đầy đủ
+các vai trò trong hệ thống:
+
+1. TÀI KHOẢN QUẢN TRỊ VIÊN (ADMINISTRATOR):
+   - Tên đăng nhập: admin
+   - Mật khẩu     : Admin!2026MX
+   - Vai trò      : Toàn quyền quản trị, kiểm toán hạ tầng kỹ thuật (Admin Audit).
+
+2. TÀI KHOẢN CÁN BỘ KỸ THUẬT / GIẢNG VIÊN (TEACHER):
+   - Tên đăng nhập: cbkt_pilot
+   - Mật khẩu     : MX!Canbo2026
+   - Vai trò      : Quản lý điểm danh, chấm bài thực địa GPS theo Rubric,
+                    xuất Bảng điểm học thuật và nhân bản khóa học (Course Cloner).
+
+3. TÀI KHOẢN HỌC VIÊN NÔNG HỘ (STUDENT):
+   - Nông hộ Rau Đà Lạt   : nd_rau_lamdong     | Mật khẩu: MX!Rau2026
+   - Nông hộ Dâu Lạc Dương: nd_dautay_lacduong | Mật khẩu: MX!Dautay2026
+   - Nông hộ Đơn Dương    : nd_donduong_01     | Mật khẩu: MX!Donduong2026
+   - Vai trò              : Học bài SCORM/H5P, nộp bài thực địa GPS, làm trắc nghiệm,
+                            nhận chứng chỉ số QR và ghi nhật ký canh tác AgriOps.
+
+4. TRUY CẬP KHÁCH VÃNG LAI (GUEST - KHÔNG CẦN ĐĂNG NHẬP):
+   - Cổng thông tin trang chủ    : http://localhost:8090/
+   - Tra cứu chứng chỉ số QR mẫu : http://localhost:8090/local/mamxanhcert/verify.php?code=MXCERT-2026-CHAMSOC01-0042
+   - Hộ chiếu nông sản VietGAP mẫu: http://localhost:8090/local/agriops/trace.php?code=VG-LD-202611-0001
+
+================================================================================
+THÔNG TIN LIÊN LẠC HỖ TRỢ KỸ THUẬT:
+Nhóm sinh viên luôn sẵn sàng hỗ trợ trực tuyến quý Thầy Cô trong quá trình cài đặt
+và thẩm định sản phẩm:
+- Nguyễn Đức Nguyên: 0912.345.678 (Zalo/Phone) | 2212429@dlu.edu.vn
+- Mai Xuân Trưởng  : 0923.456.789 (Zalo/Phone) | 2212484@dlu.edu.vn
+- Nguyễn Ngọc Tuệ Quang: 0934.567.890 (Zalo/Phone) | 2212447@dlu.edu.vn
+================================================================================

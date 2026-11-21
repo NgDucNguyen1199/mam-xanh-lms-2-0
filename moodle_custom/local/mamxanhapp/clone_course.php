@@ -445,7 +445,24 @@ echo $OUTPUT->header();
                     <button type="submit" id="mx-clone-submit-btn" class="btn btn-primary w-100 mt-2">
                         <?php echo s(local_mamxanhapp_t('Nhân bản ngay (Clone Khóa học Địa phương)', 'Clone Course Now (1-Click Backup & Restore)')); ?>
                     </button>
+                    <div id="mx-clone-loading-status" class="small fw-bold mt-2 text-center" style="display:none;color:#234E3E;">
+                        <?php echo s(local_mamxanhapp_t('Đang đóng gói & tái tạo toàn bộ cấu trúc học liệu Moodle (3–5 giây)... Vui lòng chờ...', 'Running Moodle Backup & Restore Controller (3–5s)... Please wait...')); ?>
+                    </div>
                 </form>
+                <script>
+                (function() {
+                    var f = document.getElementById('mx-course-cloner-form');
+                    var b = document.getElementById('mx-clone-submit-btn');
+                    var s = document.getElementById('mx-clone-loading-status');
+                    if (f && b && s) {
+                        f.addEventListener('submit', function() {
+                            b.style.opacity = '0.65';
+                            b.style.pointerEvents = 'none';
+                            s.style.display = 'block';
+                        });
+                    }
+                })();
+                </script>
             </section>
         </div>
 

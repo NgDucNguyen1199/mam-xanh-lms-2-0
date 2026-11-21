@@ -121,6 +121,23 @@ function local_mamxanhapp_require_admin_or_403(string $msgvi = '', string $msgen
 }
 
 /**
+ * Early Moodle hook invoked inside require_login() before core pages throw 404 nopermissions exceptions.
+ */
+function local_mamxanhapp_after_require_login(): void {
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    if (isloggedin() && !isguestuser()) {
+        $roletype = local_mamxanhapp_user_role_type();
+        $iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
+        if (!$iscbktadmin && ($script === '/user/index.php' || $script === '/grade/report/grader/index.php')) {
+            local_mamxanhapp_send_403_and_exit(
+                'Theo quy định bảo mật thông tin học viên, tài khoản Nông hộ không được phép truy cập danh sách thành viên hoặc sổ chấm điểm của khóa học.',
+                'Under learner privacy & RBAC policy, Farmer accounts are not permitted to access the course participants list or instructor grader report.'
+            );
+        }
+    }
+}
+
+/**
  * Micro-climate weather & agricultural spraying/irrigation advisory data by region.
  */
 function local_mamxanhapp_weather_data(string $region = 'Lâm Đồng'): array {

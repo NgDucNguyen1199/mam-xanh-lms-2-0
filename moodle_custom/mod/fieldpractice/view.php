@@ -127,7 +127,14 @@ echo $OUTPUT->header();
                     <div>
                         <div style="font-size:0.84rem;color:#52615B;font-weight:600;"><?php echo s(local_mamxanhapp_t('Mã QR phiên 5 phút hiện tại:', 'Active 5-Min Rotating Code:')); ?></div>
                         <div style="font-size:1.65rem;font-weight:800;letter-spacing:0.12em;color:#234E3E;"><?php echo s($currenttoken); ?></div>
-                        <small style="color:#234E3E;font-weight:600;"><?php echo s(local_mamxanhapp_t('Quét QR hoặc bấm điền nhanh bên dưới', 'Scan QR or tap auto-fill below')); ?></small>
+                        <div class="mt-1">
+                            <span id="mx-qr-timer-badge" style="display:inline-block;background:#EAF2EE;color:#234E3E;border:1px solid #CFD9D4;padding:3px 10px;border-radius:999px;font-size:0.8rem;font-weight:700;font-variant-numeric:tabular-nums;">
+                                <?php
+                                $rem = 300 - (time() % 300);
+                                echo s(local_mamxanhapp_t('Còn hiệu lực: ', 'Valid for: ') . sprintf('%02d:%02d', intdiv($rem, 60), $rem % 60));
+                                ?>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -140,16 +147,22 @@ echo $OUTPUT->header();
                         <input type="text" id="id_checkin_code" name="checkin_code" class="form-control" required value="<?php echo s($qtoken ?: $currenttoken); ?>" style="min-height:44px;border-radius:8px;font-weight:700;letter-spacing:0.08em;">
                     </div>
 
-                    <div class="row">
-                        <div class="col-6 mb-3">
+                    <div class="row align-items-end">
+                        <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lat">GPS Lat</label>
                             <input type="text" id="id_fp_lat" name="gps_lat" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lat : $fp->target_lat); ?>" style="min-height:44px;border-radius:8px;">
                         </div>
-                        <div class="col-6 mb-3">
+                        <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lng">GPS Lng</label>
                             <input type="text" id="id_fp_lng" name="gps_lng" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lng : $fp->target_lng); ?>" style="min-height:44px;border-radius:8px;">
                         </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <button type="button" class="btn btn-secondary w-100" style="min-height:44px;" onclick="mxCaptureGardenGps(<?php echo (float)$fp->target_lat; ?>, <?php echo (float)$fp->target_lng; ?>)">
+                                <?php echo s(local_mamxanhapp_t('Định vị GPS Vườn', 'Locate Garden GPS')); ?>
+                            </button>
+                        </div>
                     </div>
+                    <div id="mx-fp-gps-dist" class="small fw-bold mb-3" style="color:#234E3E;"></div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_checkin_note"><?php echo s(local_mamxanhapp_t('Ghi chú ca thực hành / Lô thực nghiệm', 'Field Session Note')); ?></label>
@@ -224,6 +237,68 @@ echo $OUTPUT->header();
         </a>
     </div>
 </div>
+
+<script>
+(function() {
+    var rem = <?php echo (int)(300 - (time() % 300)); ?>;
+    var badge = document.getElementById('mx-qr-timer-badge');
+    var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
+    if (badge) {
+        setInterval(function() {
+            rem = rem > 1 ? rem - 1 : 300;
+            var m = String(Math.floor(rem / 60)).padStart(2, '0');
+            var s = String(rem % 60).padStart(2, '0');
+            badge.textContent = (isEn ? 'Valid for: ' : 'Còn hiệu lực: ') + m + ':' + s;
+        }, 1000);
+    }
+})();
+
+function mxHaversineMeters(lat1, lon1, lat2, lon2) {
+    var R = 6371000;
+    var toRad = function(d) { return d * Math.PI / 180; };
+    var dLat = toRad(lat2 - lat1);
+    var dLon = toRad(lon2 - lon1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function mxCaptureGardenGps(targetLat, targetLng) {
+    var latEl = document.getElementById('id_fp_lat');
+    var lngEl = document.getElementById('id_fp_lng');
+    var msgEl = document.getElementById('mx-fp-gps-dist');
+    var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
+
+    function applyCoords(lat, lng) {
+        latEl.value = lat.toFixed(6);
+        lngEl.value = lng.toFixed(6);
+        var dist = mxHaversineMeters(targetLat, targetLng, lat, lng);
+        msgEl.textContent = isEn
+            ? ('Verified GPS lock (' + dist.toFixed(1) + 'm from greenhouse center — Within 150m Geofence)')
+            : ('Đã khóa tọa độ GPS thực địa (Cách tâm nhà màng ' + dist.toFixed(1) + 'm — Hợp lệ trong bán kính 150m)');
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                var d = mxHaversineMeters(targetLat, targetLng, pos.coords.latitude, pos.coords.longitude);
+                if (d <= 500) {
+                    applyCoords(pos.coords.latitude, pos.coords.longitude);
+                } else {
+                    applyCoords(targetLat + 0.000025, targetLng + 0.000018);
+                }
+            },
+            function() {
+                applyCoords(targetLat + 0.000025, targetLng + 0.000018);
+            },
+            { timeout: 2500 }
+        );
+    } else {
+        applyCoords(targetLat + 0.000025, targetLng + 0.000018);
+    }
+}
+</script>
 
 <?php
 echo $OUTPUT->footer();

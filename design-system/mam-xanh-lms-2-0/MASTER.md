@@ -15,19 +15,19 @@
 
 | Role | Hex | CSS Variable | Usage |
 |------|-----|--------------|-------|
-| **Background (Off-White)** | `#F8FAFC` | `--mx-bg` | Page background (`body`, `#page`, `#page-wrapper`) |
+| **Background (Off-White Botanical)** | `#F9FAF9` | `--mx-bg` | Page background (`body`, `#page`, `#page-wrapper`) |
 | **Surface (Pure White)** | `#FFFFFF` | `--mx-surface` | Cards, blocks, navbar, tables, modals |
-| **Muted Surface** | `#F1F5F9` | `--mx-surface-muted` | Table headers, inactive badges, hover states |
-| **Primary (Deep Forest)** | `#1E3A2F` | `--mx-primary` | Primary buttons, active tab indicators, section left borders, today circle |
-| **Primary Hover** | `#14532D` | `--mx-primary-hover` | Primary button hover/focus |
-| **Secondary (Academic Green)** | `#166534` | `--mx-accent-green` | Links, completed badges, calendar event text |
-| **Soft Highlight (Mint)** | `#DCFCE7` | `--mx-accent-soft` | Calendar event day circles (`#DCFCE7` bg + `#166534` text), Done pills |
-| **Primary Text (Slate 900)** | `#0F172A` | `--mx-text-main` | Headings `h1-h3`, course titles, active navigation |
-| **Body Text (Slate 800)** | `#1E293B` | `--mx-text-body` | Body copy, table cells, descriptions |
-| **Muted Text (Slate 600)** | `#475569` | `--mx-text-muted` | Secondary nav links, table headers, dates |
-| **Subtle Text (Slate 500)** | `#64748B` | `--mx-text-subtle` | Captions, timestamps, breadcrumbs |
-| **Border (Hairline)** | `#E2E8F0` | `--mx-border` | All card, block, navbar, and table borders (`1px solid #E2E8F0`) |
-| **Strong Border** | `#CBD5E1` | `--mx-border-strong` | Input borders, secondary button borders, card hover borders |
+| **Muted Surface** | `#F2F5F3` | `--mx-surface-muted` | Table headers, inactive badges, hover states |
+| **Primary (Deep Forest)** | `#234E3E` | `--mx-primary` | Primary buttons, active tab indicators, section left borders, today circle |
+| **Primary Hover** | `#1B3D30` | `--mx-primary-hover` | Primary button hover/focus |
+| **Secondary (Academic Green)** | `#2D6A4F` | `--mx-accent-green` | Links, completed badges, calendar event text |
+| **Soft Highlight (Mint)** | `#EAF2EE` | `--mx-accent-soft` | Calendar event day circles (`#EAF2EE` bg + `#234E3E` text), Done pills |
+| **Primary Text (Deep Slate)** | `#1C2522` | `--mx-text-main` | Headings `h1-h3`, course titles, active navigation |
+| **Body Text (Botanical Slate)** | `#33403C` | `--mx-text-body` | Body copy, table cells, descriptions |
+| **Muted Text** | `#4A5552` | `--mx-text-muted` | Secondary nav links, table headers, dates |
+| **Subtle Text** | `#687571` | `--mx-text-subtle` | Captions, timestamps, breadcrumbs |
+| **Border (Hairline)** | `#E6ECE9` | `--mx-border` | All card, block, navbar, and table borders (`1px solid #E6ECE9`) |
+| **Strong Border** | `#CFD9D4` | `--mx-border-strong` | Input borders, secondary button borders, card hover borders |
 
 ---
 

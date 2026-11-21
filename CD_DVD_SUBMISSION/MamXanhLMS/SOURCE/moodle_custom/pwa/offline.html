@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngoại tuyến | Mầm Xanh LMS 2.0</title>
+  <style>
+    :root {
+      --mx-dark: #1B4332;
+      --mx-green: #2E7D32;
+      --mx-light: #D8F3DC;
+      --mx-bg: #F4F9F5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--mx-bg);
+      color: #14281D;
+      padding: 20px;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #FFFFFF;
+      max-width: 520px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 16px 40px rgba(27, 67, 50, 0.12);
+      border: 2px solid #D8F3DC;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--mx-light);
+      color: var(--mx-dark);
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      color: var(--mx-dark);
+      font-size: 1.5rem;
+    }
+    p {
+      line-height: 1.6;
+      color: #3B5249;
+      margin: 0 0 18px;
+    }
+    .ref-box {
+      background: #F8FCF9;
+      border-left: 4px solid var(--mx-green);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.94rem;
+    }
+    .ref-box h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--mx-dark);
+    }
+    .ref-box ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.65;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      min-height: 52px;
+      background: linear-gradient(135deg, #1B4332, #2E7D32);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      line-height: 52px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="badge">Chế độ Ngoại tuyến / Offline Mode</span>
+    <h1>Mất kết nối mạng tại vườn</h1>
+    <p>Thiết bị của bạn hiện chưa có sóng 4G/Wi-Fi. Bạn vẫn có thể xem sổ tay thông số khẩn cấp dưới đây và bấm kết nối lại khi có sóng.</p>
+    <div class="ref-box">
+      <h3>Sổ tay Thông số Nhanh (Quick Field Guide)</h3>
+      <ul>
+        <li><strong>Rau ăn lá (Thủy canh/Giá thể):</strong> pH <code>5.8 – 6.2</code> | EC <code>1.2 – 1.8 mS/cm</code></li>
+        <li><strong>Dưa lưới / Cà chua nhà màng:</strong> pH <code>5.8 – 6.5</code> | EC <code>2.0 – 2.8 mS/cm</code></li>
+        <li><strong>Sầu riêng VietGAP:</strong> pH đất <code>5.5 – 6.5</code> | Nấm đối kháng <em>Trichoderma</em> 50g/gốc</li>
+        <li><strong>Kho lạnh sơ chế (Pre-cooling):</strong> Rau ăn lá <code>2 – 5°C</code>, ẩm độ <code>90 – 95%</code></li>
+      </ul>
+    </div>
+    <button class="btn" onclick="window.location.reload()">Thử kết nối lại / Retry Connection</button>
+  </main>
+</body>
+</html>
