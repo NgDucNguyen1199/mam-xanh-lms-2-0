@@ -1,1 +1,0 @@
-Chứa bộ học liệu thử nghiệm và hướng dẫn tải mẫu khóa học.

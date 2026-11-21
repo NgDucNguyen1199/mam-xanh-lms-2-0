@@ -92,8 +92,13 @@ async function inspectThesis() {
   const hasTcvnRef = docXml.includes('TCVN 11892-1:2017');
   console.log('[REFERENCES CHECK] Contains official TCVN 11892-1:2017:', hasTcvnRef, '(Expected: true)');
 
-  const hasSupervisorThS = docXml.includes('Thạc sĩ Trần Ngô Như Khánh') && !docXml.includes('Tiến sĩ Trần Ngô Như Khánh');
-  console.log('[ADMIN CHECK] Supervisor title is strictly Thạc sĩ Trần Ngô Như Khánh:', hasSupervisorThS, '(Expected: true)');
+  const hasSupervisorThay = docXml.includes('Thầy Trần Ngô Như Khánh')
+    && !docXml.includes('Thầy Thầy Trần Ngô Như Khánh')
+    && !docXml.includes('Thạc sĩ Trần Ngô Như Khánh')
+    && !docXml.includes('ThS. Trần Ngô Như Khánh')
+    && !docXml.includes('Tiến sĩ Trần Ngô Như Khánh')
+    && !docXml.includes('TS. Trần Ngô Như Khánh');
+  console.log('[ADMIN CHECK] Supervisor title is strictly "Thầy Trần Ngô Như Khánh" (no duplicates):', hasSupervisorThay, '(Expected: true)');
 
   // Check Images in media
   const mediaFiles = Object.keys(zip.files).filter(k => k.startsWith('word/media/'));

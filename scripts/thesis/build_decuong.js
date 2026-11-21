@@ -299,7 +299,7 @@ function buildCoverPage(logoBuffer) {
           color: COLOR_BLACK,
         }),
         new TextRun({
-          text: 'TS. Trần Ngô Như Khánh',
+          text: 'Thầy Trần Ngô Như Khánh',
           font: FONT_FAMILY,
           size: 26,
           bold: true,
@@ -531,7 +531,7 @@ function buildAcknowledgementsPage() {
 
     p('Đề cương Đồ án Tốt nghiệp là bước khởi đầu mang tính quyết định, định hình toàn bộ cơ sở lý thuyết, kiến trúc giải pháp và kế hoạch thực hiện cho đề tài nghiên cứu chuyên ngành Công nghệ Thông tin tại Trường Đại học Đà Lạt. Để hoàn thiện bản đề cương chi tiết này, nhóm chúng em xin gửi lời cảm ơn chân thành và sâu sắc nhất đến Ban Giám hiệu Trường Đại học Đà Lạt, Ban Chủ nhiệm Khoa Công nghệ Thông tin cùng toàn thể quý Thầy, Cô giáo trong Khoa đã tận tình truyền đạt những tri thức nền tảng và chuyên sâu quý báu trong suốt bốn năm đại học vừa qua.'),
 
-    p('Đặc biệt, nhóm chúng em xin bày tỏ lòng biết ơn sâu sắc nhất tới Thầy TS. Trần Ngô Như Khánh – Giảng viên hướng dẫn khoa học của đề tài. Thầy đã dành nhiều thời gian quý báu định hướng cấu trúc đề cương, gợi mở các bài toán thực tiễn cốt lõi về công nghệ giáo dục (EdTech) trong nông nghiệp, chỉ dẫn phương pháp luận tích hợp mật mã học HMAC-SHA256 và nghiêm khắc hoàn thiện từng chuẩn mực học thuật trong đề cương cũng như hệ thống phần mềm.'),
+    p('Đặc biệt, nhóm chúng em xin bày tỏ lòng biết ơn sâu sắc nhất tới Thầy Trần Ngô Như Khánh – Giảng viên hướng dẫn khoa học của đề tài. Thầy đã dành nhiều thời gian quý báu định hướng cấu trúc đề cương, gợi mở các bài toán thực tiễn cốt lõi về công nghệ giáo dục (EdTech) trong nông nghiệp, chỉ dẫn phương pháp luận tích hợp mật mã học HMAC-SHA256 và nghiêm khắc hoàn thiện từng chuẩn mực học thuật trong đề cương cũng như hệ thống phần mềm.'),
 
     p('Nhóm nghiên cứu cũng xin chân thành cảm ơn quý Thầy, Cô giáo trong Hội đồng phản biện và các Thầy, Cô bộ môn đã đóng góp những ý kiến phản biện quý báu ngay từ giai đoạn xét duyệt đề cương; đồng thời cảm ơn các kỹ sư Chi cục Trồng trọt & Bảo vệ Thực vật tỉnh Lâm Đồng, Ban quản trị các Hợp tác xã Nông nghiệp Công nghệ cao Lạc Dương, Đơn Dương và Đà Lạt đã nhiệt tình chia sẻ dữ liệu thực nghiệm đồng ruộng, góp ý về quy trình tập huấn thực tế để nhóm xây dựng các kịch bản học tập bám sát thực tiễn sản xuất.'),
 
@@ -653,7 +653,7 @@ function buildOutlineContent() {
 
   // Giảng viên hướng dẫn
   elements.push(
-    p('Giảng viên hướng dẫn: TS. Trần Ngô Như Khánh (Bộ môn Công nghệ Thông tin – Khoa CNTT)', {
+    p('Giảng viên hướng dẫn: Thầy Trần Ngô Như Khánh (Bộ môn Công nghệ Thông tin – Khoa CNTT)', {
       indent: 0,
       bold: true,
       after: 180,
@@ -860,7 +860,7 @@ function buildOutlineContent() {
                 alignment: AlignmentType.CENTER,
                 spacing: { before: 0, after: 300 },
                 children: [
-                  new TextRun({ text: 'TS. Trần Ngô Như Khánh', font: FONT_FAMILY, size: 26, bold: true, color: COLOR_BLACK }),
+                  new TextRun({ text: 'Thầy Trần Ngô Như Khánh', font: FONT_FAMILY, size: 26, bold: true, color: COLOR_BLACK }),
                 ],
               }),
             ],

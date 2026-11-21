@@ -2,7 +2,7 @@
 tests/e2e/node_modules/
 tests/e2e/package-lock.json
 scripts/thesis/node_modules/
-CD_DVD_SUBMISSION/MamXanhLMS/SOURCE/scripts/thesis/node_modules/
+CD_DVD_SUBMISSION/
 
 # OS / Editor files
 .DS_Store

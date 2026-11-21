@@ -8,8 +8,8 @@ export const THESIS_META = {
   titleShort: 'MẦM XANH LMS 2.0 - E-LEARNING NÔNG NGHIỆP CÔNG NGHỆ CAO',
   systemName: 'Hệ thống Quản lý Học tập Nông nghiệp Công nghệ cao Mầm Xanh LMS 2.0',
   supervisor: {
-    title: 'Thạc sĩ',
-    titleShort: 'ThS.',
+    title: 'Thầy',
+    titleShort: 'Thầy',
     name: 'Trần Ngô Như Khánh',
     email: 'khanhtnn@dlu.edu.vn',
   },

@@ -203,7 +203,7 @@ NÔNG NGHIỆP CÔNG NGHỆ CAO TRÊN NỀN TẢNG MOODLE
 (MẦM XANH LMS 2.0)
 
 CÁN BỘ HƯỚNG DẪN KHOA HỌC:
-- Thạc sĩ Trần Ngô Như Khánh (Email: khanhtnn@dlu.edu.vn)
+- Thầy Trần Ngô Như Khánh (Email: khanhtnn@dlu.edu.vn)
 
 DANH SÁCH NHÓM SINH VIÊN THỰC HIỆN:
 1. Nguyễn Đức Nguyên (Trưởng nhóm)
