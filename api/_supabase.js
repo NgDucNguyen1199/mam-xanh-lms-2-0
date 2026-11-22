@@ -243,18 +243,307 @@ const FALLBACK_LOGS = [
 
 const FALLBACK_FERTIGATION = [];
 
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  const password_hash = crypto.pbkdf2Sync(String(password), String(salt), 10000, 64, 'sha512').toString('hex');
+  return { salt, password_hash };
+}
+
+function verifyPassword(password, salt, storedHash) {
+  if (!password || !salt || !storedHash) return false;
+  const computed = crypto.pbkdf2Sync(String(password), String(salt), 10000, 64, 'sha512').toString('hex');
+  return timingSafeHexEqual(computed, storedHash);
+}
+
+function base64UrlEncode(input) {
+  return Buffer.from(input).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+function base64UrlDecode(str) {
+  let b64 = String(str).replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  return Buffer.from(b64, 'base64').toString('utf8');
+}
+
+function signJwt(payload, expiresInSec = 7 * 86400) {
+  const now = Math.floor(Date.now() / 1000);
+  const fullPayload = { ...payload, iat: now, exp: now + expiresInSec };
+  const h = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const p = base64UrlEncode(JSON.stringify(fullPayload));
+  const sig = base64UrlEncode(crypto.createHmac('sha256', SECRET).update(`${h}.${p}`).digest());
+  return `${h}.${p}.${sig}`;
+}
+
+function verifyJwt(token) {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [h, p, sig] = parts;
+  const expectedSig = base64UrlEncode(crypto.createHmac('sha256', SECRET).update(`${h}.${p}`).digest());
+  if (!timingSafeHexEqual(sig, expectedSig)) return null;
+  try {
+    const payload = JSON.parse(base64UrlDecode(p));
+    if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function sanitizeUser(u) {
+  if (!u) return null;
+  const { password_hash, salt, ...safe } = u;
+  return safe;
+}
+
+function extractBearerToken(req) {
+  const headers = (req && req.headers) || {};
+  const authHeader = headers.authorization || headers.Authorization || '';
+  const match = String(authHeader).match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : '';
+}
+
+async function supabaseCount(table) {
+  const { url, key, enabled } = getSupabaseCreds();
+  if (!enabled) return 0;
+  const res = await fetch(`${url}/rest/v1/${table}?select=id`, {
+    method: 'HEAD',
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      Prefer: 'count=exact',
+    },
+  });
+  const range = res.headers.get('content-range') || '';
+  const m = range.match(/\/(\d+)$/);
+  return m ? Number(m[1]) : 0;
+}
+
+const FALLBACK_USERS = [
+  {
+    id: 1,
+    username: 'admin',
+    email: 'admin@mamxanh.vn',
+    salt: 'mx2026salt_admin_0001a9b8c7d6e5f4',
+    password_hash: crypto.pbkdf2Sync('Admin!2026MX', 'mx2026salt_admin_0001a9b8c7d6e5f4', 10000, 64, 'sha512').toString('hex'),
+    full_name: 'Quản trị viên Hệ thống Mầm Xanh',
+    role: 'admin',
+    farm_name: 'Trung tâm Điều hành Mầm Xanh DLU',
+    region: 'Lâm Đồng',
+    area_m2: 5000,
+    main_crop: 'Quản trị Nền tảng Nông nghiệp Số',
+    is_active: true,
+    created_at: new Date('2026-11-01T00:00:00Z').toISOString(),
+  },
+  {
+    id: 2,
+    username: 'cbkt_pilot',
+    email: 'cbkt_pilot@mamxanh.vn',
+    salt: 'mx2026salt_cbkt_0002b8c7d6e5f4a3',
+    password_hash: crypto.pbkdf2Sync('MX!Canbo2026', 'mx2026salt_cbkt_0002b8c7d6e5f4a3', 10000, 64, 'sha512').toString('hex'),
+    full_name: 'Kỹ sư Trần Minh Tuấn (CBKT)',
+    role: 'teacher',
+    farm_name: 'Trạm Khuyến nông & Kiểm định VietGAP Đà Lạt',
+    region: 'Lâm Đồng',
+    area_m2: 4000,
+    main_crop: 'Giám sát Kỹ thuật Nhà màng & Thủy canh',
+    is_active: true,
+    created_at: new Date('2026-11-01T00:00:00Z').toISOString(),
+  },
+  {
+    id: 3,
+    username: 'nd_rau_lamdong',
+    email: 'nd_rau_lamdong@mamxanh.vn',
+    salt: 'mx2026salt_ndrau_0003c7d6e5f4a2b1',
+    password_hash: crypto.pbkdf2Sync('MX!Rau2026', 'mx2026salt_ndrau_0003c7d6e5f4a2b1', 10000, 64, 'sha512').toString('hex'),
+    full_name: 'Nguyễn Văn Hùng',
+    role: 'student',
+    farm_name: 'Nông trại Rau Thủy Canh & Nhà Màng Xuân Thọ',
+    region: 'Lâm Đồng',
+    area_m2: 3500,
+    main_crop: 'Xà lách thủy canh, Ớt chuông & Dâu tây nhà màng',
+    is_active: true,
+    created_at: new Date('2026-11-02T00:00:00Z').toISOString(),
+  },
+  {
+    id: 4,
+    username: 'nd_dautay_lacduong',
+    email: 'nd_dautay_lacduong@mamxanh.vn',
+    salt: 'mx2026salt_dautay_0004d6e5f4a1b2c3',
+    password_hash: crypto.pbkdf2Sync('MX!Dautay2026', 'mx2026salt_dautay_0004d6e5f4a1b2c3', 10000, 64, 'sha512').toString('hex'),
+    full_name: 'Trần Thị Lan Anh',
+    role: 'student',
+    farm_name: 'HTX Dâu tây Công nghệ cao Lạc Dương',
+    region: 'Lâm Đồng',
+    area_m2: 2200,
+    main_crop: 'Dâu tây Albion New Zealand & Hoa Cúc Cắt cành',
+    is_active: true,
+    created_at: new Date('2026-11-03T00:00:00Z').toISOString(),
+  },
+];
+
+const FALLBACK_COURSES = [
+  { id: 1, code: 'CHAMSOC01', fullname: 'Kỹ thuật Canh tác Nông nghiệp Công nghệ cao & Dinh dưỡng Tự động', category: 'Kỹ thuật Nhà màng & Dinh dưỡng', summary: 'Học phần trang bị kiến thức chuyên sâu về vi khí hậu nhà màng, hệ thống tưới nhỏ giọt bù áp, quản lý dinh dưỡng khoáng pH/EC tự động và phác đồ kiểm soát dịch hại sinh học (IPM) theo chuẩn VietGAP TCVN 11892-1:2017.', modules_count: 23, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 2, code: 'CHEBIEN01', fullname: 'Công nghệ Sơ chế, Chế biến Sâu & Bảo quản Lạnh Nông sản Xuất khẩu', category: 'Sau thu hoạch & Bảo quản', summary: 'Làm chủ chuỗi giá trị sau thu hoạch: Hạ nhiệt đồng ruộng (Pre-cooling) trong 2 giờ vàng, công nghệ sấy lạnh bơm nhiệt, đóng gói khí quyển biến đổi MAP/CA, kho lạnh thông minh và cấp mã QR VietGAP.', modules_count: 15, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 3, code: 'IOTNHAMANG01', fullname: 'Vận hành Nhà màng Thông minh & Trạm Cảm biến Vi khí hậu IoT', category: 'Nông nghiệp Thông minh & IoT', summary: 'Làm chủ hệ thống cảm biến nhiệt-ẩm-ánh sáng PAR-CO2, chỉ số thiếu hụt áp suất hơi nước VPD, điều khiển tự động lưới cắt nắng, quạt đối lưu và màn mưa Cooling Pad.', modules_count: 14, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 4, code: 'THUYCANH01', fullname: 'Kỹ thuật Thủy canh Hồi lưu NFT & Giá thể Xơ dừa Chuẩn VietGAP', category: 'Thủy canh & Giá thể', summary: 'Thiết kế độ dốc máng thủy canh màng dinh dưỡng NFT 1:40, kiểm soát oxy hòa tan DO >= 6 mg/L, xử lý xơ dừa xả chát Tanin/EC và kiểm soát dư lượng nitrat trước thu hoạch.', modules_count: 14, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 5, code: 'SAURIENG01', fullname: 'Quy trình Canh tác Sầu riêng Xuất khẩu, Mã số Vùng trồng & Xử lý Ra hoa', category: 'Cây ăn trái Xuất khẩu', summary: 'Chuẩn hóa quy trình canh tác Sầu riêng Dona/Ri6 phục vụ xuất khẩu chính ngạch: Quản lý cơi đọt, xiết nước ra hoa đồng loạt, phòng chống Phytophthora & Rệp sáp, quản lý Mã số vùng trồng (PUC).', modules_count: 14, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 6, code: 'PHANVISINH01', fullname: 'Sản xuất Phân Hữu cơ Vi sinh, Nhân sinh khối Trichoderma & Cải tạo Đất', category: 'Vi sinh & Tuần hoàn Đất', summary: 'Tận dụng phụ phẩm nông nghiệp ủ hiếu khí 55-65 độ C theo tỷ lệ C/N = 25-30:1, nhân sinh khối nấm đối kháng Trichoderma spp. và Bacillus subtilis cải tạo hệ vi sinh đất.', modules_count: 14, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 7, code: 'DAUTAY-CNC-01', fullname: 'Kỹ thuật Canh tác Dâu tây & Hoa Cúc Công nghệ cao trong Nhà màng Đà Lạt', category: 'Cây trồng Chủ lực Đà Lạt', summary: 'Quy trình chuẩn hóa canh tác Dâu tây Albion và Hoa cúc cắt cành trên giá thể treo tại Đà Lạt: kiểm soát vi khí hậu, châm phân nhỏ giọt, IPM sinh học và truy xuất nguồn gốc VietGAP.', modules_count: 14, is_cloned: false, created_by: 'admin', created_at: '2026-11-01T00:00:00Z' },
+  { id: 8, code: 'DAUTAY-DONDUONG-01', fullname: 'Tập huấn Kỹ thuật Dâu tây & Hoa Cúc CNC - HTX Đơn Dương', category: 'Chuyển giao Hợp tác xã', summary: 'Phiên bản khóa học nhân bản dành riêng cho hội viên Hợp tác xã Đơn Dương (Lâm Đồng) với trạm thực hành GPS thực địa ngay tại vùng nguyên liệu Đơn Dương.', modules_count: 14, is_cloned: true, created_by: 'cbkt_pilot', created_at: '2026-11-02T00:00:00Z' },
+];
+
+const FALLBACK_ENROLLMENTS = [
+  { id: 1, user_id: 3, course_code: 'CHAMSOC01', progress_pct: 100, quiz_score: 91.67, attendance_count: 4, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 2, user_id: 3, course_code: 'CHEBIEN01', progress_pct: 100, quiz_score: 100, attendance_count: 3, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 3, user_id: 3, course_code: 'IOTNHAMANG01', progress_pct: 100, quiz_score: 91.67, attendance_count: 3, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 4, user_id: 3, course_code: 'THUYCANH01', progress_pct: 100, quiz_score: 100, attendance_count: 4, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 5, user_id: 3, course_code: 'SAURIENG01', progress_pct: 100, quiz_score: 90, attendance_count: 3, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 6, user_id: 3, course_code: 'PHANVISINH01', progress_pct: 100, quiz_score: 90, attendance_count: 3, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 7, user_id: 3, course_code: 'DAUTAY-CNC-01', progress_pct: 100, quiz_score: 90, attendance_count: 3, status: 'completed', enrolled_at: '2026-11-02T08:00:00Z' },
+  { id: 8, user_id: 3, course_code: 'DAUTAY-DONDUONG-01', progress_pct: 65, quiz_score: 80, attendance_count: 2, status: 'in_progress', enrolled_at: '2026-11-05T08:00:00Z' },
+  { id: 9, user_id: 4, course_code: 'CHAMSOC01', progress_pct: 50, quiz_score: 80, attendance_count: 1, status: 'in_progress', enrolled_at: '2026-11-03T08:00:00Z' },
+  { id: 10, user_id: 4, course_code: 'IOTNHAMANG01', progress_pct: 25, quiz_score: 0, attendance_count: 1, status: 'enrolled', enrolled_at: '2026-11-03T08:00:00Z' },
+  { id: 11, user_id: 4, course_code: 'DAUTAY-CNC-01', progress_pct: 75, quiz_score: 80, attendance_count: 2, status: 'in_progress', enrolled_at: '2026-11-03T08:00:00Z' },
+  { id: 12, user_id: 4, course_code: 'DAUTAY-DONDUONG-01', progress_pct: 20, quiz_score: 0, attendance_count: 0, status: 'enrolled', enrolled_at: '2026-11-03T08:00:00Z' },
+];
+
+const FALLBACK_FIELDPRACTICE_SUBS = [
+  {
+    id: 1,
+    user_id: 3,
+    course_code: 'CHAMSOC01',
+    checkin_code: 'QR-CHAMSOC01-XUATHO',
+    gps_lat: '11.946520',
+    gps_lng: '108.504110',
+    distance_m: 18,
+    crit_prep: 24,
+    crit_tech: 23,
+    crit_biosafe: 24,
+    crit_quality: 22,
+    total_grade: 93,
+    feedback: 'Nông hộ thao tác cân chỉnh EC/pH chuẩn 1.6 mS/cm, đường ống nhỏ giọt không rò rỉ, tuân thủ đầy đủ bảo hộ VietGAP.',
+    graded_by: 'cbkt_pilot',
+    submitted_at: '2026-11-17T08:00:00Z',
+    graded_at: '2026-11-18T10:00:00Z',
+  },
+  {
+    id: 2,
+    user_id: 4,
+    course_code: 'DAUTAY-CNC-01',
+    checkin_code: 'QR-DAUTAY-LACDUONG',
+    gps_lat: '12.012400',
+    gps_lng: '108.431500',
+    distance_m: 26,
+    crit_prep: 0,
+    crit_tech: 0,
+    crit_biosafe: 0,
+    crit_quality: 0,
+    total_grade: 0,
+    feedback: '',
+    graded_by: null,
+    submitted_at: '2026-11-21T07:30:00Z',
+    graded_at: null,
+  },
+];
+
+const FALLBACK_QUIZ_ATTEMPTS = [
+  { id: 1, user_id: 3, course_code: 'CHAMSOC01', score_100: 91.67, answers_json: { answers: [1, 2, 0, 1, 2], correct: 5, total: 5 }, attempted_at: '2026-11-16T09:00:00Z' },
+  { id: 2, user_id: 4, course_code: 'DAUTAY-CNC-01', score_100: 80, answers_json: { answers: [0, 1, 2, 1, 0], correct: 4, total: 5 }, attempted_at: '2026-11-20T09:00:00Z' },
+];
+
+const FALLBACK_NEWS = [
+  { id: 1, category: 'Kỹ thuật Canh tác', title: 'Ứng dụng tưới nhỏ giọt bù áp & châm phân tự động (Fertigation) tiết kiệm 40% phân bón', summary: 'Kiểm soát EC 1.2–2.2 mS/cm và pH 5.6–6.2 theo từng giai đoạn sinh trưởng trong nhà màng Lâm Đồng.', content: '<p><strong>1. Đặt vấn đề:</strong> Tưới tràn truyền thống gây thất thoát đạm nitrat và tích tụ muối cục bộ trên giá thể xơ dừa. Hệ thống tưới nhỏ giọt bù áp (1.6–2.0 L/h) kết hợp bộ châm phân tự động giúp đồng đều dinh dưỡng tới 95%.</p><p><strong>2. Kết quả thực tiễn:</strong> Giảm 40% lượng phân bón hòa tan, tiết kiệm 32% nước tưới và tăng 24% tỷ lệ nông sản loại A đạt chuẩn xuất khẩu.</p>', published_at: '2026-11-12T08:00:00Z' },
+  { id: 2, category: 'Bảo vệ Thực vật', title: 'Phác đồ Quản lý dịch hại tổng hợp (IPM) & chế phẩm sinh học Trichoderma phòng bệnh héo rũ', summary: 'Nhận diện sớm nấm Fusarium, Phytophthora và kết hợp bẫy dính sinh học đảm bảo thời gian cách ly PHI = 0 ngày.', content: '<p><strong>1. Giám sát dịch tễ:</strong> Điều tra 5 điểm chéo góc định kỳ 7 ngày/lần khi ẩm độ nhà màng vượt 85%.</p><p><strong>2. Biện pháp sinh học:</strong> Ủ hoạt hóa nấm đối kháng <em>Trichoderma spp.</em> cùng vi khuẩn <em>Bacillus subtilis</em> vào giá thể, kết hợp 40 bẫy dính vàng/xanh trên 1.000 m2 giúp triệt tiêu dư lượng thuốc BVTV hóa học.</p>', published_at: '2026-11-10T08:00:00Z' },
+  { id: 3, category: 'Tiêu chuẩn & Xuất khẩu', title: 'Quy trình ghi chép nhật ký đồng ruộng điện tử & cấp mã số vùng trồng truy xuất QR', summary: 'Số hóa biểu mẫu theo TCVN 11892-1:2017 và ký xác thực lô nông sản bằng thuật toán mật mã HMAC-SHA256.', content: '<p><strong>1. Nhật ký điện tử 24h:</strong> Toàn bộ tác nghiệp pha tưới, phòng trừ sinh học và thu hoạch được ghi trực tiếp qua Web hoặc Nhật ký Cloud.</p><p><strong>2. Hộ chiếu nông sản QR:</strong> Mỗi lô nông sản thu hoạch được gắn mã truy xuất công khai cho phép đơn vị thu mua kiểm tra lịch sử canh tác tức thì.</p>', published_at: '2026-11-08T08:00:00Z' },
+  { id: 4, category: 'Thông báo Đào tạo', title: 'Kế hoạch mở lớp tập huấn Dâu tây & Hoa Cúc Công nghệ cao đợt tháng 11/2026', summary: 'Học phần DAUTAY-CNC-01 gồm 04 chuyên đề trực tuyến, H5P, SCORM 1.2 và thực hành QR+GPS tại Đà Lạt.', content: '<p><strong>1. Cấu trúc chương trình:</strong> 04 chuyên đề từ xử lý giá thể, điều tiết vi khí hậu, tưới nhỏ giọt Fertigation đến phòng trừ IPM.</p><p><strong>2. Điều kiện cấp chứng nhận:</strong> Quiz cuối khóa >= 70% và hoàn thành chấm Rubric 4 tiêu chí tại vườn >= 60 điểm.</p>', published_at: '2026-11-05T08:00:00Z' },
+];
+
+async function authenticateRequest(req, res, allowedRoles = null) {
+  const token = extractBearerToken(req);
+  const claims = verifyJwt(token);
+  if (!claims || !claims.sub) {
+    res.status(401).json({
+      ok: false,
+      message_vi: 'Vui lòng đăng nhập để truy cập chức năng này (Thiếu hoặc hết hạn JWT Token).',
+      message_en: 'Authentication required (missing or invalid JWT token).',
+    });
+    return null;
+  }
+
+  let user = null;
+  let source = 'embedded-fallback';
+  if (hasSupabaseConfig()) {
+    try {
+      const rows = await supabaseFetch(`lms_users?id=eq.${encodeURIComponent(claims.sub)}&select=*&limit=1`);
+      if (Array.isArray(rows) && rows.length > 0) {
+        user = rows[0];
+        source = 'supabase-live';
+      }
+    } catch {
+      // Fall through to fallback user lookup if transient DB issue
+    }
+  }
+  if (!user) {
+    user = FALLBACK_USERS.find(u => Number(u.id) === Number(claims.sub)) || null;
+  }
+
+  if (!user) {
+    res.status(401).json({
+      ok: false,
+      message_vi: 'Tài khoản không tồn tại trong hệ thống.',
+      message_en: 'Account not found.',
+    });
+    return null;
+  }
+
+  if (!user.is_active) {
+    res.status(403).json({
+      ok: false,
+      message_vi: 'Tài khoản của bạn đang bị tạm khóa bởi Quản trị viên.',
+      message_en: 'Your account is currently disabled.',
+    });
+    return null;
+  }
+
+  if (Array.isArray(allowedRoles) && !allowedRoles.includes(user.role)) {
+    res.status(403).json({
+      ok: false,
+      code: 'FORBIDDEN_ROLE',
+      message_vi: `Truy cập bị từ chối (403): Vai trò "${user.role}" không được phép thực hiện thao tác này.`,
+      message_en: `Access denied (403): Role "${user.role}" is not permitted for this action.`,
+    });
+    return null;
+  }
+
+  return { user, source };
+}
+
 module.exports = {
   SECRET,
   hasSupabaseConfig,
   supabaseFetch,
+  supabaseCount,
   computeCertHmac,
   computeBatchHmac,
   timingSafeHexEqual,
   formatViDateTime,
   parseJsonBody,
+  hashPassword,
+  verifyPassword,
+  signJwt,
+  verifyJwt,
+  sanitizeUser,
+  extractBearerToken,
+  authenticateRequest,
   ACTIVITY_LABELS,
   FALLBACK_CERTS,
   FALLBACK_BATCHES,
   FALLBACK_LOGS,
   FALLBACK_FERTIGATION,
+  FALLBACK_USERS,
+  FALLBACK_COURSES,
+  FALLBACK_ENROLLMENTS,
+  FALLBACK_FIELDPRACTICE_SUBS,
+  FALLBACK_QUIZ_ATTEMPTS,
+  FALLBACK_NEWS,
 };
