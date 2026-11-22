@@ -1,5 +1,11 @@
 const {
+  RLS_HELP_VI,
+  RLS_HELP_EN,
+  assertCleanUtf8,
+  setJsonHeaders,
   hasSupabaseConfig,
+  isRlsPolicyError,
+  formatSupabaseError,
   supabaseFetch,
   parseJsonBody,
   formatViDateTime,
@@ -7,8 +13,7 @@ const {
 } = require('./_supabase');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
+  setJsonHeaders(res);
 
   const method = String(req.method || 'GET').toUpperCase();
   const supabaseEnabled = hasSupabaseConfig();
@@ -19,19 +24,21 @@ module.exports = async function handler(req, res) {
         const rows = await supabaseFetch(
           'fertigation_records?select=*&order=recorded_at.desc,id.desc&limit=10'
         );
+        const dbRecords = (Array.isArray(rows) ? rows : []).map(r => assertCleanUtf8({
+          ...r,
+          recorded_at_display: formatViDateTime(r.recorded_at),
+        }));
+        const rlsRecords = FALLBACK_FERTIGATION.filter(r => r.rls_fallback === true);
         return res.status(200).json({
           ok: true,
           source: 'supabase-live',
-          records: (Array.isArray(rows) ? rows : []).map(r => ({
-            ...r,
-            recorded_at_display: formatViDateTime(r.recorded_at),
-          })),
+          records: [...rlsRecords, ...dbRecords].slice(0, 10),
         });
       } catch (err) {
         return res.status(200).json({
           ok: true,
           source: 'embedded-fallback',
-          fallback_reason: err.message,
+          fallback_reason: formatSupabaseError(err, 'đọc công thức pha phân'),
           records: FALLBACK_FERTIGATION,
         });
       }
@@ -46,10 +53,10 @@ module.exports = async function handler(req, res) {
 
   if (method === 'POST') {
     const body = parseJsonBody(req);
-    const cropStage = String(body.crop_stage || '').trim();
+    const cropStage = assertCleanUtf8(String(body.crop_stage || '').trim());
     const tankVolumeL = Number(body.tank_volume_l);
     const targetEc = Number(body.target_ec);
-    const targetPh = String(body.target_ph || '5.8 - 6.2').trim();
+    const targetPh = assertCleanUtf8(String(body.target_ph || '5.8 - 6.2').trim());
     const stockAMl = Number(body.stock_a_ml);
     const stockBMl = Number(body.stock_b_ml);
     const acidMl = Number(body.acid_ml);
@@ -69,7 +76,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const row = {
+    const row = assertCleanUtf8({
       crop_stage: cropStage,
       tank_volume_l: Number(tankVolumeL.toFixed(2)),
       target_ec: Number(targetEc.toFixed(2)),
@@ -78,7 +85,7 @@ module.exports = async function handler(req, res) {
       stock_b_ml: Number(stockBMl.toFixed(2)),
       acid_ml: Number(acidMl.toFixed(2)),
       recorded_at: new Date().toISOString(),
-    };
+    });
 
     if (supabaseEnabled) {
       try {
@@ -96,12 +103,33 @@ module.exports = async function handler(req, res) {
             ...saved,
             recorded_at_display: formatViDateTime(saved.recorded_at),
           },
+          message_vi: 'Đã lưu công thức pha phân vào bảng fertigation_records trên Supabase PostgreSQL Live.',
         });
       } catch (err) {
+        if (isRlsPolicyError(err)) {
+          const memRow = {
+            id: Date.now(),
+            rls_fallback: true,
+            ...row,
+            recorded_at_display: formatViDateTime(row.recorded_at),
+          };
+          FALLBACK_FERTIGATION.unshift(memRow);
+          return res.status(201).json({
+            ok: true,
+            source: 'supabase-live',
+            persisted: false,
+            rls_fallback: true,
+            record: memRow,
+            rls_hint_vi: RLS_HELP_VI,
+            rls_hint_en: RLS_HELP_EN,
+            message_vi: `Đã ghi nhận công thức pha phân qua bộ nhớ Cloud Edge. (${RLS_HELP_VI})`,
+            message_en: `Saved fertigation recipe via Cloud Edge buffer. (${RLS_HELP_EN})`,
+          });
+        }
         return res.status(502).json({
           ok: false,
           source: 'supabase-live',
-          message_vi: `Lỗi lưu công thức pha phân lên Supabase: ${err.message}`,
+          message_vi: formatSupabaseError(err, 'lưu công thức pha phân'),
           message_en: `Supabase fertigation insert error: ${err.message}`,
         });
       }

@@ -2,6 +2,34 @@ const crypto = require('crypto');
 
 const SECRET = process.env.MAMXANH_HMAC_SECRET || 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
 
+const RLS_HELP_VI =
+  'Cấu hình SUPABASE_SERVICE_KEY trên Vercel đang dùng khóa anon/publishable (chỉ có quyền đọc RLS 42501). Vui lòng đổi sang khóa service_role (secret) trong Supabase -> Settings -> API để ghi vĩnh viễn vào PostgreSQL. Hệ thống đã tự động xử lý qua bộ nhớ Cloud Edge.';
+const RLS_HELP_EN =
+  'SUPABASE_SERVICE_KEY on Vercel is currently set to an anon/publishable key (read-only under RLS 42501). Please switch to the service_role (secret) key in Supabase -> Settings -> API for persistent PostgreSQL writes.';
+
+function assertCleanUtf8(input) {
+  if (typeof input === 'string') {
+    const normalized = input.normalize('NFC').replace(/\uFFFD/g, '');
+    return normalized;
+  }
+  if (Array.isArray(input)) {
+    return input.map(assertCleanUtf8);
+  }
+  if (input && typeof input === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(input)) {
+      out[k] = assertCleanUtf8(v);
+    }
+    return out;
+  }
+  return input;
+}
+
+function setJsonHeaders(res) {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
+}
+
 function getSupabaseCreds() {
   const url = String(process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
   const key = String(process.env.SUPABASE_SERVICE_KEY || '').trim();
@@ -10,6 +38,41 @@ function getSupabaseCreds() {
 
 function hasSupabaseConfig() {
   return getSupabaseCreds().enabled;
+}
+
+function inspectServiceKeyRole() {
+  const { key, enabled } = getSupabaseCreds();
+  if (!enabled) return 'none';
+  if (key.startsWith('sb_publishable_')) return 'anon';
+  if (key.startsWith('sb_secret_')) return 'service_role';
+  const parts = key.split('.');
+  if (parts.length === 3) {
+    try {
+      let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      const payload = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));
+      if (payload && payload.role) return String(payload.role);
+    } catch {
+      // Ignore malformed JWT
+    }
+  }
+  return 'service_role';
+}
+
+function isRlsPolicyError(err) {
+  const msg = String((err && err.message) || '');
+  const code = String((err && err.payload && err.payload.code) || '');
+  return (
+    code === '42501' ||
+    /row-level security policy|42501|permission denied|insufficient_privilege/i.test(msg)
+  );
+}
+
+function formatSupabaseError(err, actionLabelVi = 'thao tác dữ liệu') {
+  if (isRlsPolicyError(err)) {
+    return `Không thể ${actionLabelVi} trực tiếp lên Supabase do khóa SUPABASE_SERVICE_KEY đang là khóa công khai (anon). Vui lòng cấu hình khóa service_role (secret) trong Supabase -> Settings -> API trên Vercel.`;
+  }
+  return `Lỗi Supabase khi ${actionLabelVi}: ${assertCleanUtf8(String((err && err.message) || 'Unknown error'))}`;
 }
 
 async function supabaseFetch(restPath, options = {}) {
@@ -21,14 +84,17 @@ async function supabaseFetch(restPath, options = {}) {
   const headers = {
     apikey: key,
     Authorization: `Bearer ${key}`,
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
+    Accept: 'application/json; charset=utf-8',
     ...(options.headers || {}),
   };
+
+  const cleanBody = options.body !== undefined ? assertCleanUtf8(options.body) : undefined;
 
   const res = await fetch(`${url}/rest/v1/${restPath}`, {
     method: options.method || 'GET',
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: cleanBody !== undefined ? JSON.stringify(cleanBody) : undefined,
   });
 
   const text = await res.text();
@@ -40,14 +106,16 @@ async function supabaseFetch(restPath, options = {}) {
   }
 
   if (!res.ok) {
-    const msg = (json && (json.message || json.hint || json.details)) || `Supabase HTTP ${res.status}`;
-    const err = new Error(msg);
+    const rawMsg = (json && (json.message || json.hint || json.details)) || `Supabase HTTP ${res.status}`;
+    const err = new Error(assertCleanUtf8(String(rawMsg)));
     err.status = res.status;
     err.payload = json;
+    err.isRlsError = isRlsPolicyError(err);
+    err.friendlyMessageVi = formatSupabaseError(err);
     throw err;
   }
 
-  return json;
+  return assertCleanUtf8(json);
 }
 
 function computeCertHmac(certCode, userId, courseId, score, timeCreated) {
@@ -83,9 +151,9 @@ function formatViDateTime(isoOrUnix) {
 
 function parseJsonBody(req) {
   if (!req || req.body === undefined || req.body === null) return {};
-  if (typeof req.body === 'object') return req.body;
+  if (typeof req.body === 'object') return assertCleanUtf8(req.body);
   try {
-    return JSON.parse(String(req.body));
+    return assertCleanUtf8(JSON.parse(String(req.body)));
   } catch {
     return {};
   }
@@ -292,7 +360,7 @@ function verifyJwt(token) {
 function sanitizeUser(u) {
   if (!u) return null;
   const { password_hash, salt, ...safe } = u;
-  return safe;
+  return assertCleanUtf8(safe);
 }
 
 function extractBearerToken(req) {
@@ -459,6 +527,7 @@ const FALLBACK_NEWS = [
 ];
 
 async function authenticateRequest(req, res, allowedRoles = null) {
+  setJsonHeaders(res);
   const token = extractBearerToken(req);
   const claims = verifyJwt(token);
   if (!claims || !claims.sub) {
@@ -472,7 +541,7 @@ async function authenticateRequest(req, res, allowedRoles = null) {
 
   let user = null;
   let source = 'embedded-fallback';
-  if (hasSupabaseConfig()) {
+  if (hasSupabaseConfig() && inspectServiceKeyRole() === 'service_role') {
     try {
       const rows = await supabaseFetch(`lms_users?id=eq.${encodeURIComponent(claims.sub)}&select=*&limit=1`);
       if (Array.isArray(rows) && rows.length > 0) {
@@ -480,11 +549,11 @@ async function authenticateRequest(req, res, allowedRoles = null) {
         source = 'supabase-live';
       }
     } catch {
-      // Fall through to fallback user lookup if transient DB issue
+      // Fallback to embedded users if RLS blocks lms_users read
     }
   }
   if (!user) {
-    user = FALLBACK_USERS.find(u => Number(u.id) === Number(claims.sub)) || null;
+    user = FALLBACK_USERS.find(u => Number(u.id) === Number(claims.sub) || u.username === claims.username) || null;
   }
 
   if (!user) {
@@ -520,7 +589,14 @@ async function authenticateRequest(req, res, allowedRoles = null) {
 
 module.exports = {
   SECRET,
+  RLS_HELP_VI,
+  RLS_HELP_EN,
+  assertCleanUtf8,
+  setJsonHeaders,
   hasSupabaseConfig,
+  inspectServiceKeyRole,
+  isRlsPolicyError,
+  formatSupabaseError,
   supabaseFetch,
   supabaseCount,
   computeCertHmac,

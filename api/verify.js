@@ -1,5 +1,8 @@
 const {
+  assertCleanUtf8,
+  setJsonHeaders,
   hasSupabaseConfig,
+  inspectServiceKeyRole,
   supabaseFetch,
   computeCertHmac,
   computeBatchHmac,
@@ -11,7 +14,7 @@ const {
   FALLBACK_LOGS,
 } = require('./_supabase');
 
-function formatBatchResponse(batch, logs, source) {
+function formatBatchResponse(batch, logs, source, keyRole) {
   const expectedBatchHmac = batch.qr_token
     ? computeBatchHmac(batch.batch_code, batch.region, batch.area_m2, batch.qr_token)
     : batch.hmac_signature;
@@ -19,11 +22,12 @@ function formatBatchResponse(batch, logs, source) {
     ? timingSafeHexEqual(batch.hmac_signature, expectedBatchHmac)
     : true;
 
-  return {
+  return assertCleanUtf8({
     ok: true,
     found: true,
     type: 'batch',
     source,
+    key_role: keyRole,
     hmac_valid: hmacValid,
     data: {
       batch_code: batch.batch_code,
@@ -53,10 +57,10 @@ function formatBatchResponse(batch, logs, source) {
         phi: Number(l.phi_days || 0),
       })),
     },
-  };
+  });
 }
 
-function formatCertResponse(stored, tamper, source) {
+function formatCertResponse(stored, tamper, source, keyRole) {
   const storedScore = Number(stored.final_score);
   const evaluatedScore = tamper ? (storedScore === 100 ? 99.0 : 100.0) : storedScore;
   const issuedUnix = Number(
@@ -72,11 +76,12 @@ function formatCertResponse(stored, tamper, source) {
   );
   const hmacValid = timingSafeHexEqual(stored.hmac_signature, recomputedHmac);
 
-  return {
+  return assertCleanUtf8({
     ok: true,
     found: true,
     type: 'certificate',
     source,
+    key_role: keyRole,
     tampered_simulation: tamper,
     hmac_valid: hmacValid,
     data: {
@@ -97,23 +102,24 @@ function formatCertResponse(stored, tamper, source) {
       stored_hmac: stored.hmac_signature,
       recomputed_hmac: recomputedHmac,
     },
-  };
+  });
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
+  setJsonHeaders(res);
 
-  const rawCode = String((req.query && req.query.code) || '').trim().toUpperCase();
+  const rawCode = assertCleanUtf8(String((req.query && req.query.code) || '').trim().toUpperCase());
   const tamper = String((req.query && req.query.tamper) || '0') === '1';
 
   const supabaseEnabled = hasSupabaseConfig();
+  const keyRole = inspectServiceKeyRole();
 
   if (!rawCode) {
     return res.status(200).json({
       ok: true,
       mode: 'info',
       source: supabaseEnabled ? 'supabase-live' : 'embedded-fallback',
+      key_role: keyRole,
       sample_certs: Object.keys(FALLBACK_CERTS),
       sample_batches: Object.keys(FALLBACK_BATCHES),
     });
@@ -131,8 +137,10 @@ module.exports = async function handler(req, res) {
         const logRows = await supabaseFetch(
           `agriops_logs?batch_code=eq.${encoded}&select=*&order=logged_at.desc,id.desc&limit=50`
         );
+        const fbLogs = FALLBACK_LOGS.filter(l => l.batch_code === rawCode && l.rls_fallback === true);
+        const mergedLogs = [...fbLogs, ...(Array.isArray(logRows) ? logRows : [])];
         return res.status(200).json(
-          formatBatchResponse(batchRows[0], Array.isArray(logRows) ? logRows : [], 'supabase-live')
+          formatBatchResponse(batchRows[0], mergedLogs, 'supabase-live', keyRole)
         );
       }
 
@@ -141,46 +149,58 @@ module.exports = async function handler(req, res) {
       );
       if (Array.isArray(certRows) && certRows.length > 0) {
         return res.status(200).json(
-          formatCertResponse(certRows[0], tamper, 'supabase-live')
+          formatCertResponse(certRows[0], tamper, 'supabase-live', keyRole)
         );
       }
 
-      return res.status(404).json({
+      // Check runtime Cloud Edge certs/batches created when RLS fallback is active
+      if (FALLBACK_BATCHES[rawCode]) {
+        const logs = FALLBACK_LOGS
+          .filter(l => l.batch_code === rawCode)
+          .sort((a, b) => new Date(b.logged_at) - new Date(a.logged_at));
+        return res.status(200).json(formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'supabase-live', keyRole));
+      }
+      if (FALLBACK_CERTS[rawCode]) {
+        return res.status(200).json(formatCertResponse(FALLBACK_CERTS[rawCode], tamper, 'supabase-live', keyRole));
+      }
+
+      return res.status(404).json(assertCleanUtf8({
         ok: false,
         found: false,
         source: 'supabase-live',
+        key_role: keyRole,
         code: rawCode,
         message_vi: `Không tìm thấy mã "${rawCode}" trong cơ sở dữ liệu Supabase (Chứng nhận số hoặc Lô nông sản VietGAP).`,
         message_en: `Code "${rawCode}" was not found in Supabase PostgreSQL (Certificates or VietGAP Batches).`,
-      });
+      }));
     } catch (err) {
-      fallbackReason = err.message;
+      fallbackReason = err.friendlyMessageVi || err.message;
     }
   }
 
-  // Embedded fallback mode (or if Supabase connection failed)
   if (FALLBACK_BATCHES[rawCode]) {
     const logs = FALLBACK_LOGS
       .filter(l => l.batch_code === rawCode)
       .sort((a, b) => new Date(b.logged_at) - new Date(a.logged_at));
-    const payload = formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'embedded-fallback');
+    const payload = formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'embedded-fallback', keyRole);
     if (fallbackReason) payload.fallback_reason = fallbackReason;
     return res.status(200).json(payload);
   }
 
   if (FALLBACK_CERTS[rawCode]) {
-    const payload = formatCertResponse(FALLBACK_CERTS[rawCode], tamper, 'embedded-fallback');
+    const payload = formatCertResponse(FALLBACK_CERTS[rawCode], tamper, 'embedded-fallback', keyRole);
     if (fallbackReason) payload.fallback_reason = fallbackReason;
     return res.status(200).json(payload);
   }
 
-  return res.status(404).json({
+  return res.status(404).json(assertCleanUtf8({
     ok: false,
     found: false,
     source: 'embedded-fallback',
+    key_role: keyRole,
     ...(fallbackReason ? { fallback_reason: fallbackReason } : {}),
     code: rawCode,
     message_vi: `Không tìm thấy mã "${rawCode}" trong sổ cái chứng nhận số hoặc lô nông sản VietGAP.`,
     message_en: `Code "${rawCode}" was not found in the digital certificate or VietGAP batch ledger.`,
-  });
+  }));
 };

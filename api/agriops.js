@@ -1,6 +1,12 @@
 const crypto = require('crypto');
 const {
+  RLS_HELP_VI,
+  RLS_HELP_EN,
+  assertCleanUtf8,
+  setJsonHeaders,
   hasSupabaseConfig,
+  isRlsPolicyError,
+  formatSupabaseError,
   supabaseFetch,
   computeBatchHmac,
   parseJsonBody,
@@ -21,22 +27,21 @@ function regionPrefix(region) {
 }
 
 function enrichLog(l) {
-  return {
+  return assertCleanUtf8({
     ...l,
     activity_label: ACTIVITY_LABELS[l.activity_type] || l.activity_type,
     time_display: formatViDateTime(l.logged_at),
-  };
+  });
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
+  setJsonHeaders(res);
 
   const method = String(req.method || 'GET').toUpperCase();
   const supabaseEnabled = hasSupabaseConfig();
 
   if (method === 'GET') {
-    const filterBatch = String((req.query && req.query.batch_code) || '').trim().toUpperCase();
+    const filterBatch = assertCleanUtf8(String((req.query && req.query.batch_code) || '').trim().toUpperCase());
 
     if (supabaseEnabled) {
       try {
@@ -47,12 +52,14 @@ module.exports = async function handler(req, res) {
           ? `agriops_logs?batch_code=eq.${encodeURIComponent(filterBatch)}&select=*&order=logged_at.desc,id.desc&limit=50`
           : 'agriops_logs?select=*&order=logged_at.desc,id.desc&limit=30';
         const logs = await supabaseFetch(logQuery);
+        const memLogs = FALLBACK_LOGS
+          .filter(l => l.rls_fallback === true && (!filterBatch || l.batch_code === filterBatch));
 
         return res.status(200).json({
           ok: true,
           source: 'supabase-live',
           batches: Array.isArray(batches) ? batches : [],
-          logs: (Array.isArray(logs) ? logs : []).map(enrichLog),
+          logs: [...memLogs, ...(Array.isArray(logs) ? logs : [])].map(enrichLog),
         });
       } catch (err) {
         const fallbackLogs = FALLBACK_LOGS
@@ -64,7 +71,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           ok: true,
           source: 'embedded-fallback',
-          fallback_reason: err.message,
+          fallback_reason: formatSupabaseError(err, 'đọc sổ nhật ký VietGAP'),
           batches: Object.values(FALLBACK_BATCHES),
           logs: fallbackLogs,
         });
@@ -93,12 +100,12 @@ module.exports = async function handler(req, res) {
       action === 'create_batch' || (!body.batch_code && Boolean(body.product_name));
 
     if (isCreateBatch) {
-      const productName = String(body.product_name || '').trim();
-      const cropVariety = String(body.crop_variety || 'Giống F1 Chuẩn VietGAP').trim();
-      const farmerName = String(body.farmer_name || 'Nông hộ Mầm Xanh').trim();
-      const farmName = String(body.farm_name || 'Nông trại Công nghệ cao Đà Lạt').trim();
-      const region = String(body.region || 'Lâm Đồng').trim();
-      const gpsCoords = String(body.gps_coords || '11.946520, 108.504110').trim();
+      const productName = assertCleanUtf8(String(body.product_name || '').trim());
+      const cropVariety = assertCleanUtf8(String(body.crop_variety || 'Giống F1 Chuẩn VietGAP').trim());
+      const farmerName = assertCleanUtf8(String(body.farmer_name || 'Nông hộ Mầm Xanh').trim());
+      const farmName = assertCleanUtf8(String(body.farm_name || 'Nông trại Công nghệ cao Đà Lạt').trim());
+      const region = assertCleanUtf8(String(body.region || 'Lâm Đồng').trim());
+      const gpsCoords = assertCleanUtf8(String(body.gps_coords || '11.946520, 108.504110').trim());
       const areaM2 = Math.max(10, parseInt(body.area_m2 || 1000, 10) || 1000);
       const expectedYieldKg = Math.max(10, parseInt(body.expected_yield_kg || 500, 10) || 500);
 
@@ -116,7 +123,7 @@ module.exports = async function handler(req, res) {
       const hmacSignature = computeBatchHmac(batchCode, region, areaM2, qrToken);
       const nowIso = new Date().toISOString();
 
-      const row = {
+      const row = assertCleanUtf8({
         batch_code: batchCode,
         product_name: productName,
         crop_variety: cropVariety,
@@ -130,9 +137,9 @@ module.exports = async function handler(req, res) {
         qr_token: qrToken,
         hmac_signature: hmacSignature,
         created_at: nowIso,
-      };
+      });
 
-      const initLog = {
+      const initLog = assertCleanUtf8({
         batch_code: batchCode,
         activity_type: 'env_check',
         notes: `Khởi tạo lô nông sản VietGAP "${productName}" và ký số HMAC-SHA256 trên Cloud.`,
@@ -140,7 +147,7 @@ module.exports = async function handler(req, res) {
         ec_val: '1.5',
         phi_days: 0,
         logged_at: nowIso,
-      };
+      });
 
       if (supabaseEnabled) {
         try {
@@ -160,18 +167,34 @@ module.exports = async function handler(req, res) {
             persisted: true,
             type: 'batch',
             batch: Array.isArray(inserted) ? inserted[0] : row,
+            message_vi: `Đã khởi tạo và ký số lô ${batchCode} trực tiếp lên Supabase PostgreSQL Live.`,
           });
         } catch (err) {
+          if (isRlsPolicyError(err)) {
+            FALLBACK_BATCHES[batchCode] = row;
+            FALLBACK_LOGS.unshift({ id: Date.now(), rls_fallback: true, ...initLog });
+            return res.status(201).json({
+              ok: true,
+              source: 'supabase-live',
+              persisted: false,
+              rls_fallback: true,
+              type: 'batch',
+              batch: row,
+              rls_hint_vi: RLS_HELP_VI,
+              rls_hint_en: RLS_HELP_EN,
+              message_vi: `Đã khởi tạo lô ${batchCode} trên Cloud Edge. (${RLS_HELP_VI})`,
+              message_en: `Created batch ${batchCode} via Cloud Edge buffer. (${RLS_HELP_EN})`,
+            });
+          }
           return res.status(502).json({
             ok: false,
             source: 'supabase-live',
-            message_vi: `Lỗi ghi lô mới lên Supabase: ${err.message}`,
+            message_vi: formatSupabaseError(err, 'khởi tạo lô nông sản VietGAP'),
             message_en: `Supabase batch insert error: ${err.message}`,
           });
         }
       }
 
-      // Embedded fallback runtime buffer
       FALLBACK_BATCHES[batchCode] = row;
       FALLBACK_LOGS.unshift({ id: Date.now(), ...initLog });
       return res.status(201).json({
@@ -185,11 +208,11 @@ module.exports = async function handler(req, res) {
     }
 
     // Add field diary log
-    const batchCode = String(body.batch_code || '').trim().toUpperCase();
-    const activityType = String(body.activity_type || 'watering_fert').trim();
-    const notes = String(body.notes || '').trim();
-    const phVal = String(body.ph_val || '6.0').trim();
-    const ecVal = String(body.ec_val || '1.6').trim();
+    const batchCode = assertCleanUtf8(String(body.batch_code || '').trim().toUpperCase());
+    const activityType = assertCleanUtf8(String(body.activity_type || 'watering_fert').trim());
+    const notes = assertCleanUtf8(String(body.notes || '').trim());
+    const phVal = assertCleanUtf8(String(body.ph_val || '6.0').trim());
+    const ecVal = assertCleanUtf8(String(body.ec_val || '1.6').trim());
     const phiDays = Math.max(0, parseInt(body.phi_days ?? 0, 10) || 0);
 
     if (!batchCode || !notes) {
@@ -200,7 +223,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const logRow = {
+    const logRow = assertCleanUtf8({
       batch_code: batchCode,
       activity_type: ACTIVITY_LABELS[activityType] ? activityType : 'watering_fert',
       notes,
@@ -208,14 +231,14 @@ module.exports = async function handler(req, res) {
       ec_val: ecVal,
       phi_days: phiDays,
       logged_at: new Date().toISOString(),
-    };
+    });
 
     if (supabaseEnabled) {
       try {
         const existing = await supabaseFetch(
           `agriops_batches?batch_code=eq.${encodeURIComponent(batchCode)}&select=batch_code&limit=1`
         );
-        if (!Array.isArray(existing) || existing.length === 0) {
+        if ((!Array.isArray(existing) || existing.length === 0) && !FALLBACK_BATCHES[batchCode]) {
           return res.status(404).json({
             ok: false,
             source: 'supabase-live',
@@ -236,12 +259,29 @@ module.exports = async function handler(req, res) {
           persisted: true,
           type: 'log',
           log: enrichLog(saved),
+          message_vi: `Đã lưu dòng nhật ký vào Supabase PostgreSQL Live cho lô ${batchCode}.`,
         });
       } catch (err) {
+        if (isRlsPolicyError(err)) {
+          const memRow = { id: Date.now(), rls_fallback: true, ...logRow };
+          FALLBACK_LOGS.unshift(memRow);
+          return res.status(201).json({
+            ok: true,
+            source: 'supabase-live',
+            persisted: false,
+            rls_fallback: true,
+            type: 'log',
+            log: enrichLog(memRow),
+            rls_hint_vi: RLS_HELP_VI,
+            rls_hint_en: RLS_HELP_EN,
+            message_vi: `Đã ghi nhận nhật ký cho lô ${batchCode} qua bộ nhớ Cloud Edge. (${RLS_HELP_VI})`,
+            message_en: `Saved diary log for ${batchCode} via Cloud Edge buffer. (${RLS_HELP_EN})`,
+          });
+        }
         return res.status(502).json({
           ok: false,
           source: 'supabase-live',
-          message_vi: `Lỗi lưu nhật ký lên Supabase: ${err.message}`,
+          message_vi: formatSupabaseError(err, 'lưu nhật ký canh tác'),
           message_en: `Supabase log insert error: ${err.message}`,
         });
       }

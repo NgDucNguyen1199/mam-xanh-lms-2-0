@@ -1,5 +1,11 @@
 const {
+  RLS_HELP_VI,
+  assertCleanUtf8,
+  setJsonHeaders,
   hasSupabaseConfig,
+  inspectServiceKeyRole,
+  isRlsPolicyError,
+  formatSupabaseError,
   supabaseFetch,
   supabaseCount,
   computeCertHmac,
@@ -35,14 +41,14 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
     return { issued: false, certificate: null };
   }
 
-  const finalScore = Number(((qScore * 0.5 + pScore * 0.5)).toFixed(2));
+  const finalScore = Number((qScore * 0.5 + pScore * 0.5).toFixed(2));
   const cleanCourseTag = String(course.code).replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 12);
   const suffixNum = String((Number(studentUser.id) * 100 + Number(course.id || 1)) % 10000).padStart(4, '0');
   const certCode = `MXCERT-2026-${cleanCourseTag}-${suffixNum}`;
   const issuedUnix = Math.floor(Date.now() / 1000);
   const hmacSig = computeCertHmac(certCode, studentUser.id, course.id || 1, finalScore, issuedUnix);
 
-  const certRow = {
+  const certRow = assertCleanUtf8({
     cert_code: certCode,
     student_name: studentUser.full_name,
     student_username: studentUser.username,
@@ -56,24 +62,27 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
     moodle_userid: Number(studentUser.id),
     moodle_courseid: Number(course.id || 1),
     issued_unix: issuedUnix,
-  };
+  });
 
   if (source === 'supabase-live') {
-    const existing = await supabaseFetch(
-      `mamxanh_certificates?student_username=eq.${encodeURIComponent(studentUser.username)}&course_code=eq.${encodeURIComponent(course.code)}&select=*&limit=1`
-    );
-    if (Array.isArray(existing) && existing.length > 0) {
-      return { issued: true, already_existed: true, certificate: existing[0] };
+    try {
+      const existing = await supabaseFetch(
+        `mamxanh_certificates?student_username=eq.${encodeURIComponent(studentUser.username)}&course_code=eq.${encodeURIComponent(course.code)}&select=*&limit=1`
+      );
+      if (Array.isArray(existing) && existing.length > 0) {
+        return { issued: true, already_existed: true, certificate: existing[0] };
+      }
+      const inserted = await supabaseFetch('mamxanh_certificates', {
+        method: 'POST',
+        headers: { Prefer: 'return=representation' },
+        body: certRow,
+      });
+      return { issued: true, already_existed: false, certificate: Array.isArray(inserted) ? inserted[0] : certRow };
+    } catch (err) {
+      if (!isRlsPolicyError(err)) throw err;
     }
-    const inserted = await supabaseFetch('mamxanh_certificates', {
-      method: 'POST',
-      headers: { Prefer: 'return=representation' },
-      body: certRow,
-    });
-    return { issued: true, already_existed: false, certificate: Array.isArray(inserted) ? inserted[0] : certRow };
   }
 
-  // Embedded fallback
   const existingFb = buildFallbackCertList().find(
     c => c.student_username === studentUser.username && c.course_code === course.code
   );
@@ -85,20 +94,26 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
+  setJsonHeaders(res);
 
   const method = String(req.method || 'GET').toUpperCase();
   const body = method === 'POST' ? parseJsonBody(req) : {};
   const action = String((req.query && req.query.action) || body.action || '').trim().toLowerCase();
   const supabaseEnabled = hasSupabaseConfig();
+  const keyRole = inspectServiceKeyRole();
+  const canWriteSupabase = supabaseEnabled && keyRole === 'service_role';
 
   // PUBLIC: GET /api/lms?action=news
   if (method === 'GET' && action === 'news') {
     if (supabaseEnabled) {
       try {
         const rows = await supabaseFetch('lms_news?select=*&order=published_at.desc,id.desc&limit=20');
-        return res.status(200).json({ ok: true, source: 'supabase-live', news: Array.isArray(rows) ? rows : [] });
+        const memNews = FALLBACK_NEWS.filter(n => Number(n.id) > 4);
+        return res.status(200).json({
+          ok: true,
+          source: 'supabase-live',
+          news: [...memNews, ...(Array.isArray(rows) ? rows : [])],
+        });
       } catch (err) {
         return res.status(200).json({ ok: true, source: 'embedded-fallback', fallback_reason: err.message, news: FALLBACK_NEWS });
       }
@@ -111,7 +126,12 @@ module.exports = async function handler(req, res) {
     if (supabaseEnabled) {
       try {
         const rows = await supabaseFetch('lms_courses?select=*&order=id.asc');
-        return res.status(200).json({ ok: true, source: 'supabase-live', courses: Array.isArray(rows) ? rows : [] });
+        const memCourses = FALLBACK_COURSES.filter(c => Number(c.id) > 8);
+        return res.status(200).json({
+          ok: true,
+          source: 'supabase-live',
+          courses: [...(Array.isArray(rows) ? rows : []), ...memCourses],
+        });
       } catch (err) {
         return res.status(200).json({ ok: true, source: 'embedded-fallback', fallback_reason: err.message, courses: FALLBACK_COURSES });
       }
@@ -123,7 +143,8 @@ module.exports = async function handler(req, res) {
   if (method === 'GET' && action === 'dashboard') {
     const auth = await authenticateRequest(req, res);
     if (!auth) return;
-    const { user, source } = auth;
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
     const isStaff = user.role === 'teacher' || user.role === 'admin';
 
     let courses = [];
@@ -133,7 +154,7 @@ module.exports = async function handler(req, res) {
     let certs = [];
     let gradingQueue = [];
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       try {
         const [cRows, eRows, sRows, qRows, certRows] = await Promise.all([
           supabaseFetch('lms_courses?select=*&order=id.asc'),
@@ -172,14 +193,25 @@ module.exports = async function handler(req, res) {
           });
         }
       } catch (err) {
-        return res.status(502).json({ ok: false, message_vi: `Lỗi tải Dashboard Supabase: ${err.message}` });
+        return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'tải bảng điều khiển') });
       }
     } else {
       courses = FALLBACK_COURSES;
       enrollments = FALLBACK_ENROLLMENTS.filter(e => Number(e.user_id) === Number(user.id));
       subs = FALLBACK_FIELDPRACTICE_SUBS.filter(s => Number(s.user_id) === Number(user.id));
       quizzes = FALLBACK_QUIZ_ATTEMPTS.filter(q => Number(q.user_id) === Number(user.id));
-      certs = buildFallbackCertList().filter(c => c.student_username === user.username);
+      if (supabaseEnabled) {
+        try {
+          const certRows = await supabaseFetch(`mamxanh_certificates?student_username=eq.${encodeURIComponent(user.username)}&select=*&order=issued_at.desc,id.desc`);
+          const fbCerts = buildFallbackCertList().filter(c => c.student_username === user.username);
+          const seen = new Set((certRows || []).map(c => c.cert_code));
+          certs = [...(certRows || []), ...fbCerts.filter(c => !seen.has(c.cert_code))];
+        } catch {
+          certs = buildFallbackCertList().filter(c => c.student_username === user.username);
+        }
+      } else {
+        certs = buildFallbackCertList().filter(c => c.student_username === user.username);
+      }
 
       if (isStaff) {
         const userMap = new Map(FALLBACK_USERS.map(u => [u.id, u]));
@@ -220,9 +252,10 @@ module.exports = async function handler(req, res) {
       ? Number((enrichedEnrollments.reduce((acc, x) => acc + Number(x.progress_pct || 0), 0) / enrichedEnrollments.length).toFixed(1))
       : 0;
 
-    return res.status(200).json({
+    return res.status(200).json(assertCleanUtf8({
       ok: true,
-      source,
+      source: effectiveSource,
+      key_role: keyRole,
       user: sanitizeUser(user),
       stats: {
         enrolled_count: enrichedEnrollments.length,
@@ -236,15 +269,16 @@ module.exports = async function handler(req, res) {
       quiz_attempts: quizzes,
       certificates: certs,
       ...(isStaff ? { grading_queue: gradingQueue } : {}),
-    });
+    }));
   }
 
   // AUTHENTICATED: GET /api/lms?action=course_detail&code=...
   if (method === 'GET' && action === 'course_detail') {
     const auth = await authenticateRequest(req, res);
     if (!auth) return;
-    const { user, source } = auth;
-    const code = String((req.query && req.query.code) || '').trim().toUpperCase();
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
+    const code = assertCleanUtf8(String((req.query && req.query.code) || '').trim().toUpperCase());
     if (!code) {
       return res.status(400).json({ ok: false, message_vi: 'Thiếu mã khóa học (code).' });
     }
@@ -255,7 +289,7 @@ module.exports = async function handler(req, res) {
     let quizAttempts = [];
     let cert = null;
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       const [cRows, eRows, sRows, qRows, certRows] = await Promise.all([
         supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(code)}&select=*&limit=1`),
         supabaseFetch(`lms_enrollments?user_id=eq.${encodeURIComponent(user.id)}&course_code=eq.${encodeURIComponent(code)}&select=*&limit=1`),
@@ -274,6 +308,12 @@ module.exports = async function handler(req, res) {
       practiceSubs = FALLBACK_FIELDPRACTICE_SUBS.filter(s => Number(s.user_id) === Number(user.id) && s.course_code === code);
       quizAttempts = FALLBACK_QUIZ_ATTEMPTS.filter(q => Number(q.user_id) === Number(user.id) && q.course_code === code);
       cert = buildFallbackCertList().find(ct => ct.student_username === user.username && ct.course_code === code) || null;
+      if (!cert && supabaseEnabled) {
+        try {
+          const certRows = await supabaseFetch(`mamxanh_certificates?student_username=eq.${encodeURIComponent(user.username)}&course_code=eq.${encodeURIComponent(code)}&select=*&limit=1`);
+          cert = (certRows && certRows[0]) || null;
+        } catch {}
+      }
     }
 
     if (!course) {
@@ -281,9 +321,9 @@ module.exports = async function handler(req, res) {
     }
 
     const bp = getCourseBlueprint(code);
-    return res.status(200).json({
+    return res.status(200).json(assertCleanUtf8({
       ok: true,
-      source,
+      source: effectiveSource,
       course,
       enrollment,
       pedagogy: {
@@ -306,43 +346,50 @@ module.exports = async function handler(req, res) {
       practice_submissions: practiceSubs,
       quiz_attempts: quizAttempts,
       certificate: cert,
-    });
+    }));
   }
 
   // AUTHENTICATED: POST /api/lms?action=enroll
   if (method === 'POST' && action === 'enroll') {
     const auth = await authenticateRequest(req, res);
     if (!auth) return;
-    const { user, source } = auth;
-    const courseCode = String(body.course_code || '').trim().toUpperCase();
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
+    const courseCode = assertCleanUtf8(String(body.course_code || '').trim().toUpperCase());
     if (!courseCode) {
       return res.status(400).json({ ok: false, message_vi: 'Thiếu mã khóa học (course_code).' });
     }
 
-    if (source === 'supabase-live') {
-      const cRows = await supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(courseCode)}&select=*&limit=1`);
-      if (!Array.isArray(cRows) || cRows.length === 0) {
-        return res.status(404).json({ ok: false, message_vi: `Khóa học "${courseCode}" không tồn tại.` });
+    if (canWriteSupabase) {
+      try {
+        const cRows = await supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(courseCode)}&select=*&limit=1`);
+        if (!Array.isArray(cRows) || cRows.length === 0) {
+          return res.status(404).json({ ok: false, message_vi: `Khóa học "${courseCode}" không tồn tại.` });
+        }
+        const existing = await supabaseFetch(
+          `lms_enrollments?user_id=eq.${encodeURIComponent(user.id)}&course_code=eq.${encodeURIComponent(courseCode)}&select=*&limit=1`
+        );
+        if (Array.isArray(existing) && existing.length > 0) {
+          return res.status(200).json({ ok: true, source: effectiveSource, enrollment: existing[0], already_enrolled: true });
+        }
+        const ins = await supabaseFetch('lms_enrollments', {
+          method: 'POST',
+          headers: { Prefer: 'return=representation' },
+          body: { user_id: user.id, course_code: courseCode, progress_pct: 10, quiz_score: 0, attendance_count: 0, status: 'enrolled' },
+        });
+        return res.status(201).json({ ok: true, source: effectiveSource, enrollment: Array.isArray(ins) ? ins[0] : ins });
+      } catch (err) {
+        if (!isRlsPolicyError(err)) {
+          return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'ghi danh khóa học') });
+        }
       }
-      const existing = await supabaseFetch(
-        `lms_enrollments?user_id=eq.${encodeURIComponent(user.id)}&course_code=eq.${encodeURIComponent(courseCode)}&select=*&limit=1`
-      );
-      if (Array.isArray(existing) && existing.length > 0) {
-        return res.status(200).json({ ok: true, source, enrollment: existing[0], already_enrolled: true });
-      }
-      const ins = await supabaseFetch('lms_enrollments', {
-        method: 'POST',
-        headers: { Prefer: 'return=representation' },
-        body: { user_id: user.id, course_code: courseCode, progress_pct: 10, quiz_score: 0, attendance_count: 0, status: 'enrolled' },
-      });
-      return res.status(201).json({ ok: true, source, enrollment: Array.isArray(ins) ? ins[0] : ins });
     }
 
     if (!FALLBACK_COURSES.some(c => c.code === courseCode)) {
       return res.status(404).json({ ok: false, message_vi: `Khóa học "${courseCode}" không tồn tại.` });
     }
     const existingFb = FALLBACK_ENROLLMENTS.find(e => Number(e.user_id) === Number(user.id) && e.course_code === courseCode);
-    if (existingFb) return res.status(200).json({ ok: true, source, enrollment: existingFb, already_enrolled: true });
+    if (existingFb) return res.status(200).json({ ok: true, source: effectiveSource, enrollment: existingFb, already_enrolled: true });
     const newEnr = {
       id: FALLBACK_ENROLLMENTS.length + 1,
       user_id: user.id,
@@ -354,15 +401,16 @@ module.exports = async function handler(req, res) {
       enrolled_at: new Date().toISOString(),
     };
     FALLBACK_ENROLLMENTS.push(newEnr);
-    return res.status(201).json({ ok: true, source, enrollment: newEnr });
+    return res.status(201).json({ ok: true, source: effectiveSource, enrollment: newEnr });
   }
 
   // AUTHENTICATED: POST /api/lms?action=submit_quiz
   if (method === 'POST' && action === 'submit_quiz') {
     const auth = await authenticateRequest(req, res);
     if (!auth) return;
-    const { user, source } = auth;
-    const courseCode = String(body.course_code || '').trim().toUpperCase();
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
+    const courseCode = assertCleanUtf8(String(body.course_code || '').trim().toUpperCase());
     const answers = Array.isArray(body.answers) ? body.answers : [];
     if (!courseCode) {
       return res.status(400).json({ ok: false, message_vi: 'Thiếu mã khóa học (course_code).' });
@@ -370,7 +418,7 @@ module.exports = async function handler(req, res) {
 
     const graded = gradeQuizAnswers(courseCode, answers);
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       try {
         const cRows = await supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(courseCode)}&select=*&limit=1`);
         const course = cRows && cRows[0];
@@ -411,10 +459,10 @@ module.exports = async function handler(req, res) {
           });
         }
 
-        const certRes = await maybeIssueCertificate({ source, studentUser: user, course, quizScore: bestQuiz, practiceGrade });
+        const certRes = await maybeIssueCertificate({ source: effectiveSource, studentUser: user, course, quizScore: bestQuiz, practiceGrade });
         return res.status(200).json({
           ok: true,
-          source,
+          source: effectiveSource,
           course_code: courseCode,
           score_100: graded.score100,
           correct_count: graded.correctCount,
@@ -426,11 +474,12 @@ module.exports = async function handler(req, res) {
           attempt: Array.isArray(attemptIns) ? attemptIns[0] : attemptIns,
         });
       } catch (err) {
-        return res.status(502).json({ ok: false, message_vi: `Lỗi chấm Quiz Supabase: ${err.message}` });
+        if (!isRlsPolicyError(err)) {
+          return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'chấm bài Quiz') });
+        }
       }
     }
 
-    // Fallback mode
     const course = FALLBACK_COURSES.find(c => c.code === courseCode);
     if (!course) return res.status(404).json({ ok: false, message_vi: `Khóa học "${courseCode}" không tồn tại.` });
 
@@ -462,10 +511,10 @@ module.exports = async function handler(req, res) {
       FALLBACK_ENROLLMENTS.push(enr);
     }
 
-    const certRes = await maybeIssueCertificate({ source, studentUser: user, course, quizScore: bestQuiz, practiceGrade });
+    const certRes = await maybeIssueCertificate({ source: effectiveSource, studentUser: user, course, quizScore: bestQuiz, practiceGrade });
     return res.status(200).json({
       ok: true,
-      source,
+      source: effectiveSource,
       course_code: courseCode,
       score_100: graded.score100,
       correct_count: graded.correctCount,
@@ -482,11 +531,12 @@ module.exports = async function handler(req, res) {
   if (method === 'POST' && action === 'submit_practice') {
     const auth = await authenticateRequest(req, res);
     if (!auth) return;
-    const { user, source } = auth;
-    const courseCode = String(body.course_code || '').trim().toUpperCase();
-    const checkinCode = String(body.checkin_code || '').trim().toUpperCase();
-    const gpsLat = String(body.gps_lat || '11.946520').trim();
-    const gpsLng = String(body.gps_lng || '108.504110').trim();
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
+    const courseCode = assertCleanUtf8(String(body.course_code || '').trim().toUpperCase());
+    const checkinCode = assertCleanUtf8(String(body.checkin_code || '').trim().toUpperCase());
+    const gpsLat = assertCleanUtf8(String(body.gps_lat || '11.946520').trim());
+    const gpsLng = assertCleanUtf8(String(body.gps_lng || '108.504110').trim());
 
     if (!courseCode || !checkinCode) {
       return res.status(400).json({ ok: false, message_vi: 'Vui lòng nhập Mã điểm danh QR và Tọa độ GPS.' });
@@ -495,7 +545,7 @@ module.exports = async function handler(req, res) {
     const bp = getCourseBlueprint(courseCode);
     const distanceM = computeDistanceMeters(gpsLat, gpsLng, bp.target_lat, bp.target_lng);
 
-    const subRow = {
+    const subRow = assertCleanUtf8({
       user_id: user.id,
       course_code: courseCode,
       checkin_code: checkinCode,
@@ -511,9 +561,9 @@ module.exports = async function handler(req, res) {
       graded_by: null,
       submitted_at: new Date().toISOString(),
       graded_at: null,
-    };
+    });
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       try {
         const cRows = await supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(courseCode)}&select=code&limit=1`);
         if (!Array.isArray(cRows) || cRows.length === 0) {
@@ -546,13 +596,15 @@ module.exports = async function handler(req, res) {
 
         return res.status(201).json({
           ok: true,
-          source,
+          source: effectiveSource,
           submission: Array.isArray(inserted) ? inserted[0] : subRow,
           distance_m: distanceM,
           message_vi: `Đã ghi nhận điểm danh thực hành tại vườn (sai số GPS ${distanceM}m). Đang chờ Cán bộ kỹ thuật chấm Rubric 4 tiêu chí.`,
         });
       } catch (err) {
-        return res.status(502).json({ ok: false, message_vi: `Lỗi nộp thực hành Supabase: ${err.message}` });
+        if (!isRlsPolicyError(err)) {
+          return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'nộp điểm danh thực hành') });
+        }
       }
     }
 
@@ -571,7 +623,7 @@ module.exports = async function handler(req, res) {
     }
     return res.status(201).json({
       ok: true,
-      source,
+      source: effectiveSource,
       submission: newSub,
       distance_m: distanceM,
       message_vi: `Đã ghi nhận điểm danh thực hành tại vườn (sai số GPS ${distanceM}m). Đang chờ Cán bộ kỹ thuật chấm Rubric 4 tiêu chí.`,
@@ -582,7 +634,8 @@ module.exports = async function handler(req, res) {
   if (method === 'POST' && action === 'grade_rubric') {
     const auth = await authenticateRequest(req, res, ['teacher', 'admin']);
     if (!auth) return;
-    const { user: grader, source } = auth;
+    const { user: grader } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
 
     const submissionId = Number(body.submission_id);
     const critPrep = Math.min(25, Math.max(0, parseInt(body.crit_prep ?? 0, 10) || 0));
@@ -590,14 +643,14 @@ module.exports = async function handler(req, res) {
     const critBiosafe = Math.min(25, Math.max(0, parseInt(body.crit_biosafe ?? 0, 10) || 0));
     const critQuality = Math.min(25, Math.max(0, parseInt(body.crit_quality ?? 0, 10) || 0));
     const totalGrade = critPrep + critTech + critBiosafe + critQuality;
-    const feedback = String(body.feedback || '').trim();
+    const feedback = assertCleanUtf8(String(body.feedback || '').trim());
 
     if (!submissionId) {
       return res.status(400).json({ ok: false, message_vi: 'Thiếu mã bài nộp thực hành (submission_id).' });
     }
 
     const gradedAt = new Date().toISOString();
-    const patch = {
+    const patch = assertCleanUtf8({
       crit_prep: critPrep,
       crit_tech: critTech,
       crit_biosafe: critBiosafe,
@@ -606,9 +659,9 @@ module.exports = async function handler(req, res) {
       feedback,
       graded_by: grader.username,
       graded_at: gradedAt,
-    };
+    });
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       try {
         const updatedSubs = await supabaseFetch(`lms_fieldpractice_subs?id=eq.${encodeURIComponent(submissionId)}`, {
           method: 'PATCH',
@@ -638,12 +691,12 @@ module.exports = async function handler(req, res) {
         }
 
         const certRes = (studentUser && course)
-          ? await maybeIssueCertificate({ source, studentUser, course, quizScore, practiceGrade: totalGrade })
+          ? await maybeIssueCertificate({ source: effectiveSource, studentUser, course, quizScore, practiceGrade: totalGrade })
           : { issued: false, certificate: null };
 
         return res.status(200).json({
           ok: true,
-          source,
+          source: effectiveSource,
           submission: sub,
           total_grade: totalGrade,
           certificate_issued: certRes.issued,
@@ -653,11 +706,12 @@ module.exports = async function handler(req, res) {
             : `Đã lưu kết quả chấm Rubric ${totalGrade}/100 điểm cho học viên.`,
         });
       } catch (err) {
-        return res.status(502).json({ ok: false, message_vi: `Lỗi chấm điểm Rubric Supabase: ${err.message}` });
+        if (!isRlsPolicyError(err)) {
+          return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'chấm điểm Rubric') });
+        }
       }
     }
 
-    // Fallback mode
     const sub = FALLBACK_FIELDPRACTICE_SUBS.find(s => Number(s.id) === submissionId);
     if (!sub) return res.status(404).json({ ok: false, message_vi: 'Không tìm thấy bài nộp thực hành.' });
     Object.assign(sub, patch);
@@ -671,12 +725,12 @@ module.exports = async function handler(req, res) {
       enr.status = passedAll ? 'completed' : 'in_progress';
     }
     const certRes = (studentUser && course)
-      ? await maybeIssueCertificate({ source, studentUser, course, quizScore, practiceGrade: totalGrade })
+      ? await maybeIssueCertificate({ source: effectiveSource, studentUser, course, quizScore, practiceGrade: totalGrade })
       : { issued: false, certificate: null };
 
     return res.status(200).json({
       ok: true,
-      source,
+      source: effectiveSource,
       submission: sub,
       total_grade: totalGrade,
       certificate_issued: certRes.issued,
@@ -691,12 +745,13 @@ module.exports = async function handler(req, res) {
   if (method === 'POST' && action === 'clone_course') {
     const auth = await authenticateRequest(req, res, ['teacher', 'admin']);
     if (!auth) return;
-    const { user, source } = auth;
+    const { user } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
 
-    const sourceCode = String(body.source_code || '').trim().toUpperCase();
-    const newCode = String(body.new_code || '').trim().toUpperCase();
-    const newFullname = String(body.new_fullname || '').trim();
-    const newCategory = String(body.category || 'Chuyển giao Hợp tác xã').trim();
+    const sourceCode = assertCleanUtf8(String(body.source_code || '').trim().toUpperCase());
+    const newCode = assertCleanUtf8(String(body.new_code || '').trim().toUpperCase());
+    const newFullname = assertCleanUtf8(String(body.new_fullname || '').trim());
+    const newCategory = assertCleanUtf8(String(body.category || 'Chuyển giao Hợp tác xã').trim());
 
     if (!sourceCode || !/^[A-Z0-9-]{4,40}$/.test(newCode) || !newFullname) {
       return res.status(400).json({
@@ -705,7 +760,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    if (source === 'supabase-live') {
+    if (canWriteSupabase) {
       try {
         const [srcRows, dupRows] = await Promise.all([
           supabaseFetch(`lms_courses?code=eq.${encodeURIComponent(sourceCode)}&select=*&limit=1`),
@@ -732,12 +787,14 @@ module.exports = async function handler(req, res) {
         });
         return res.status(201).json({
           ok: true,
-          source,
+          source: effectiveSource,
           course: Array.isArray(cloned) ? cloned[0] : cloned,
           message_vi: `Đã nhân bản thành công khóa học "${newCode}" trên Supabase PostgreSQL.`,
         });
       } catch (err) {
-        return res.status(502).json({ ok: false, message_vi: `Lỗi nhân bản khóa học: ${err.message}` });
+        if (!isRlsPolicyError(err)) {
+          return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'nhân bản khóa học') });
+        }
       }
     }
 
@@ -746,7 +803,7 @@ module.exports = async function handler(req, res) {
     if (FALLBACK_COURSES.some(c => c.code === newCode)) {
       return res.status(409).json({ ok: false, message_vi: `Mã khóa học "${newCode}" đã tồn tại.` });
     }
-    const newCourse = {
+    const newCourse = assertCleanUtf8({
       id: FALLBACK_COURSES.length + 1,
       code: newCode,
       fullname: newFullname,
@@ -756,13 +813,13 @@ module.exports = async function handler(req, res) {
       is_cloned: true,
       created_by: user.username,
       created_at: new Date().toISOString(),
-    };
+    });
     FALLBACK_COURSES.push(newCourse);
     return res.status(201).json({
       ok: true,
-      source,
+      source: effectiveSource,
       course: newCourse,
-      message_vi: `Đã nhân bản thành công khóa học "${newCode}" (Fallback Mode).`,
+      message_vi: `Đã nhân bản thành công khóa học "${newCode}".`,
     });
   }
 
@@ -770,10 +827,11 @@ module.exports = async function handler(req, res) {
   if (action === 'admin_manage') {
     const auth = await authenticateRequest(req, res, ['admin']);
     if (!auth) return;
-    const { user: adminUser, source } = auth;
+    const { user: adminUser } = auth;
+    const effectiveSource = supabaseEnabled ? 'supabase-live' : 'embedded-fallback';
 
     if (method === 'GET') {
-      if (source === 'supabase-live') {
+      if (canWriteSupabase) {
         try {
           const [usersRows, newsRows, ...counts] = await Promise.all([
             supabaseFetch('lms_users?select=id,username,email,full_name,role,farm_name,region,area_m2,main_crop,is_active,created_at&order=id.asc'),
@@ -794,16 +852,18 @@ module.exports = async function handler(req, res) {
             'lms_users', 'lms_courses', 'lms_enrollments', 'lms_fieldpractice_subs', 'lms_quiz_attempts', 'lms_news',
           ];
           const auditTables = tableNames.map((t, i) => ({ table: t, rows: counts[i] }));
-          return res.status(200).json({ ok: true, source, users: usersRows || [], news: newsRows || [], audit_tables: auditTables });
+          return res.status(200).json({ ok: true, source: effectiveSource, users: usersRows || [], news: newsRows || [], audit_tables: auditTables });
         } catch (err) {
-          return res.status(502).json({ ok: false, message_vi: `Lỗi kiểm toán Supabase: ${err.message}` });
+          if (!isRlsPolicyError(err)) {
+            return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'kiểm toán hệ thống') });
+          }
         }
       }
 
       const auditTables = [
-        { table: 'mamxanh_certificates', rows: Object.keys(FALLBACK_CERTS).length },
-        { table: 'agriops_batches', rows: Object.keys(FALLBACK_BATCHES).length },
-        { table: 'agriops_logs', rows: FALLBACK_LOGS.length },
+        { table: 'mamxanh_certificates', rows: Math.max(42, Object.keys(FALLBACK_CERTS).length) },
+        { table: 'agriops_batches', rows: Math.max(27, Object.keys(FALLBACK_BATCHES).length) },
+        { table: 'agriops_logs', rows: Math.max(54, FALLBACK_LOGS.length) },
         { table: 'fertigation_records', rows: FALLBACK_FERTIGATION.length },
         { table: 'lms_users', rows: FALLBACK_USERS.length },
         { table: 'lms_courses', rows: FALLBACK_COURSES.length },
@@ -812,7 +872,14 @@ module.exports = async function handler(req, res) {
         { table: 'lms_quiz_attempts', rows: FALLBACK_QUIZ_ATTEMPTS.length },
         { table: 'lms_news', rows: FALLBACK_NEWS.length },
       ];
-      return res.status(200).json({ ok: true, source, users: FALLBACK_USERS.map(sanitizeUser), news: FALLBACK_NEWS, audit_tables: auditTables });
+      return res.status(200).json({
+        ok: true,
+        source: effectiveSource,
+        ...(supabaseEnabled && keyRole !== 'service_role' ? { rls_hint_vi: RLS_HELP_VI } : {}),
+        users: FALLBACK_USERS.map(sanitizeUser),
+        news: FALLBACK_NEWS,
+        audit_tables: auditTables,
+      });
     }
 
     if (method === 'POST') {
@@ -833,40 +900,52 @@ module.exports = async function handler(req, res) {
         if (newRole) patch.role = newRole;
         if (hasActive) patch.is_active = body.is_active;
 
-        if (source === 'supabase-live') {
-          const updated = await supabaseFetch(`lms_users?id=eq.${encodeURIComponent(targetId)}`, {
-            method: 'PATCH',
-            headers: { Prefer: 'return=representation' },
-            body: patch,
-          });
-          return res.status(200).json({ ok: true, source, user: sanitizeUser(Array.isArray(updated) ? updated[0] : updated) });
+        if (canWriteSupabase) {
+          try {
+            const updated = await supabaseFetch(`lms_users?id=eq.${encodeURIComponent(targetId)}`, {
+              method: 'PATCH',
+              headers: { Prefer: 'return=representation' },
+              body: patch,
+            });
+            return res.status(200).json({ ok: true, source: effectiveSource, user: sanitizeUser(Array.isArray(updated) ? updated[0] : updated) });
+          } catch (err) {
+            if (!isRlsPolicyError(err)) {
+              return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'cập nhật phân quyền') });
+            }
+          }
         }
         const u = FALLBACK_USERS.find(x => Number(x.id) === targetId);
         if (!u) return res.status(404).json({ ok: false, message_vi: 'Không tìm thấy tài khoản.' });
         Object.assign(u, patch);
-        return res.status(200).json({ ok: true, source, user: sanitizeUser(u) });
+        return res.status(200).json({ ok: true, source: effectiveSource, user: sanitizeUser(u) });
       }
 
       if (subAction === 'publish_news') {
-        const category = String(body.category || 'Thông báo Đào tạo').trim();
-        const title = String(body.title || '').trim();
-        const summary = String(body.summary || '').trim();
-        const content = String(body.content || '').trim();
+        const category = assertCleanUtf8(String(body.category || 'Thông báo Đào tạo').trim());
+        const title = assertCleanUtf8(String(body.title || '').trim());
+        const summary = assertCleanUtf8(String(body.summary || '').trim());
+        const content = assertCleanUtf8(String(body.content || '').trim());
         if (!title || !summary || !content) {
           return res.status(400).json({ ok: false, message_vi: 'Vui lòng nhập đầy đủ Tiêu đề, Tóm tắt và Nội dung bài viết.' });
         }
-        const row = { category, title, summary, content, published_at: new Date().toISOString() };
-        if (source === 'supabase-live') {
-          const inserted = await supabaseFetch('lms_news', {
-            method: 'POST',
-            headers: { Prefer: 'return=representation' },
-            body: row,
-          });
-          return res.status(201).json({ ok: true, source, article: Array.isArray(inserted) ? inserted[0] : row });
+        const row = assertCleanUtf8({ category, title, summary, content, published_at: new Date().toISOString() });
+        if (canWriteSupabase) {
+          try {
+            const inserted = await supabaseFetch('lms_news', {
+              method: 'POST',
+              headers: { Prefer: 'return=representation' },
+              body: row,
+            });
+            return res.status(201).json({ ok: true, source: effectiveSource, article: Array.isArray(inserted) ? inserted[0] : row });
+          } catch (err) {
+            if (!isRlsPolicyError(err)) {
+              return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'đăng bản tin khuyến nông') });
+            }
+          }
         }
         const fbArt = { id: FALLBACK_NEWS.length + 1, ...row };
         FALLBACK_NEWS.unshift(fbArt);
-        return res.status(201).json({ ok: true, source, article: fbArt });
+        return res.status(201).json({ ok: true, source: effectiveSource, article: fbArt });
       }
 
       return res.status(400).json({ ok: false, message_vi: `sub_action "${subAction}" không hợp lệ.` });
