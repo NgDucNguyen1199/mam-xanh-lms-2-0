@@ -1255,6 +1255,16 @@
       }
     }
 
+    function showWelcomeToast(welcomeEmail) {
+      const mailSent = Boolean(welcomeEmail && welcomeEmail.sent);
+      showToast(
+        mailSent
+          ? t('Đăng ký thành công! Email chào mừng đã được gửi tới hộp thư của bạn.', 'Registration successful! A welcome email has been sent to your inbox.')
+          : t('Đăng ký tài khoản thành công! Chào mừng bạn đến với Mầm Xanh LMS 2.0.', 'Account registered successfully! Welcome to Mầm Xanh LMS 2.0.'),
+        'success'
+      );
+    }
+
     async function handleOAuthRedirectOnLoad() {
       const hashStr = window.location.hash && window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
       const searchStr = window.location.search && window.location.search.startsWith('?') ? window.location.search.slice(1) : '';
@@ -1286,7 +1296,8 @@
         setToken(json.token);
         currentUser = json.user;
         closeAuthModal();
-        showToast(json.message_vi || t(`Xin chào ${currentUser.full_name}!`, `Welcome, ${currentUser.full_name}!`), 'success');
+        if (json.is_new_user) showWelcomeToast(json.welcomeEmail);
+        else showToast(json.message_vi || t(`Xin chào ${currentUser.full_name}!`, `Welcome, ${currentUser.full_name}!`), 'success');
         await switchView('dashboard');
         return true;
       } catch (err) {
@@ -1358,7 +1369,7 @@
         document.getElementById('reg-email').value = '';
         document.getElementById('reg-password').value = '';
         closeAuthModal();
-        showToast(t(`Đã tạo tài khoản ${currentUser.username} và ghi danh 3 khóa học!`, `Account ${currentUser.username} created and enrolled in 3 starter courses!`), 'success');
+        showWelcomeToast(json.welcomeEmail);
         await switchView('dashboard');
       } catch (err) {
         msgBox.innerHTML = `<div class="mx-inline-msg error">Lỗi kết nối: ${escapeHtml(err.message)}</div>`;

@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { sendWelcomeEmail } = require('./_mailer');
 const {
   RLS_HELP_VI,
   RLS_HELP_EN,
@@ -272,6 +273,12 @@ module.exports = async function handler(req, res) {
         supabaseEnabled
       );
       const token = signJwt({ sub: created.user.id, username: created.user.username, role: created.user.role });
+      const welcomeEmail = await sendWelcomeEmail({
+        full_name: created.user.full_name,
+        username: created.user.username,
+        email: created.user.email,
+        auth_method: 'Form Đăng ký 3 trường',
+      });
       return res.status(201).json({
         ok: true,
         source: created.source,
@@ -279,7 +286,10 @@ module.exports = async function handler(req, res) {
         token,
         user: sanitizeUser(created.user),
         enrolled_starter_courses: STARTER_COURSES,
-        message_vi: `Đã tạo tài khoản ${created.user.username} và ghi danh 3 khóa học cơ bản thành công.`,
+        welcomeEmail,
+        message_vi: welcomeEmail.sent
+          ? 'Đăng ký thành công! Email chào mừng đã được gửi tới hộp thư của bạn.'
+          : 'Đăng ký tài khoản thành công! Chào mừng bạn đến với Mầm Xanh LMS 2.0.',
       });
     } catch (err) {
       return res.status(502).json({
@@ -407,6 +417,18 @@ module.exports = async function handler(req, res) {
       );
 
       const token = signJwt({ sub: created.user.id, username: created.user.username, role: created.user.role });
+      const oauthMethodLabel =
+        provider === 'google'
+          ? 'Google OAuth 2.0'
+          : provider === 'github'
+            ? 'GitHub OAuth 2.0'
+            : `Supabase OAuth (${provider})`;
+      const welcomeEmail = await sendWelcomeEmail({
+        full_name: created.user.full_name,
+        username: created.user.username,
+        email: created.user.email,
+        auth_method: oauthMethodLabel,
+      });
       return res.status(200).json({
         ok: true,
         source: created.source,
@@ -416,7 +438,10 @@ module.exports = async function handler(req, res) {
         token,
         user: sanitizeUser(created.user),
         enrolled_starter_courses: STARTER_COURSES,
-        message_vi: `Chào mừng ${created.user.full_name}! Đã tạo tài khoản qua ${provider.toUpperCase()} và ghi danh 3 khóa học cơ bản.`,
+        welcomeEmail,
+        message_vi: welcomeEmail.sent
+          ? `Đăng ký thành công qua ${oauthMethodLabel}! Email chào mừng đã được gửi tới hộp thư của bạn.`
+          : `Chào mừng ${created.user.full_name}! Đã tạo tài khoản qua ${provider.toUpperCase()} và ghi danh 3 khóa học cơ bản.`,
       });
     } catch (err) {
       return res.status(502).json({
