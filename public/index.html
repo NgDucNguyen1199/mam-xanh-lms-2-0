@@ -314,6 +314,42 @@
       min-width: 0;
     }
 
+    /* Social OAuth Buttons & Divider */
+    .mx-oauth-section { margin-top: 16px; }
+    .mx-oauth-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 12px; color: var(--mx-text-subtle); font-size: 0.82rem; font-weight: 600;
+    }
+    .mx-oauth-divider::before, .mx-oauth-divider::after {
+      content: ""; flex: 1 1 0; height: 1px; background: var(--mx-border-strong);
+    }
+    .mx-oauth-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+    }
+    .mx-btn-oauth {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      min-height: 44px; min-width: 44px; width: 100%; padding: 9px 14px;
+      border-radius: var(--mx-radius-md); border: 1px solid var(--mx-border-strong);
+      background: var(--mx-surface); color: var(--mx-text-main);
+      font-family: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer;
+      white-space: nowrap; touch-action: manipulation; transition: all 0.15s ease;
+    }
+    .mx-btn-oauth:hover:not(:disabled) {
+      background: var(--mx-surface-muted); border-color: var(--mx-primary);
+    }
+    .mx-btn-oauth:disabled { opacity: 0.6; cursor: not-allowed; }
+    .mx-spotlight-title {
+      margin: 0 0 8px; font-size: 1.08rem; font-weight: 700; line-height: 1.4;
+      color: var(--mx-text-main);
+    }
+    .mx-spotlight-summary {
+      margin: 0 0 14px; font-size: 0.9rem; line-height: 1.6; color: var(--mx-text-body);
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .mx-footer-links {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px;
+    }
+
     /* Toast Notification (Bottom-Right) */
     #mx-toast-container {
       position: fixed; right: 18px; bottom: 18px; z-index: 1200;
@@ -385,7 +421,14 @@
       .mx-container { padding: 16px 12px 48px; }
       .mx-card, .mx-hero { padding: 16px; }
       .mx-hero h1 { font-size: 1.42rem; }
-      .mx-grid-2, .mx-grid-3, .mx-grid-4, .mx-hero-stats { grid-template-columns: minmax(0, 1fr); }
+      .mx-grid-2, .mx-grid-3, .mx-grid-4, .mx-hero-stats, .mx-oauth-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .mx-nav-inner { padding: 6px 10px; }
+      .mx-brand { font-size: 0.9rem; gap: 6px; padding: 4px 2px; }
+      .mx-brand img { width: 28px; height: 28px; }
+      .mx-mobile-drawer-btn { padding: 6px 10px; gap: 5px; font-size: 0.82rem; }
     }
 
     /* A4 Print Support for Transcript & Rubric */
@@ -462,21 +505,19 @@
           </div>
         </div>
 
-        <aside class="mx-hero-aside">
+        <aside class="mx-hero-aside" id="hero-spotlight-aside">
           <div>
-            <span class="mx-badge" style="margin-bottom:10px;">VERCEL SERVERLESS + SUPABASE POSTGRESQL</span>
-            <h3 style="margin:0 0 8px;font-size:1.12rem;" data-vi="Thông tin Đồ án Tốt nghiệp" data-en="Graduation Thesis Team">Thông tin Đồ án Tốt nghiệp</h3>
-            <p style="margin:0 0 10px;font-size:0.9rem;color:var(--mx-text-body);">
-              <strong data-vi="Giảng viên hướng dẫn:" data-en="Supervisor:">Giảng viên hướng dẫn:</strong> Thầy Trần Ngô Như Khánh<br />
-              <strong data-vi="Nhóm sinh viên (CTK46A):" data-en="Students (CTK46A):">Nhóm sinh viên (CTK46A):</strong><br />
-              • <code>2212429</code> — Nguyễn Đức Nguyên (<span data-vi="Trưởng nhóm" data-en="Team Lead">Trưởng nhóm</span>)<br />
-              • <code>2212484</code> — Mai Xuân Trưởng<br />
-              • <code>2212447</code> — Nguyễn Ngọc Tuệ Quang
-            </p>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="mx-badge" data-vi="TIN TIÊU ĐIỂM KHUYẾN NÔNG" data-en="EXTENSION SPOTLIGHT">TIN TIÊU ĐIỂM KHUYẾN NÔNG</span>
+              <span id="spotlight-date" style="font-size:0.8125rem;color:var(--mx-text-subtle);font-variant-numeric:tabular-nums;">12/11/2026</span>
+            </div>
+            <div id="spotlight-category" style="font-size:0.8125rem;font-weight:700;color:var(--mx-primary);margin-bottom:6px;">Kỹ thuật Canh tác</div>
+            <h3 id="spotlight-title" class="mx-spotlight-title">Ứng dụng tưới nhỏ giọt bù áp &amp; châm phân tự động (Fertigation) tiết kiệm 40% phân bón</h3>
+            <p id="spotlight-summary" class="mx-spotlight-summary">Kiểm soát EC 1.2–2.2 mS/cm và pH 5.6–6.2 theo từng giai đoạn sinh trưởng trong nhà màng Lâm Đồng.</p>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-            <a href="https://github.com/NgDucNguyen1199/mam-xanh-lms-2-0" target="_blank" rel="noopener" class="mx-btn mx-btn-secondary" style="flex:1;">GitHub Repository</a>
-            <button type="button" class="mx-btn mx-btn-secondary" style="flex:1;" onclick="openModal('docker-modal')" data-vi="Moodle Docker 60s" data-en="Moodle Docker 60s">Moodle Docker 60s</button>
+            <button type="button" id="spotlight-read-btn" class="mx-btn mx-btn-primary" style="flex:1 1 auto;" onclick="openSpotlightArticle()" data-vi="Đọc bài viết tiêu điểm →" data-en="Read Spotlight Article →">Đọc bài viết tiêu điểm →</button>
+            <button type="button" class="mx-btn mx-btn-secondary" onclick="openModal('thesis-modal')" data-vi="Giới thiệu Đồ án" data-en="Thesis Info">Giới thiệu Đồ án</button>
           </div>
         </aside>
       </section>
@@ -779,7 +820,25 @@
   </main>
 
   <footer class="mx-footer no-print">
-    <strong>Mầm Xanh LMS 2.0</strong> — <span data-vi="Đồ án Tốt nghiệp Khoa Công nghệ Thông tin, Trường Đại học Đà Lạt (2026) • GVHD: Thầy Trần Ngô Như Khánh" data-en="Graduation Thesis, Faculty of Information Technology, Dalat University (2026) • Supervisor: Tran Ngo Nhu Khanh">Đồ án Tốt nghiệp Khoa Công nghệ Thông tin, Trường Đại học Đà Lạt (2026) • GVHD: Thầy Trần Ngô Như Khánh</span>
+    <div style="max-width:960px;margin:0 auto;">
+      <div style="font-weight:700;color:var(--mx-text-main);margin-bottom:4px;">
+        Mầm Xanh LMS 2.0 — <span data-vi="Đồ án Tốt nghiệp Khoa Công nghệ Thông tin, Trường Đại học Đà Lạt (2026)" data-en="Graduation Thesis, Faculty of Information Technology, Dalat University (2026)">Đồ án Tốt nghiệp Khoa Công nghệ Thông tin, Trường Đại học Đà Lạt (2026)</span>
+      </div>
+      <div style="margin-bottom:4px;">
+        <strong data-vi="Giảng viên hướng dẫn:" data-en="Supervisor:">Giảng viên hướng dẫn:</strong> Thầy Trần Ngô Như Khánh
+      </div>
+      <div style="font-size:0.84rem;">
+        <strong data-vi="Nhóm sinh viên thực hiện (CTK46A):" data-en="Student Team (CTK46A):">Nhóm sinh viên thực hiện (CTK46A):</strong>
+        <code>2212429</code> Nguyễn Đức Nguyên (<span data-vi="Trưởng nhóm" data-en="Team Lead">Trưởng nhóm</span>) •
+        <code>2212484</code> Mai Xuân Trưởng •
+        <code>2212447</code> Nguyễn Ngọc Tuệ Quang
+      </div>
+      <div class="mx-footer-links">
+        <button type="button" class="mx-btn mx-btn-secondary" onclick="openModal('thesis-modal')" data-vi="Giới thiệu Đồ án &amp; Kiến trúc" data-en="Thesis &amp; Architecture">Giới thiệu Đồ án &amp; Kiến trúc</button>
+        <button type="button" class="mx-btn mx-btn-secondary" onclick="openModal('docker-modal')" data-vi="Moodle Docker 60s" data-en="Moodle Docker 60s">Moodle Docker 60s</button>
+        <a href="https://github.com/NgDucNguyen1199/mam-xanh-lms-2-0" target="_blank" rel="noopener" class="mx-btn mx-btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
   </footer>
 
   <!-- TOAST NOTIFICATION CONTAINER -->
@@ -787,7 +846,7 @@
 
   <!-- AUTHENTICATION MODAL -->
   <div id="auth-modal" class="mx-modal no-print" role="dialog" aria-modal="true" onclick="if(event.target===this)closeAuthModal()">
-    <div class="mx-modal-box" style="max-width:540px;">
+    <div class="mx-modal-box" style="max-width:520px;">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--mx-border);">
         <div style="display:flex;align-items:center;gap:10px;">
           <img src="/assets/logo_fit_dlu.png" alt="Logo" style="width:30px;height:30px;border-radius:6px;" />
@@ -804,12 +863,12 @@
       <form id="login-form" onsubmit="event.preventDefault(); submitLogin();" style="display:flex;flex-direction:column;gap:14px;">
         <div>
           <label for="login-identifier" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Tên đăng nhập hoặc Email" data-en="Username or Email">Tên đăng nhập hoặc Email</label>
-          <input id="login-identifier" type="text" class="mx-input" autocomplete="username" required placeholder="Nhập username hoặc email của bạn" />
+          <input id="login-identifier" type="text" class="mx-input" autocomplete="username" required placeholder="Nhập username hoặc email của bạn" data-vi-placeholder="Nhập username hoặc email của bạn" data-en-placeholder="Enter your username or email" />
         </div>
         <div>
           <label for="login-password" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Mật khẩu" data-en="Password">Mật khẩu</label>
           <div class="mx-pw-wrap">
-            <input id="login-password" type="password" class="mx-input" autocomplete="current-password" required placeholder="Nhập mật khẩu" />
+            <input id="login-password" type="password" class="mx-input" autocomplete="current-password" required placeholder="Nhập mật khẩu" data-vi-placeholder="Nhập mật khẩu" data-en-placeholder="Enter your password" />
             <button type="button" class="mx-pw-toggle" onclick="togglePw('login-password', this)" data-vi="Hiện" data-en="Show">Hiện</button>
           </div>
         </div>
@@ -817,53 +876,46 @@
       </form>
 
       <form id="register-form" onsubmit="event.preventDefault(); submitRegister();" style="display:none;flex-direction:column;gap:12px;">
-        <div class="mx-grid-2">
-          <div>
-            <label for="reg-username" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Tên đăng nhập *" data-en="Username *">Tên đăng nhập *</label>
-            <input id="reg-username" type="text" class="mx-input" autocomplete="username" required placeholder="vd: nongho_dalat" />
-          </div>
-          <div>
-            <label for="reg-email" style="display:block;font-weight:700;margin-bottom:4px;">Email *</label>
-            <input id="reg-email" type="email" class="mx-input" autocomplete="email" required placeholder="ten@mamxanh.vn" />
-          </div>
+        <div>
+          <label for="reg-fullname" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Họ và tên *" data-en="Full Name *">Họ và tên *</label>
+          <input id="reg-fullname" type="text" class="mx-input" autocomplete="name" required placeholder="Nhập họ và tên của bạn" data-vi-placeholder="Nhập họ và tên của bạn" data-en-placeholder="Enter your full name" />
         </div>
         <div>
-          <label for="reg-fullname" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Họ và tên Học viên / Nông hộ *" data-en="Full Name *">Họ và tên Học viên / Nông hộ *</label>
-          <input id="reg-fullname" type="text" class="mx-input" autocomplete="name" required placeholder="Nguyễn Văn An" />
+          <label for="reg-email" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Email *" data-en="Email *">Email *</label>
+          <input id="reg-email" type="email" class="mx-input" autocomplete="email" required placeholder="Nhập địa chỉ email" data-vi-placeholder="Nhập địa chỉ email" data-en-placeholder="Enter your email address" />
         </div>
         <div>
-          <label for="reg-password" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Mật khẩu (tối thiểu 6 ký tự) *" data-en="Password (min 6 chars) *">Mật khẩu (tối thiểu 6 ký tự) *</label>
+          <label for="reg-password" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Mật khẩu *" data-en="Password *">Mật khẩu *</label>
           <div class="mx-pw-wrap">
-            <input id="reg-password" type="password" class="mx-input" autocomplete="new-password" required minlength="6" placeholder="Nhập mật khẩu bảo mật" />
+            <input id="reg-password" type="password" class="mx-input" autocomplete="new-password" required minlength="6" placeholder="Tối thiểu 6 ký tự" data-vi-placeholder="Tối thiểu 6 ký tự" data-en-placeholder="Minimum 6 characters" />
             <button type="button" class="mx-pw-toggle" onclick="togglePw('reg-password', this)" data-vi="Hiện" data-en="Show">Hiện</button>
           </div>
         </div>
-        <div class="mx-grid-2">
-          <div>
-            <label for="reg-farm" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Tên Nông trại / HTX" data-en="Farm / Cooperative Name">Tên Nông trại / HTX</label>
-            <input id="reg-farm" type="text" class="mx-input" value="Nông trại Công nghệ cao Đà Lạt" />
-          </div>
-          <div>
-            <label for="reg-region" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Tỉnh / Vùng trồng" data-en="Province / Region">Tỉnh / Vùng trồng</label>
-            <select id="reg-region" class="mx-select">
-              <option value="Lâm Đồng">Lâm Đồng</option>
-              <option value="Đắk Lắk">Đắk Lắk</option>
-              <option value="Đồng Nai">Đồng Nai</option>
-            </select>
-          </div>
-        </div>
-        <div class="mx-grid-2">
-          <div>
-            <label for="reg-area" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Diện tích canh tác (m²)" data-en="Farm Area (m²)">Diện tích canh tác (m²)</label>
-            <input id="reg-area" type="number" class="mx-input" value="1500" min="50" />
-          </div>
-          <div>
-            <label for="reg-crop" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Cây trồng chủ lực" data-en="Main Crop">Cây trồng chủ lực</label>
-            <input id="reg-crop" type="text" class="mx-input" value="Rau & Dâu tây Công nghệ cao" />
-          </div>
-        </div>
-        <button type="submit" id="register-submit-btn" class="mx-btn mx-btn-primary" style="width:100%;" data-vi="Tạo tài khoản &amp; Bắt đầu học ngay" data-en="Create Account &amp; Start Learning">Tạo tài khoản &amp; Bắt đầu học ngay</button>
+        <button type="submit" id="register-submit-btn" class="mx-btn mx-btn-primary" style="width:100%;" data-vi="Đăng ký" data-en="Sign Up">Đăng ký</button>
       </form>
+
+      <div class="mx-oauth-section">
+        <div class="mx-oauth-divider">
+          <span data-vi="Hoặc tiếp tục với" data-en="Or continue with">Hoặc tiếp tục với</span>
+        </div>
+        <div class="mx-oauth-grid">
+          <button type="button" id="oauth-google-btn" class="mx-btn-oauth" onclick="startOAuth('google', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+              <path fill="#34A853" d="M12 24c3.3 0 6.08-1.09 8.1-2.96l-3.88-3.05c-1.1.74-2.51 1.18-4.22 1.18-3.25 0-6-2.19-6.98-5.14H1.01v3.14C3.05 21.2 7.24 24 12 24Z"/>
+              <path fill="#FBBC05" d="M5.02 14.03A7.2 7.2 0 0 1 4.64 12c0-.7.13-1.38.38-2.03V6.83H1.01A11.99 11.99 0 0 0 0 12c0 1.94.46 3.77 1.01 5.17l4.01-3.14Z"/>
+              <path fill="#EA4335" d="M12 4.75c1.8 0 3.41.62 4.68 1.84l3.51-3.51C18.07 1.19 15.3 0 12 0 7.24 0 3.05 2.8 1.01 6.83l4.01 3.14c.98-2.95 3.73-5.22 6.98-5.22Z"/>
+            </svg>
+            <span data-vi="Tiếp tục với Google" data-en="Continue with Google">Tiếp tục với Google</span>
+          </button>
+          <button type="button" id="oauth-github-btn" class="mx-btn-oauth" onclick="startOAuth('github', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.37.5 0 5.78 0 12.3c0 5.21 3.44 9.64 8.21 11.2.6.11.82-.25.82-.57 0-.28-.01-1.03-.02-2.02-3.34.71-4.04-1.59-4.04-1.59-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.58-2.67-.3-5.47-1.31-5.47-5.84 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.51.12-3.15 0 0 1.01-.32 3.3 1.21a11.7 11.7 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.64.24 2.85.12 3.15.77.83 1.24 1.88 1.24 3.17 0 4.54-2.8 5.54-5.48 5.83.43.37.82 1.09.82 2.2 0 1.59-.01 2.87-.01 3.26 0 .32.22.69.83.57C20.56 21.93 24 17.51 24 12.3 24 5.78 18.63.5 12 .5Z"/>
+            </svg>
+            <span data-vi="Tiếp tục với GitHub" data-en="Continue with GitHub">Tiếp tục với GitHub</span>
+          </button>
+        </div>
+      </div>
 
       <div id="auth-modal-msg"></div>
     </div>
@@ -1144,13 +1196,15 @@
     }
 
     // ==================== AUTH MODAL & SESSION ====================
+    let spotlightArticleId = 1;
+
     function openAuthModal(tab = 'login') {
       toggleMobileNav(true);
       document.getElementById('auth-modal-msg').innerHTML = '';
       switchAuthTab(tab);
       document.getElementById('auth-modal').classList.add('open');
       setTimeout(() => {
-        const targetInput = document.getElementById(tab === 'register' ? 'reg-username' : 'login-identifier');
+        const targetInput = document.getElementById(tab === 'register' ? 'reg-fullname' : 'login-identifier');
         if (targetInput) targetInput.focus();
       }, 60);
     }
@@ -1173,6 +1227,72 @@
       const isPw = inp.type === 'password';
       inp.type = isPw ? 'text' : 'password';
       btn.textContent = isPw ? t('Ẩn', 'Hide') : t('Hiện', 'Show');
+    }
+
+    async function startOAuth(provider, btn) {
+      const msgBox = document.getElementById('auth-modal-msg');
+      if (msgBox) msgBox.innerHTML = '';
+      setBtnLoading(btn, true, 'Đang kết nối cổng xác thực...', 'Connecting OAuth...');
+      try {
+        const { res, json } = await apiFetch('/api/auth?action=oauth_config');
+        if (!res.ok || !json.ok || !json.supabaseUrl || !json.supabaseAnonKey) {
+          const errMsg = (json && json.message_vi) || t(
+            'Chưa cấu hình SUPABASE_ANON_KEY trên Vercel. Vui lòng thiết lập Environment Variable để bật đăng nhập Google/GitHub.',
+            'SUPABASE_ANON_KEY is not configured on Vercel Environment Variables.'
+          );
+          if (msgBox) msgBox.innerHTML = `<div class="mx-inline-msg warn">${escapeHtml(errMsg)}</div>`;
+          showToast(errMsg, 'warn');
+          return;
+        }
+        const redirectTo = encodeURIComponent(window.location.origin);
+        window.location.href = `${json.supabaseUrl}/auth/v1/authorize?provider=${encodeURIComponent(provider)}&redirect_to=${redirectTo}`;
+      } catch (err) {
+        const errMsg = t('Không thể kết nối cổng xác thực OAuth: ', 'OAuth connection error: ') + err.message;
+        if (msgBox) msgBox.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(errMsg)}</div>`;
+        showToast(errMsg, 'error');
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function handleOAuthRedirectOnLoad() {
+      const hashStr = window.location.hash && window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
+      const searchStr = window.location.search && window.location.search.startsWith('?') ? window.location.search.slice(1) : '';
+      const hashParams = new URLSearchParams(hashStr);
+      const searchParams = new URLSearchParams(searchStr);
+
+      const oauthErr = hashParams.get('error_description') || searchParams.get('error_description') || hashParams.get('error') || searchParams.get('error');
+      if (oauthErr) {
+        try { window.history.replaceState(null, '', window.location.pathname); } catch {}
+        showToast(t('Đăng nhập OAuth chưa thành công: ', 'OAuth sign-in error: ') + oauthErr, 'error');
+        return false;
+      }
+
+      const accessToken = hashParams.get('access_token');
+      if (!accessToken) return false;
+
+      try { window.history.replaceState(null, '', window.location.pathname); } catch {}
+      showToast(t('Đang đồng bộ phiên đăng nhập OAuth với Supabase...', 'Syncing OAuth session with Supabase...'), 'success');
+
+      try {
+        const { res, json } = await apiFetch('/api/auth?action=oauth_callback', {
+          method: 'POST',
+          body: { action: 'oauth_callback', access_token: accessToken },
+        });
+        if (!res.ok || !json.ok || !json.token || !json.user) {
+          showToast((json && json.message_vi) || t('Xác thực OAuth thất bại.', 'OAuth verification failed.'), 'error');
+          return false;
+        }
+        setToken(json.token);
+        currentUser = json.user;
+        closeAuthModal();
+        showToast(json.message_vi || t(`Xin chào ${currentUser.full_name}!`, `Welcome, ${currentUser.full_name}!`), 'success');
+        await switchView('dashboard');
+        return true;
+      } catch (err) {
+        showToast(t('Lỗi xử lý OAuth callback: ', 'OAuth callback error: ') + err.message, 'error');
+        return false;
+      }
     }
 
     async function submitLogin() {
@@ -1213,14 +1333,9 @@
       const msgBox = document.getElementById('auth-modal-msg');
       const payload = {
         action: 'register',
-        username: document.getElementById('reg-username').value.trim(),
-        email: document.getElementById('reg-email').value.trim(),
         full_name: document.getElementById('reg-fullname').value.trim(),
+        email: document.getElementById('reg-email').value.trim(),
         password: document.getElementById('reg-password').value,
-        farm_name: document.getElementById('reg-farm').value.trim(),
-        region: document.getElementById('reg-region').value,
-        area_m2: document.getElementById('reg-area').value,
-        main_crop: document.getElementById('reg-crop').value.trim(),
       };
 
       setBtnLoading(btn, true, 'Đang tạo tài khoản...', 'Creating account...');
@@ -1239,6 +1354,9 @@
         }
         setToken(json.token);
         currentUser = json.user;
+        document.getElementById('reg-fullname').value = '';
+        document.getElementById('reg-email').value = '';
+        document.getElementById('reg-password').value = '';
         closeAuthModal();
         showToast(t(`Đã tạo tài khoản ${currentUser.username} và ghi danh 3 khóa học!`, `Account ${currentUser.username} created and enrolled in 3 starter courses!`), 'success');
         await switchView('dashboard');
@@ -1834,7 +1952,7 @@
             <div class="mx-grid-2">
               <div>
                 <label for="prof-farm" style="display:block;font-weight:700;margin-bottom:4px;">Tên Nông trại / Đơn vị</label>
-                <input id="prof-farm" type="text" class="mx-input" value="${escapeHtml(u.farm_name)}" />
+                <input id="prof-farm" type="text" class="mx-input" value="${escapeHtml(u.farm_name || '')}" placeholder="Nhập tên Nông trại / HTX của bạn" />
               </div>
               <div>
                 <label for="prof-region" style="display:block;font-weight:700;margin-bottom:4px;">Vùng trồng</label>
@@ -1852,7 +1970,7 @@
               </div>
               <div>
                 <label for="prof-crop" style="display:block;font-weight:700;margin-bottom:4px;">Cây trồng chủ lực</label>
-                <input id="prof-crop" type="text" class="mx-input" value="${escapeHtml(u.main_crop)}" />
+                <input id="prof-crop" type="text" class="mx-input" value="${escapeHtml(u.main_crop || '')}" placeholder="Ví dụ: Dâu tây, Rau thủy canh CNC..." />
               </div>
             </div>
             <hr style="border:none;border-top:1px solid var(--mx-border);margin:6px 0;" />
@@ -2253,7 +2371,30 @@
     async function loadNewsPublic() {
       const { json } = await apiFetch('/api/lms?action=news');
       publicNewsCache = (json && json.news) || [];
+      renderHeroSpotlight();
       renderNewsGrid();
+    }
+
+    function renderHeroSpotlight() {
+      const a = Array.isArray(publicNewsCache) && publicNewsCache.length > 0 ? publicNewsCache[0] : null;
+      if (!a) return;
+      spotlightArticleId = Number(a.id || 1);
+      const dateEl = document.getElementById('spotlight-date');
+      const catEl = document.getElementById('spotlight-category');
+      const titleEl = document.getElementById('spotlight-title');
+      const sumEl = document.getElementById('spotlight-summary');
+      if (dateEl && a.published_at) dateEl.textContent = new Date(a.published_at).toLocaleDateString('vi-VN');
+      if (catEl) catEl.textContent = a.category || '';
+      if (titleEl) titleEl.textContent = a.title || '';
+      if (sumEl) sumEl.textContent = a.summary || '';
+    }
+
+    function openSpotlightArticle() {
+      if (Array.isArray(publicNewsCache) && publicNewsCache.length > 0) {
+        openArticle(spotlightArticleId || publicNewsCache[0].id);
+        return;
+      }
+      openArticle(1);
     }
 
     function renderNewsGrid() {
@@ -2675,6 +2816,37 @@ docker compose up -d --build
 # Truy cập: http://localhost:8090</pre>
         `;
         document.getElementById('info-modal').classList.add('open');
+        return;
+      }
+
+      if (type === 'thesis-modal') {
+        document.getElementById('modal-badge').textContent = 'KHOA CNTT • TRƯỜNG ĐẠI HỌC ĐÀ LẠT (2026)';
+        document.getElementById('modal-title').textContent = t(
+          'Giới thiệu Đồ án Tốt nghiệp & Nhóm Thực hiện Mầm Xanh LMS 2.0',
+          'Graduation Thesis & Engineering Team — Mầm Xanh LMS 2.0'
+        );
+        document.getElementById('modal-body').innerHTML = `
+          <p><strong>${escapeHtml(t('Tên đề tài:', 'Thesis Topic:'))}</strong> ${escapeHtml(t('Xây dựng hệ thống quản lý học tập và tập huấn kỹ thuật canh tác nông nghiệp công nghệ cao trên nền tảng Moodle (Mầm Xanh LMS 2.0).', 'Developing a Learning Management and High-Tech Agricultural Cultivation Training System on Moodle Platform (Mam Xanh LMS 2.0).'))}</p>
+          <div style="background:var(--mx-accent-soft);border:1px solid var(--mx-border);border-radius:10px;padding:14px;margin:12px 0;">
+            <p style="margin:0 0 8px;"><strong>${escapeHtml(t('Giảng viên hướng dẫn:', 'Supervisor:'))}</strong> Thầy Trần Ngô Như Khánh</p>
+            <p style="margin:0 0 6px;"><strong>${escapeHtml(t('Nhóm sinh viên thực hiện (CTK46A):', 'Student Team (CTK46A):'))}</strong></p>
+            <ul style="margin:0;padding-left:20px;line-height:1.8;">
+              <li><code>2212429</code> — Nguyễn Đức Nguyên (${escapeHtml(t('Trưởng nhóm', 'Team Lead'))})</li>
+              <li><code>2212484</code> — Mai Xuân Trưởng</li>
+              <li><code>2212447</code> — Nguyễn Ngọc Tuệ Quang</li>
+            </ul>
+          </div>
+          <p style="margin:10px 0 6px;"><strong>${escapeHtml(t('Kiến trúc Lai (Hybrid Cloud Deployment):', 'Hybrid Cloud Architecture:'))}</strong></p>
+          <ul style="margin:0;padding-left:20px;line-height:1.7;">
+            <li><strong>On-Premise Edge (60s):</strong> Docker Turbo 5 containers (Caddy 2 Reverse Proxy, Moodle 4.5 LTS PHP 8.3 + Apache, MariaDB 10.11 utf8mb4, Redis 7 Cache, Moodle Cron Worker) + 5 Plugin chuyên biệt.</li>
+            <li><strong>Cloud Serverless:</strong> Vercel Edge Functions (Node.js) + Supabase PostgreSQL 15 (10 bảng RLS, PBKDF2 SHA-512, JWT HS256, Google/GitHub OAuth, xác thực chứng nhận HMAC-SHA256 &amp; Hộ chiếu VietGAP).</li>
+          </ul>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;">
+            <a href="https://github.com/NgDucNguyen1199/mam-xanh-lms-2-0" target="_blank" rel="noopener" class="mx-btn mx-btn-primary">GitHub Repository</a>
+            <button type="button" class="mx-btn mx-btn-secondary" onclick="openModal('docker-modal')">${escapeHtml(t('Xem hướng dẫn Docker 60s', 'View Docker 60s Guide'))}</button>
+          </div>
+        `;
+        document.getElementById('info-modal').classList.add('open');
       }
     }
 
@@ -2701,7 +2873,11 @@ docker compose up -d --build
       document.querySelectorAll('[data-vi][data-en]').forEach(el => {
         el.textContent = currentLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
       });
+      document.querySelectorAll('[data-vi-placeholder][data-en-placeholder]').forEach(el => {
+        el.placeholder = currentLang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-vi-placeholder');
+      });
       renderNavbar();
+      renderHeroSpotlight();
       renderNewsGrid();
       renderCoursesGrid();
       renderGallery();
@@ -2731,7 +2907,8 @@ docker compose up -d --build
         loadFertigationHistory(),
       ]);
 
-      if (getToken()) {
+      const oauthHandled = await handleOAuthRedirectOnLoad();
+      if (!oauthHandled && getToken()) {
         const { res, json } = await apiFetch('/api/auth?action=me');
         if (res.ok && json.ok && json.user) {
           currentUser = json.user;

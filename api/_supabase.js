@@ -33,7 +33,18 @@ function setJsonHeaders(res) {
 function getSupabaseCreds() {
   const url = String(process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
   const key = String(process.env.SUPABASE_SERVICE_KEY || '').trim();
-  return { url, key, enabled: Boolean(url && key) };
+  const anonKey = String(process.env.SUPABASE_ANON_KEY || '').trim();
+  return { url, key, anonKey, enabled: Boolean(url && key) };
+}
+
+function getSupabaseOAuthConfig() {
+  const supabaseUrl = String(process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const supabaseAnonKey = String(process.env.SUPABASE_ANON_KEY || '').trim();
+  return {
+    supabaseUrl,
+    supabaseAnonKey,
+    ok: Boolean(supabaseUrl && supabaseAnonKey),
+  };
 }
 
 function hasSupabaseConfig() {
@@ -593,6 +604,8 @@ module.exports = {
   RLS_HELP_EN,
   assertCleanUtf8,
   setJsonHeaders,
+  getSupabaseCreds,
+  getSupabaseOAuthConfig,
   hasSupabaseConfig,
   inspectServiceKeyRole,
   isRlsPolicyError,
