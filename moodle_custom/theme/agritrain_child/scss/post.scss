@@ -3019,3 +3019,29 @@ body.mx-site-index:not(.editing) {
         }
     }
 }
+
+.mx-rubric-chip {
+    min-height: 44px;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+        background-color: #234e3e !important;
+        border-color: #234e3e !important;
+        color: #ffffff !important;
+    }
+}
+
+.mx-phi-dashboard-card {
+    background: var(--mx-surface);
+    border: 1px solid var(--mx-border);
+}
+
+@media (max-width: 575.98px) {
+    .mx-one-tap-feedback-bar .mx-rubric-chip {
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+    }
+}
+

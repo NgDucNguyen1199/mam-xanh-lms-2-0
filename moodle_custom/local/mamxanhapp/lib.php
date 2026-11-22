@@ -233,3 +233,76 @@ function local_mamxanhapp_extend_navigation(\global_navigation $nav): void {
     );
     $calcnode->showinflatnavigation = true;
 }
+
+/**
+ * Non-blocking Cloud sync bridge from Moodle 4.5 LTS to Supabase PostgREST.
+ * Fails silently with debug logging if env vars are missing, network is down, or timeout (> 2s) occurs.
+ */
+function local_mamxanh_sync_to_cloud(string $table, array $payload, string $onconflict = ''): bool {
+    global $CFG;
+
+    try {
+        $allowedtables = ['mamxanh_certificates', 'agriops_batches', 'agriops_logs'];
+        if (!in_array($table, $allowedtables, true) || !function_exists('curl_init')) {
+            return false;
+        }
+
+        $sburl = trim((string)(getenv('MAMXANH_SUPABASE_URL') ?: ($CFG->mamxanh_supabase_url ?? '')));
+        $sbkey = trim((string)(getenv('MAMXANH_SUPABASE_KEY') ?: ($CFG->mamxanh_supabase_key ?? '')));
+        if ($sburl === '' || $sbkey === '') {
+            return false;
+        }
+
+        // Normalize UTF-8 strings cleanly to NFC before JSON encoding.
+        $cleanpayload = [];
+        foreach ($payload as $k => $v) {
+            if (is_string($v) && class_exists('\Normalizer')) {
+                $norm = \Normalizer::normalize($v, \Normalizer::FORM_C);
+                $cleanpayload[$k] = ($norm !== false) ? $norm : $v;
+            } else {
+                $cleanpayload[$k] = $v;
+            }
+        }
+
+        $endpoint = rtrim($sburl, '/') . '/rest/v1/' . rawurlencode($table);
+        if ($onconflict !== '') {
+            $endpoint .= '?on_conflict=' . rawurlencode($onconflict);
+        }
+
+        $body = json_encode($cleanpayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($body === false) {
+            return false;
+        }
+
+        $ch = curl_init($endpoint);
+        if ($ch === false) {
+            return false;
+        }
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $body,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 1,
+            CURLOPT_TIMEOUT        => 2,
+            CURLOPT_HTTPHEADER     => [
+                'apikey: ' . $sbkey,
+                'Authorization: Bearer ' . $sbkey,
+                'Content-Type: application/json; charset=utf-8',
+                'Prefer: resolution=merge-duplicates,return=minimal',
+            ],
+        ]);
+        @curl_exec($ch);
+        $errno = curl_errno($ch);
+        $httpcode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($errno !== 0 || $httpcode < 200 || $httpcode >= 300) {
+            @error_log("local_mamxanh_sync_to_cloud({$table}) skipped/non-2xx (errno={$errno}, http={$httpcode})");
+            return false;
+        }
+        return true;
+    } catch (\Throwable $e) {
+        @error_log('local_mamxanh_sync_to_cloud exception: ' . $e->getMessage());
+        return false;
+    }
+}

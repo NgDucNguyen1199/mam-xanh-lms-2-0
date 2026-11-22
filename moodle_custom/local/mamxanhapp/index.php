@@ -2,6 +2,9 @@
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
+if (file_exists($CFG->dirroot . '/local/agriops/lib.php')) {
+    require_once($CFG->dirroot . '/local/agriops/lib.php');
+}
 
 local_mamxanhapp_handle_lang_switch();
 require_login();
@@ -233,6 +236,12 @@ echo $OUTPUT->header();
             <span class="mx-summary-label"><?php echo s(local_mamxanhapp_t('Chứng nhận', 'Certificates')); ?></span>
         </div>
     </section>
+
+    <?php
+    if (function_exists('local_agriops_render_phi_widget_html')) {
+        echo local_agriops_render_phi_widget_html($userid, $en);
+    }
+    ?>
 
     <section aria-labelledby="mx-courses-heading">
         <h2 id="mx-courses-heading" class="mx-section-title"><?php echo s(local_mamxanhapp_t('Danh sách khóa học', 'Course list')); ?></h2>

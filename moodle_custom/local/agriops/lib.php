@@ -151,3 +151,192 @@ function local_agriops_translate_activity_type(string $code): string {
 function local_agriops_translate_note(string $note): string {
     return trim($note);
 }
+
+/**
+ * Push a VietGAP batch and/or cultivation log to Supabase via local_mamxanh_sync_to_cloud().
+ */
+function local_agriops_push_cloud_records(?stdClass $batch, ?stdClass $log = null): void {
+    global $CFG, $DB;
+
+    if (!function_exists('local_mamxanh_sync_to_cloud') && file_exists($CFG->dirroot . '/local/mamxanhapp/lib.php')) {
+        require_once($CFG->dirroot . '/local/mamxanhapp/lib.php');
+    }
+    if (!function_exists('local_mamxanh_sync_to_cloud')) {
+        return;
+    }
+
+    if ($batch) {
+        $farmer = $DB->get_record('user', ['id' => (int)$batch->userid], 'id,firstname,lastname,firstnamephonetic,lastnamephonetic,middlename,alternatename');
+        $farmname = 'Nông trại Mầm Xanh';
+        $gps = '11.940419, 108.458313';
+        if ($DB->get_manager()->table_exists('local_farmerprofile')) {
+            $pf = $DB->get_record('local_farmerprofile', ['userid' => (int)$batch->userid], 'id,farm_name');
+            if ($pf && !empty($pf->farm_name)) {
+                $farmname = (string)$pf->farm_name;
+            }
+        }
+        $secret = $CFG->mamxanh_hmac_secret ?? 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
+        $batchhmac = hash_hmac('sha256', implode('|', [
+            trim((string)$batch->batch_code),
+            trim((string)$batch->region),
+            (int)$batch->area_m2,
+            trim((string)$batch->qr_token),
+        ]), $secret);
+
+        local_mamxanh_sync_to_cloud('agriops_batches', [
+            'batch_code'        => (string)$batch->batch_code,
+            'product_name'      => (string)$batch->product_name,
+            'crop_variety'      => (string)$batch->crop_variety,
+            'farmer_name'       => $farmer ? fullname($farmer) : ('Nông hộ #' . (int)$batch->userid),
+            'farm_name'         => $farmname,
+            'region'            => (string)$batch->region,
+            'gps_coords'        => $gps,
+            'area_m2'           => (int)$batch->area_m2,
+            'expected_yield_kg' => (int)$batch->expected_yield_kg,
+            'vietgap_status'    => (string)($batch->vietgap_status ?? 'active'),
+            'qr_token'          => (string)$batch->qr_token,
+            'hmac_signature'    => $batchhmac,
+            'created_at'        => gmdate('c', (int)($batch->timecreated ?: time())),
+        ], 'batch_code');
+    }
+
+    if ($batch && $log) {
+        local_mamxanh_sync_to_cloud('agriops_logs', [
+            'batch_code'    => (string)$batch->batch_code,
+            'activity_type' => (string)$log->activity_type,
+            'notes'         => (string)$log->notes,
+            'ph_val'        => (string)$log->ph_val,
+            'ec_val'        => (string)$log->ec_val,
+            'phi_days'      => (int)$log->phi_days,
+            'logged_at'     => gmdate('c', (int)($log->log_time ?: time())),
+        ]);
+    }
+}
+
+/**
+ * Query latest VietGAP PHI (Pre-Harvest Interval) records per batch for Dashboard alerts.
+ * Prioritizes entries where phi_days > 0 and computes safe_date = timecreated + (phi_days * 86400).
+ */
+function local_agriops_get_phi_countdown_items(int $userid, int $limit = 4): array {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+    if (!$dbman->table_exists('local_agriops_log') || !$dbman->table_exists('local_agriops_batch')) {
+        return [];
+    }
+
+    $hasownbatches = ($userid > 0) && $DB->record_exists('local_agriops_batch', ['userid' => $userid]);
+    $where = $hasownbatches ? 'WHERE (l.userid = :uid OR b.userid = :buid)' : '';
+    $params = $hasownbatches ? ['uid' => $userid, 'buid' => $userid] : [];
+
+    $sql = "SELECT l.id, l.batchid, l.activity_type, l.notes, l.phi_days, l.log_time,
+                   b.batch_code, b.product_name, b.region
+              FROM {local_agriops_log} l
+              JOIN {local_agriops_batch} b ON b.id = l.batchid
+              {$where}
+          ORDER BY CASE WHEN l.phi_days > 0 THEN 1 ELSE 0 END DESC,
+                   l.log_time DESC,
+                   l.id DESC";
+    $rows = $DB->get_records_sql($sql, $params, 0, 40);
+    if (empty($rows)) {
+        return [];
+    }
+
+    $now = time();
+    $bybatch = [];
+    foreach ($rows as $r) {
+        $bid = (int)$r->batchid;
+        if (isset($bybatch[$bid])) {
+            continue;
+        }
+        $phidays = max(0, (int)$r->phi_days);
+        $timecreated = (int)$r->log_time;
+        $safedate = $timecreated + ($phidays * 86400);
+        $remaining = ($phidays > 0 && $safedate > $now)
+            ? (int)ceil(($safedate - $now) / 86400)
+            : 0;
+
+        $bybatch[$bid] = (object)[
+            'batchid'        => $bid,
+            'batch_code'     => (string)$r->batch_code,
+            'product_name'   => (string)$r->product_name,
+            'region'         => (string)$r->region,
+            'activity_type'  => (string)$r->activity_type,
+            'activity_label' => local_agriops_translate_activity_type((string)$r->activity_type),
+            'phi_days'       => $phidays,
+            'timecreated'    => $timecreated,
+            'safe_date'      => $safedate,
+            'remaining_days' => $remaining,
+            'is_locked'      => ($remaining > 0),
+        ];
+        if (count($bybatch) >= $limit) {
+            break;
+        }
+    }
+
+    return array_values($bybatch);
+}
+
+/**
+ * Render the VietGAP PHI Harvest Safety Countdown card for Learner Dashboard & Overview Hub.
+ */
+function local_agriops_render_phi_widget_html(int $userid, bool $en = false): string {
+    $items = local_agriops_get_phi_countdown_items($userid, 4);
+    if (empty($items)) {
+        return '';
+    }
+
+    $diaryurl = (new moodle_url('/local/agriops/index.php'))->out(false);
+    $eyebrow = $en ? 'VIETGAP HARVEST SAFETY (PHI COUNTDOWN)' : 'CẢNH BÁO AN TOÀN THU HOẠCH VIETGAP (ĐẾM NGƯỢC PHI)';
+    $heading = $en ? 'Pre-Harvest Interval (PHI) Status by Crop Batch' : 'Theo dõi Thời gian Cách ly An toàn Thu hoạch theo Lô';
+    $btnlabel = $en ? 'Open VietGAP Diary' : 'Mở Sổ Nhật ký VietGAP';
+    $dfmt = $en ? '%d %b %Y %H:%M' : '%d/%m/%Y %H:%M';
+
+    $cards = '';
+    foreach ($items as $it) {
+        if ($it->is_locked) {
+            $urgent = ($it->remaining_days >= 5);
+            $cardbg = $urgent ? '#FEF2F2' : '#FFF8E1';
+            $bordercol = $urgent ? '#C62828' : '#B45309';
+            $badgebg = $urgent ? '#C62828' : '#B45309';
+            $badgecol = '#FFFFFF';
+            $statustext = $en
+                ? ('In Quarantine — ' . $it->remaining_days . ' day(s) remaining')
+                : ('Đang trong thời gian cách ly — Còn ' . $it->remaining_days . ' ngày');
+        } else {
+            $cardbg = '#F9FAF9';
+            $bordercol = '#234E3E';
+            $badgebg = '#EAF2EE';
+            $badgecol = '#234E3E';
+            $statustext = $en ? 'Safe to Harvest' : 'An toàn thu hoạch';
+        }
+
+        $cards .= '<article class="mx-phi-item-card" style="background:' . $cardbg . ';border:1px solid #E6ECE9;border-left:4px solid ' . $bordercol . ';border-radius:10px;padding:14px 16px;">'
+            . '<div class="d-flex flex-wrap justify-content-between align-items-center mb-2" style="gap:6px;">'
+            . '<code style="background:#FFFFFF;border:1px solid #CFD9D4;color:#1C2522;padding:2px 8px;border-radius:4px;font-weight:700;">' . s($it->batch_code) . '</code>'
+            . '<span class="badge" style="background:' . $badgebg . ';color:' . $badgecol . ';border:1px solid ' . $bordercol . ';font-weight:700;padding:4px 10px;border-radius:999px;font-size:0.78rem;">' . s($statustext) . '</span>'
+            . '</div>'
+            . '<div style="font-weight:700;color:#1C2522;font-size:0.95rem;margin-bottom:4px;">' . s($it->product_name) . '</div>'
+            . '<div class="small" style="color:#4A5552;line-height:1.55;">'
+            . s($it->activity_label) . ' (' . s($it->region) . ')<br>'
+            . s($en ? 'PHI Duration: ' : 'Cách ly PHI: ') . '<strong>' . (int)$it->phi_days . ' ' . s($en ? 'days' : 'ngày') . '</strong>'
+            . ' • ' . s($en ? 'Safe harvest: ' : 'Ngày an toàn: ') . '<strong>' . s(userdate($it->safe_date, $dfmt)) . '</strong>'
+            . '</div>'
+            . '</article>';
+    }
+
+    return '<section class="mx-phi-dashboard-card mb-4" aria-label="' . s($eyebrow) . '" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:12px;padding:20px 22px;box-shadow:0 1px 3px rgba(28,37,34,0.03);">'
+        . '<div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:12px;">'
+        . '<div>'
+        . '<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;color:#234E3E;margin-bottom:2px;">' . s($eyebrow) . '</div>'
+        . '<h2 class="h4 mb-0" style="color:#1C2522;font-weight:700;">' . s($heading) . '</h2>'
+        . '</div>'
+        . '<a href="' . $diaryurl . '" class="btn btn-primary" style="min-height:44px;display:inline-flex;align-items:center;font-weight:600;border-radius:8px;background:#234E3E;border-color:#234E3E;">'
+        . s($btnlabel)
+        . '</a>'
+        . '</div>'
+        . '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">'
+        . $cards
+        . '</div>'
+        . '</section>';
+}

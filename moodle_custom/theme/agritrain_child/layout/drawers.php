@@ -69,6 +69,16 @@ $mxfrontpagehtml = '';
 if ($issiteindex && !$PAGE->user_is_editing() && function_exists('theme_agritrain_child_build_frontpage_portal_html')) {
     $mxfrontpagehtml = theme_agritrain_child_build_frontpage_portal_html();
 }
+$mxphiwidgethtml = '';
+if (isloggedin() && !isguestuser() && $PAGE->pagetype === 'my-index' && strpos($reqpath, '/my/courses.php') === false && !$PAGE->user_is_editing()) {
+    $agriopslib = $CFG->dirroot . '/local/agriops/lib.php';
+    if (file_exists($agriopslib)) {
+        require_once($agriopslib);
+        if (function_exists('local_agriops_render_phi_widget_html')) {
+            $mxphiwidgethtml = local_agriops_render_phi_widget_html((int)$USER->id, $isen);
+        }
+    }
+}
 
 $extraclasses = ['uses-drawers', 'mx-agritrain-body'];
 if (!$iscbktadmin) {
@@ -224,6 +234,7 @@ $templatecontext = [
     'langenurl'                 => $enurl->out(false),
     'mxcoursetileshtml'         => $mxcoursetileshtml,
     'mxfrontpagehtml'           => $mxfrontpagehtml,
+    'mxphiwidgethtml'           => $mxphiwidgethtml,
     'mxbackurl'                 => $mxbackurl,
     'mxbacklabel'               => $mxbacklabel,
     'mxhasback'                 => ($mxbackurl !== ''),

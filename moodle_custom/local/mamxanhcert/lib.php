@@ -35,6 +35,46 @@ function local_mamxanhcert_verify_record(stdClass $cert): bool {
 }
 
 /**
+ * Push a newly issued or upgraded certificate record to Supabase asynchronously (non-blocking 2s timeout).
+ */
+function local_mamxanhcert_push_cloud_sync(stdClass $cert): void {
+    global $CFG, $DB;
+
+    if (!function_exists('local_mamxanh_sync_to_cloud') && file_exists($CFG->dirroot . '/local/mamxanhapp/lib.php')) {
+        require_once($CFG->dirroot . '/local/mamxanhapp/lib.php');
+    }
+    if (!function_exists('local_mamxanh_sync_to_cloud')) {
+        return;
+    }
+
+    $student = $DB->get_record('user', ['id' => (int)$cert->userid], 'id,firstname,lastname,firstnamephonetic,lastnamephonetic,middlename,alternatename,username');
+    $course = $DB->get_record('course', ['id' => (int)$cert->courseid], 'id,shortname,fullname');
+    $farmname = '';
+    if ($DB->get_manager()->table_exists('local_farmerprofile')) {
+        $pf = $DB->get_record('local_farmerprofile', ['userid' => (int)$cert->userid], 'id,farm_name');
+        if ($pf && !empty($pf->farm_name)) {
+            $farmname = (string)$pf->farm_name;
+        }
+    }
+
+    local_mamxanh_sync_to_cloud('mamxanh_certificates', [
+        'cert_code'        => (string)$cert->cert_code,
+        'student_name'     => $student ? fullname($student) : ('Học viên #' . (int)$cert->userid),
+        'student_username' => $student ? (string)$student->username : '',
+        'farm_name'        => $farmname,
+        'course_code'      => $course ? (string)$course->shortname : ('C' . (int)$cert->courseid),
+        'course_name'      => $course ? format_string($course->fullname) : '',
+        'final_score'      => round((float)$cert->final_score, 2),
+        'hmac_signature'   => (string)$cert->hmac_signature,
+        'status'           => (string)($cert->status ?? 'valid'),
+        'issued_at'        => gmdate('c', (int)$cert->timecreated),
+        'moodle_userid'    => (int)$cert->userid,
+        'moodle_courseid'  => (int)$cert->courseid,
+        'issued_unix'      => (int)$cert->timecreated,
+    ], 'cert_code');
+}
+
+/**
  * Issue (or upgrade score of) a digital HMAC-SHA256 certificate for a learner in a course.
  */
 function local_mamxanhcert_issue_certificate(int $userid, int $courseid, float $score, int $issuedat = 0): stdClass {
@@ -52,6 +92,7 @@ function local_mamxanhcert_issue_certificate(int $userid, int $courseid, float $
                 (int)$existing->timecreated
             );
             $DB->update_record('local_mamxanhcert', $existing);
+            local_mamxanhcert_push_cloud_sync($existing);
         }
         return $existing;
     }
@@ -82,6 +123,7 @@ function local_mamxanhcert_issue_certificate(int $userid, int $courseid, float $
         'timecreated'    => $ts,
     ];
     $rec->id = $DB->insert_record('local_mamxanhcert', $rec);
+    local_mamxanhcert_push_cloud_sync($rec);
     return $rec;
 }
 

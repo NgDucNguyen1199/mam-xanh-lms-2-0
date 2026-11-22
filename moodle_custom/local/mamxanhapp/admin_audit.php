@@ -1,6 +1,9 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
+if (file_exists($CFG->dirroot . '/mod/fieldpractice/lib.php')) {
+    require_once($CFG->dirroot . '/mod/fieldpractice/lib.php');
+}
 
 local_mamxanhapp_handle_lang_switch();
 require_login();
@@ -135,6 +138,12 @@ echo $OUTPUT->header();
             </table>
         </div>
     </div>
+
+    <?php
+    if (function_exists('fieldpractice_render_criteria_summary_html')) {
+        echo fieldpractice_render_criteria_summary_html(0, local_mamxanhapp_is_en());
+    }
+    ?>
 </div>
 <?php
 echo $OUTPUT->footer();

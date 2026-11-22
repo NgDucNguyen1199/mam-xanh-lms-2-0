@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'expected_yield_kg' => required_param('expected_yield_kg', PARAM_INT),
         ]);
         // Seed initial germination/batch registration log automatically
-        local_agriops_add_log($userid, (int)$batch->id, [
+        $seedlog = local_agriops_add_log($userid, (int)$batch->id, [
             'activity_type' => 'env_check',
             'notes'         => 'Khởi tạo lô canh tác chuẩn VietGAP, kiểm tra nguồn nước và giá thể đạt chuẩn.',
             'ph_val'        => '6.0',
@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'phi_days'      => 0,
             'voice_input'   => 0,
         ]);
+        local_agriops_push_cloud_records($batch, $seedlog);
         $flashmsg = local_mamxanhapp_t(
             'Đã tạo lô nông sản VietGAP mới thành công! Mã truy xuất QR: ' . $batch->batch_code,
             'Created new VietGAP batch successfully! QR Trace Code: ' . $batch->batch_code
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ((int)$batch->userid !== $userid && !$canaudit) {
             local_mamxanhapp_send_403_and_exit();
         }
-        local_agriops_add_log($userid, $batchid, [
+        $newlog = local_agriops_add_log($userid, $batchid, [
             'activity_type' => required_param('activity_type', PARAM_ALPHANUMEXT),
             'notes'         => required_param('notes', PARAM_TEXT),
             'ph_val'        => required_param('ph_val', PARAM_TEXT),
@@ -61,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'phi_days'      => required_param('phi_days', PARAM_INT),
             'voice_input'   => optional_param('voice_input', 0, PARAM_INT),
         ]);
+        local_agriops_push_cloud_records($batch, $newlog);
         $flashmsg = local_mamxanhapp_t(
             'Đã ghi Nhật ký canh tác vào Lô ' . $batch->batch_code . ' và cập nhật hộ chiếu QR!',
             'Recorded cultivation log onto Batch ' . $batch->batch_code . ' and updated QR passport!'

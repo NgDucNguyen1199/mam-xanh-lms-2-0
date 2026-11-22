@@ -272,3 +272,117 @@ function fieldpractice_save_rubric_grade(
 
     return $sub;
 }
+
+/**
+ * Aggregate 4-criteria Rubric average scores (Prep, Technique, BioSafety, Quality) across graded submissions.
+ */
+function fieldpractice_get_rubric_criteria_summary(int $fieldpracticeid = 0): stdClass {
+    global $DB;
+
+    $summary = (object)[
+        'count'       => 0,
+        'avg_prep'    => 0.0,
+        'avg_tech'    => 0.0,
+        'avg_biosafe' => 0.0,
+        'avg_quality' => 0.0,
+        'avg_total'   => 0.0,
+    ];
+    if (!$DB->get_manager()->table_exists('fieldpractice_sub')) {
+        return $summary;
+    }
+
+    $where = 'total_grade IS NOT NULL AND graded_time > 0';
+    $params = [];
+    if ($fieldpracticeid > 0) {
+        $where .= ' AND fieldpracticeid = :fpid';
+        $params['fpid'] = $fieldpracticeid;
+    }
+
+    $sql = "SELECT COUNT(1) AS cnt,
+                   COALESCE(AVG(crit_prep), 0) AS avg_prep,
+                   COALESCE(AVG(crit_tech), 0) AS avg_tech,
+                   COALESCE(AVG(crit_biosafe), 0) AS avg_biosafe,
+                   COALESCE(AVG(crit_quality), 0) AS avg_quality,
+                   COALESCE(AVG(total_grade), 0) AS avg_total
+              FROM {fieldpractice_sub}
+             WHERE {$where}";
+    $row = $DB->get_record_sql($sql, $params);
+    if ($row && (int)$row->cnt > 0) {
+        $summary->count       = (int)$row->cnt;
+        $summary->avg_prep    = round((float)$row->avg_prep, 2);
+        $summary->avg_tech    = round((float)$row->avg_tech, 2);
+        $summary->avg_biosafe = round((float)$row->avg_biosafe, 2);
+        $summary->avg_quality = round((float)$row->avg_quality, 2);
+        $summary->avg_total   = round((float)$row->avg_total, 2);
+    }
+    return $summary;
+}
+
+/**
+ * Render reusable 4-criteria Rubric average breakdown table for Analytics & Audit views.
+ */
+function fieldpractice_render_criteria_summary_html(int $fieldpracticeid = 0, bool $en = false): string {
+    $st = fieldpractice_get_rubric_criteria_summary($fieldpracticeid);
+    $criteria = [
+        [
+            'code' => 'TC1',
+            'name' => $en ? '1. Materials, PPE & Instrument Calibration' : '1. Chuẩn bị Vật tư, Bảo hộ & Hiệu chuẩn Dụng cụ',
+            'avg'  => $st->avg_prep,
+        ],
+        [
+            'code' => 'TC2',
+            'name' => $en ? '2. Standardized VietGAP & Fertigation Execution' : '2. Kỹ thuật Thao tác chuẩn Quy trình VietGAP / Fertigation',
+            'avg'  => $st->avg_tech,
+        ],
+        [
+            'code' => 'TC3',
+            'name' => $en ? '3. BioSafety, pH/EC Control & PHI Compliance' : '3. An toàn Sinh học, Kiểm soát pH/EC & Cách ly PHI',
+            'avg'  => $st->avg_biosafe,
+        ],
+        [
+            'code' => 'TC4',
+            'name' => $en ? '4. Output Quality & Digital Field Logging' : '4. Chất lượng Thành phẩm & Ghi chép Nhật ký Điện tử',
+            'avg'  => $st->avg_quality,
+        ],
+    ];
+
+    $title = $en
+        ? '4-Criteria Field Practice Rubric Skill Averages (' . $st->count . ' Graded Evaluations)'
+        : 'Thống kê Điểm Trung bình 4 Tiêu chí Rubric Thực hành VietGAP (' . $st->count . ' Phiếu đã chấm)';
+
+    $rows = '';
+    foreach ($criteria as $cr) {
+        $pct = $st->count > 0 ? round(($cr['avg'] / 25.0) * 100.0, 1) : 0.0;
+        $rows .= '<tr>'
+            . '<td><code>' . s($cr['code']) . '</code></td>'
+            . '<td style="font-weight:600;color:#1C2522;">' . s($cr['name']) . '</td>'
+            . '<td class="text-center"><strong>' . ($st->count > 0 ? number_format($cr['avg'], 2) : '--') . ' / 25</strong></td>'
+            . '<td>'
+            . '<div class="d-flex align-items-center" style="gap:8px;">'
+            . '<div style="flex:1;height:8px;background:#EAF2EE;border-radius:4px;overflow:hidden;"><div style="width:' . max(4, min(100, (int)round($pct))) . '%;height:100%;background:#234E3E;border-radius:4px;"></div></div>'
+            . '<span class="small fw-bold" style="color:#234E3E;min-width:48px;">' . ($st->count > 0 ? number_format($pct, 1) . '%' : '--') . '</span>'
+            . '</div>'
+            . '</td>'
+            . '</tr>';
+    }
+
+    return '<section class="mx-criteria-summary-card mt-4 mb-4" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:14px;padding:20px;">'
+        . '<div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">'
+        . '<h4 class="h4 mb-0" style="color:#234E3E;font-weight:700;">' . s($title) . '</h4>'
+        . '<span class="badge" style="background:#EAF2EE;color:#234E3E;border:1px solid #CFD9D4;font-weight:700;padding:6px 12px;border-radius:999px;">'
+        . s(($en ? 'Overall Mean: ' : 'Điểm tổng bình quân: ') . ($st->count > 0 ? number_format($st->avg_total, 2) . '/100' : '--'))
+        . '</span>'
+        . '</div>'
+        . '<div class="table-responsive">'
+        . '<table class="table table-hover align-middle mb-0">'
+        . '<thead><tr>'
+        . '<th>' . s($en ? 'Code' : 'Mã') . '</th>'
+        . '<th>' . s($en ? 'Rubric Criterion' : 'Tiêu chí Đánh giá Tay nghề') . '</th>'
+        . '<th class="text-center">' . s($en ? 'Mean Score' : 'Điểm Trung bình') . '</th>'
+        . '<th>' . s($en ? 'Proficiency Rate' : 'Mức độ Đạt chuẩn') . '</th>'
+        . '</tr></thead>'
+        . '<tbody>' . $rows . '</tbody>'
+        . '</table>'
+        . '</div>'
+        . '</section>';
+}

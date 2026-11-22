@@ -2,6 +2,9 @@
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
+if (file_exists($CFG->dirroot . '/mod/fieldpractice/lib.php')) {
+    require_once($CFG->dirroot . '/mod/fieldpractice/lib.php');
+}
 
 local_mamxanhapp_handle_lang_switch();
 require_login();
@@ -391,6 +394,12 @@ echo $OUTPUT->header();
             </div>
         </div>
     </section>
+
+    <?php
+    if (function_exists('fieldpractice_render_criteria_summary_html')) {
+        echo fieldpractice_render_criteria_summary_html(0, $en);
+    }
+    ?>
 
     <!-- Quick 1-Click Master Course Cloner Banner -->
     <section class="mx-card p-4 mb-4" style="background:#F9FAF9 !important;">
