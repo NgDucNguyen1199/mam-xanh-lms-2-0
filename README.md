@@ -61,21 +61,12 @@ npm install
 node verify_full_crawl.mjs
 ```
 
-### Biên soạn Báo cáo Đồ án Word
-```bash
-cd scripts/thesis
-npm install
-node build_thesis.js
-node inspect_thesis_v2.js
-```
-
 ---
 
 ## 5. Cấu trúc Thư mục Chính
 
 - `moodle_custom/`: Toàn bộ mã nguồn 5 plugin mở rộng (`local_*`, `mod/fieldpractice`) và child theme (`theme/agritrain_child`).
 - `docker/` & `docker-compose.yml`: Cấu hình hạ tầng Docker Turbo.
-- `scripts/`: Bộ công cụ PHP CLI bảo trì/seed dữ liệu và script Node.js sinh báo cáo Word.
+- `scripts/`: Bộ công cụ PHP CLI bảo trì, seed dữ liệu và đồng bộ khóa học Moodle.
 - `tests/e2e/`: Kịch bản kiểm thử tự động End-to-End bằng Puppeteer.
-- `docs/`: Báo cáo Đồ án Tốt nghiệp (`BAO_CAO_DO_AN_TOT_NGHIEP_DLU.docx`), Đề cương, Báo cáo kiểm định (`FINAL_PRE_DEFENSE_AUDIT.md`) và ảnh chụp màn hình.
 - `DEMO_COURSE_KIT/`: Bộ học liệu mẫu SCORM, H5P, PDF phục vụ triển khai.

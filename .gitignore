@@ -1,7 +1,10 @@
 # Node / E2E Artifacts
 tests/e2e/node_modules/
 tests/e2e/package-lock.json
-scripts/thesis/node_modules/
+
+# Local Thesis / Word Report Generation & Submission Packages (kept locally, excluded from GitHub)
+scripts/thesis/
+docs/
 CD_DVD_SUBMISSION/
 
 # OS / Editor files
