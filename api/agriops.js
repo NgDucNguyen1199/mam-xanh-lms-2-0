@@ -5,6 +5,7 @@ const {
   assertCleanUtf8,
   setJsonHeaders,
   hasSupabaseConfig,
+  inspectServiceKeyRole,
   isRlsPolicyError,
   formatSupabaseError,
   supabaseFetch,
@@ -58,6 +59,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           ok: true,
           source: 'supabase-live',
+          key_role: inspectServiceKeyRole(),
           batches: Array.isArray(batches) ? batches : [],
           logs: [...memLogs, ...(Array.isArray(logs) ? logs : [])].map(enrichLog),
         });

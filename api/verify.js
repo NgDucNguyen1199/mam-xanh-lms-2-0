@@ -6,7 +6,7 @@ const {
   supabaseFetch,
   computeCertHmac,
   computeBatchHmac,
-  timingSafeHexEqual,
+  verifyHmacWithSecrets,
   formatViDateTime,
   ACTIVITY_LABELS,
   FALLBACK_CERTS,
@@ -14,13 +14,15 @@ const {
   FALLBACK_LOGS,
 } = require('./_supabase');
 
-function formatBatchResponse(batch, logs, source, keyRole) {
-  const expectedBatchHmac = batch.qr_token
-    ? computeBatchHmac(batch.batch_code, batch.region, batch.area_m2, batch.qr_token)
-    : batch.hmac_signature;
-  const hmacValid = batch.hmac_signature
-    ? timingSafeHexEqual(batch.hmac_signature, expectedBatchHmac)
-    : true;
+function formatBatchResponse(batch, logs, source, keyRole, tamper = false) {
+  const storedArea = Number(batch.area_m2);
+  const evaluatedArea = tamper ? storedArea + 500 : storedArea;
+  const verified = batch.qr_token
+    ? verifyHmacWithSecrets(batch.hmac_signature, sec =>
+        computeBatchHmac(batch.batch_code, batch.region, evaluatedArea, batch.qr_token, sec)
+      )
+    : { valid: !tamper, recomputed: batch.hmac_signature || '' };
+  const hmacValid = tamper ? false : (batch.hmac_signature ? verified.valid : true);
 
   return assertCleanUtf8({
     ok: true,
@@ -28,6 +30,7 @@ function formatBatchResponse(batch, logs, source, keyRole) {
     type: 'batch',
     source,
     key_role: keyRole,
+    tampered_simulation: Boolean(tamper),
     hmac_valid: hmacValid,
     data: {
       batch_code: batch.batch_code,
@@ -42,7 +45,7 @@ function formatBatchResponse(batch, logs, source, keyRole) {
       expected_yield_kg: Number(batch.expected_yield_kg),
       vietgap_status: batch.vietgap_status || 'active',
       standard: 'VietGAP TCVN 11892-1:2017',
-      hmac_signature: batch.hmac_signature || expectedBatchHmac,
+      hmac_signature: batch.hmac_signature || verified.recomputed,
       created_at: formatViDateTime(batch.created_at),
       logs: logs.map(l => ({
         id: l.id,
@@ -67,14 +70,17 @@ function formatCertResponse(stored, tamper, source, keyRole) {
     stored.issued_unix ||
       Math.floor(new Date(stored.issued_at || Date.now()).getTime() / 1000)
   );
-  const recomputedHmac = computeCertHmac(
-    stored.cert_code,
-    stored.moodle_userid ?? 0,
-    stored.moodle_courseid ?? 0,
-    evaluatedScore,
-    issuedUnix
+  // Identify which secret signed the original stored record so tamper simulation displays its exact mismatched recomputation
+  const baselineCheck = verifyHmacWithSecrets(stored.hmac_signature, sec =>
+    computeCertHmac(stored.cert_code, stored.moodle_userid ?? 0, stored.moodle_courseid ?? 0, storedScore, issuedUnix, sec)
   );
-  const hmacValid = timingSafeHexEqual(stored.hmac_signature, recomputedHmac);
+  const evalCheck = verifyHmacWithSecrets(stored.hmac_signature, sec =>
+    computeCertHmac(stored.cert_code, stored.moodle_userid ?? 0, stored.moodle_courseid ?? 0, evaluatedScore, issuedUnix, sec)
+  );
+  const recomputedHmac = tamper && baselineCheck.matchedSecret
+    ? computeCertHmac(stored.cert_code, stored.moodle_userid ?? 0, stored.moodle_courseid ?? 0, evaluatedScore, issuedUnix, baselineCheck.matchedSecret)
+    : evalCheck.recomputed;
+  const hmacValid = evalCheck.valid;
 
   return assertCleanUtf8({
     ok: true,
@@ -140,7 +146,7 @@ module.exports = async function handler(req, res) {
         const fbLogs = FALLBACK_LOGS.filter(l => l.batch_code === rawCode && l.rls_fallback === true);
         const mergedLogs = [...fbLogs, ...(Array.isArray(logRows) ? logRows : [])];
         return res.status(200).json(
-          formatBatchResponse(batchRows[0], mergedLogs, 'supabase-live', keyRole)
+          formatBatchResponse(batchRows[0], mergedLogs, 'supabase-live', keyRole, tamper)
         );
       }
 
@@ -158,7 +164,7 @@ module.exports = async function handler(req, res) {
         const logs = FALLBACK_LOGS
           .filter(l => l.batch_code === rawCode)
           .sort((a, b) => new Date(b.logged_at) - new Date(a.logged_at));
-        return res.status(200).json(formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'supabase-live', keyRole));
+        return res.status(200).json(formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'supabase-live', keyRole, tamper));
       }
       if (FALLBACK_CERTS[rawCode]) {
         return res.status(200).json(formatCertResponse(FALLBACK_CERTS[rawCode], tamper, 'supabase-live', keyRole));
@@ -182,7 +188,7 @@ module.exports = async function handler(req, res) {
     const logs = FALLBACK_LOGS
       .filter(l => l.batch_code === rawCode)
       .sort((a, b) => new Date(b.logged_at) - new Date(a.logged_at));
-    const payload = formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'embedded-fallback', keyRole);
+    const payload = formatBatchResponse(FALLBACK_BATCHES[rawCode], logs, 'embedded-fallback', keyRole, tamper);
     if (fallbackReason) payload.fallback_reason = fallbackReason;
     return res.status(200).json(payload);
   }

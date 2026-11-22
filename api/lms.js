@@ -1,3 +1,4 @@
+const { sendCertIssuedEmail } = require('./_mailer');
 const {
   RLS_HELP_VI,
   assertCleanUtf8,
@@ -9,6 +10,7 @@ const {
   supabaseFetch,
   supabaseCount,
   computeCertHmac,
+  computePhiAlerts,
   parseJsonBody,
   sanitizeUser,
   authenticateRequest,
@@ -38,7 +40,7 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
   const qScore = Number(quizScore || 0);
   const pScore = Number(practiceGrade || 0);
   if (qScore < 70 || pScore < 60) {
-    return { issued: false, certificate: null };
+    return { issued: false, certificate: null, certEmail: null };
   }
 
   const finalScore = Number((qScore * 0.5 + pScore * 0.5).toFixed(2));
@@ -70,14 +72,25 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
         `mamxanh_certificates?student_username=eq.${encodeURIComponent(studentUser.username)}&course_code=eq.${encodeURIComponent(course.code)}&select=*&limit=1`
       );
       if (Array.isArray(existing) && existing.length > 0) {
-        return { issued: true, already_existed: true, certificate: existing[0] };
+        return { issued: true, already_existed: true, certificate: existing[0], certEmail: null };
       }
       const inserted = await supabaseFetch('mamxanh_certificates', {
         method: 'POST',
         headers: { Prefer: 'return=representation' },
         body: certRow,
       });
-      return { issued: true, already_existed: false, certificate: Array.isArray(inserted) ? inserted[0] : certRow };
+      const finalCert = Array.isArray(inserted) ? inserted[0] : certRow;
+      const certEmail = await sendCertIssuedEmail({
+        full_name: studentUser.full_name,
+        username: studentUser.username,
+        email: studentUser.email,
+        course_code: course.code,
+        course_name: course.fullname,
+        cert_code: finalCert.cert_code,
+        final_score: finalCert.final_score,
+        hmac_signature: finalCert.hmac_signature,
+      });
+      return { issued: true, already_existed: false, certificate: finalCert, certEmail };
     } catch (err) {
       if (!isRlsPolicyError(err)) throw err;
     }
@@ -87,10 +100,20 @@ async function maybeIssueCertificate({ source, studentUser, course, quizScore, p
     c => c.student_username === studentUser.username && c.course_code === course.code
   );
   if (existingFb) {
-    return { issued: true, already_existed: true, certificate: existingFb };
+    return { issued: true, already_existed: true, certificate: existingFb, certEmail: null };
   }
   FALLBACK_CERTS[certCode] = certRow;
-  return { issued: true, already_existed: false, certificate: certRow };
+  const certEmail = await sendCertIssuedEmail({
+    full_name: studentUser.full_name,
+    username: studentUser.username,
+    email: studentUser.email,
+    course_code: course.code,
+    course_name: course.fullname,
+    cert_code: certRow.cert_code,
+    final_score: certRow.final_score,
+    hmac_signature: certRow.hmac_signature,
+  });
+  return { issued: true, already_existed: false, certificate: certRow, certEmail };
 }
 
 module.exports = async function handler(req, res) {
@@ -98,7 +121,12 @@ module.exports = async function handler(req, res) {
 
   const method = String(req.method || 'GET').toUpperCase();
   const body = method === 'POST' ? parseJsonBody(req) : {};
-  const action = String((req.query && req.query.action) || body.action || '').trim().toLowerCase();
+  const rawAction = String((req.query && req.query.action) || body.action || '').trim().toLowerCase();
+  const action = rawAction === 'submit_fieldpractice'
+    ? 'submit_practice'
+    : rawAction === 'admin_overview'
+      ? 'admin_manage'
+      : rawAction;
   const supabaseEnabled = hasSupabaseConfig();
   const keyRole = inspectServiceKeyRole();
   const canWriteSupabase = supabaseEnabled && keyRole === 'service_role';
@@ -236,7 +264,8 @@ module.exports = async function handler(req, res) {
     const courseMap = new Map(courses.map(c => [c.code, c]));
     const enrichedEnrollments = enrollments.map(e => {
       const c = courseMap.get(e.course_code) || {};
-      const latestSub = subs.find(s => s.course_code === e.course_code) || null;
+      const gradedSub = subs.find(s => s.course_code === e.course_code && s.graded_by) || null;
+      const latestSub = gradedSub || subs.find(s => s.course_code === e.course_code) || null;
       const cert = certs.find(ct => ct.course_code === e.course_code) || null;
       return {
         ...e,
@@ -247,6 +276,24 @@ module.exports = async function handler(req, res) {
         certificate: cert,
       };
     });
+
+    // Compute VietGAP PHI safety harvest countdown alerts for Dashboard
+    let phiBatches = Object.values(FALLBACK_BATCHES);
+    let phiLogs = [...FALLBACK_LOGS];
+    if (supabaseEnabled) {
+      try {
+        const [sbBatches, sbLogs] = await Promise.all([
+          supabaseFetch('agriops_batches?select=batch_code,product_name,region&order=created_at.desc&limit=20'),
+          supabaseFetch('agriops_logs?select=batch_code,activity_type,phi_days,logged_at&order=logged_at.desc&limit=50'),
+        ]);
+        if (Array.isArray(sbBatches) && sbBatches.length > 0) phiBatches = sbBatches;
+        const rlsLogs = FALLBACK_LOGS.filter(l => l.rls_fallback === true);
+        if (Array.isArray(sbLogs)) phiLogs = [...rlsLogs, ...sbLogs];
+      } catch {
+        // Fallback to embedded logs/batches
+      }
+    }
+    const phiAlerts = computePhiAlerts(phiBatches, phiLogs);
 
     const avgProgress = enrichedEnrollments.length
       ? Number((enrichedEnrollments.reduce((acc, x) => acc + Number(x.progress_pct || 0), 0) / enrichedEnrollments.length).toFixed(1))
@@ -268,6 +315,7 @@ module.exports = async function handler(req, res) {
       practice_submissions: subs,
       quiz_attempts: quizzes,
       certificates: certs,
+      phi_alerts: phiAlerts,
       ...(isStaff ? { grading_queue: gradingQueue } : {}),
     }));
   }
@@ -324,6 +372,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(assertCleanUtf8({
       ok: true,
       source: effectiveSource,
+      key_role: keyRole,
       course,
       enrollment,
       pedagogy: {
@@ -463,14 +512,18 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           ok: true,
           source: effectiveSource,
+          key_role: keyRole,
           course_code: courseCode,
           score_100: graded.score100,
           correct_count: graded.correctCount,
           total_questions: graded.total,
           breakdown: graded.breakdown,
           best_quiz_score: bestQuiz,
+          progress_pct: nextProgress,
+          status: nextStatus,
           certificate_issued: certRes.issued,
           certificate: certRes.certificate,
+          cert_email: certRes.certEmail || null,
           attempt: Array.isArray(attemptIns) ? attemptIns[0] : attemptIns,
         });
       } catch (err) {
@@ -515,14 +568,18 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       source: effectiveSource,
+      key_role: keyRole,
       course_code: courseCode,
       score_100: graded.score100,
       correct_count: graded.correctCount,
       total_questions: graded.total,
       breakdown: graded.breakdown,
       best_quiz_score: bestQuiz,
+      progress_pct: nextProgress,
+      status: nextStatus,
       certificate_issued: certRes.issued,
       certificate: certRes.certificate,
+      cert_email: certRes.certEmail || null,
       attempt,
     });
   }
@@ -597,6 +654,7 @@ module.exports = async function handler(req, res) {
         return res.status(201).json({
           ok: true,
           source: effectiveSource,
+          key_role: keyRole,
           submission: Array.isArray(inserted) ? inserted[0] : subRow,
           distance_m: distanceM,
           message_vi: `Đã ghi nhận điểm danh thực hành tại vườn (sai số GPS ${distanceM}m). Đang chờ Cán bộ kỹ thuật chấm Rubric 4 tiêu chí.`,
@@ -624,6 +682,7 @@ module.exports = async function handler(req, res) {
     return res.status(201).json({
       ok: true,
       source: effectiveSource,
+      key_role: keyRole,
       submission: newSub,
       distance_m: distanceM,
       message_vi: `Đã ghi nhận điểm danh thực hành tại vườn (sai số GPS ${distanceM}m). Đang chờ Cán bộ kỹ thuật chấm Rubric 4 tiêu chí.`,
@@ -692,15 +751,17 @@ module.exports = async function handler(req, res) {
 
         const certRes = (studentUser && course)
           ? await maybeIssueCertificate({ source: effectiveSource, studentUser, course, quizScore, practiceGrade: totalGrade })
-          : { issued: false, certificate: null };
+          : { issued: false, certificate: null, certEmail: null };
 
         return res.status(200).json({
           ok: true,
           source: effectiveSource,
+          key_role: keyRole,
           submission: sub,
           total_grade: totalGrade,
           certificate_issued: certRes.issued,
           certificate: certRes.certificate,
+          cert_email: certRes.certEmail || null,
           message_vi: certRes.issued
             ? `Đã chấm ${totalGrade}/100 điểm Rubric và tự động cấp Chứng nhận số HMAC-SHA256 (${certRes.certificate.cert_code}).`
             : `Đã lưu kết quả chấm Rubric ${totalGrade}/100 điểm cho học viên.`,
@@ -726,15 +787,17 @@ module.exports = async function handler(req, res) {
     }
     const certRes = (studentUser && course)
       ? await maybeIssueCertificate({ source: effectiveSource, studentUser, course, quizScore, practiceGrade: totalGrade })
-      : { issued: false, certificate: null };
+      : { issued: false, certificate: null, certEmail: null };
 
     return res.status(200).json({
       ok: true,
       source: effectiveSource,
+      key_role: keyRole,
       submission: sub,
       total_grade: totalGrade,
       certificate_issued: certRes.issued,
       certificate: certRes.certificate,
+      cert_email: certRes.certEmail || null,
       message_vi: certRes.issued
         ? `Đã chấm ${totalGrade}/100 điểm Rubric và tự động cấp Chứng nhận số HMAC-SHA256 (${certRes.certificate.cert_code}).`
         : `Đã lưu kết quả chấm Rubric ${totalGrade}/100 điểm cho học viên.`,
@@ -788,6 +851,7 @@ module.exports = async function handler(req, res) {
         return res.status(201).json({
           ok: true,
           source: effectiveSource,
+          key_role: keyRole,
           course: Array.isArray(cloned) ? cloned[0] : cloned,
           message_vi: `Đã nhân bản thành công khóa học "${newCode}" trên Supabase PostgreSQL.`,
         });
@@ -818,6 +882,7 @@ module.exports = async function handler(req, res) {
     return res.status(201).json({
       ok: true,
       source: effectiveSource,
+      key_role: keyRole,
       course: newCourse,
       message_vi: `Đã nhân bản thành công khóa học "${newCode}".`,
     });
@@ -852,7 +917,7 @@ module.exports = async function handler(req, res) {
             'lms_users', 'lms_courses', 'lms_enrollments', 'lms_fieldpractice_subs', 'lms_quiz_attempts', 'lms_news',
           ];
           const auditTables = tableNames.map((t, i) => ({ table: t, rows: counts[i] }));
-          return res.status(200).json({ ok: true, source: effectiveSource, users: usersRows || [], news: newsRows || [], audit_tables: auditTables });
+          return res.status(200).json({ ok: true, source: effectiveSource, key_role: keyRole, users: usersRows || [], news: newsRows || [], audit_tables: auditTables });
         } catch (err) {
           if (!isRlsPolicyError(err)) {
             return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'kiểm toán hệ thống') });
@@ -875,6 +940,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         source: effectiveSource,
+        key_role: keyRole,
         ...(supabaseEnabled && keyRole !== 'service_role' ? { rls_hint_vi: RLS_HELP_VI } : {}),
         users: FALLBACK_USERS.map(sanitizeUser),
         news: FALLBACK_NEWS,
@@ -907,7 +973,7 @@ module.exports = async function handler(req, res) {
               headers: { Prefer: 'return=representation' },
               body: patch,
             });
-            return res.status(200).json({ ok: true, source: effectiveSource, user: sanitizeUser(Array.isArray(updated) ? updated[0] : updated) });
+            return res.status(200).json({ ok: true, source: effectiveSource, key_role: keyRole, user: sanitizeUser(Array.isArray(updated) ? updated[0] : updated) });
           } catch (err) {
             if (!isRlsPolicyError(err)) {
               return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'cập nhật phân quyền') });
@@ -917,7 +983,7 @@ module.exports = async function handler(req, res) {
         const u = FALLBACK_USERS.find(x => Number(x.id) === targetId);
         if (!u) return res.status(404).json({ ok: false, message_vi: 'Không tìm thấy tài khoản.' });
         Object.assign(u, patch);
-        return res.status(200).json({ ok: true, source: effectiveSource, user: sanitizeUser(u) });
+        return res.status(200).json({ ok: true, source: effectiveSource, key_role: keyRole, user: sanitizeUser(u) });
       }
 
       if (subAction === 'publish_news') {
@@ -936,7 +1002,7 @@ module.exports = async function handler(req, res) {
               headers: { Prefer: 'return=representation' },
               body: row,
             });
-            return res.status(201).json({ ok: true, source: effectiveSource, article: Array.isArray(inserted) ? inserted[0] : row });
+            return res.status(201).json({ ok: true, source: effectiveSource, key_role: keyRole, article: Array.isArray(inserted) ? inserted[0] : row });
           } catch (err) {
             if (!isRlsPolicyError(err)) {
               return res.status(502).json({ ok: false, message_vi: formatSupabaseError(err, 'đăng bản tin khuyến nông') });
@@ -945,7 +1011,7 @@ module.exports = async function handler(req, res) {
         }
         const fbArt = { id: FALLBACK_NEWS.length + 1, ...row };
         FALLBACK_NEWS.unshift(fbArt);
-        return res.status(201).json({ ok: true, source: effectiveSource, article: fbArt });
+        return res.status(201).json({ ok: true, source: effectiveSource, key_role: keyRole, article: fbArt });
       }
 
       return res.status(400).json({ ok: false, message_vi: `sub_action "${subAction}" không hợp lệ.` });

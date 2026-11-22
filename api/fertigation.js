@@ -4,6 +4,7 @@ const {
   assertCleanUtf8,
   setJsonHeaders,
   hasSupabaseConfig,
+  inspectServiceKeyRole,
   isRlsPolicyError,
   formatSupabaseError,
   supabaseFetch,
@@ -32,6 +33,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           ok: true,
           source: 'supabase-live',
+          key_role: inspectServiceKeyRole(),
           records: [...rlsRecords, ...dbRecords].slice(0, 10),
         });
       } catch (err) {

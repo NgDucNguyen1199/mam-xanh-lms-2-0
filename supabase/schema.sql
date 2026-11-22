@@ -2,6 +2,8 @@
 -- Mầm Xanh LMS 2.0 — Supabase (PostgreSQL) Cloud Schema & Authentic Seed Data
 -- Generated directly from Moodle 4.5 LTS database (mamxanh_lms_db_backup.sql)
 -- Includes 42 HMAC-SHA256 Digital Certificates, 27 VietGAP Batches, 54 Diary Logs
+-- Canonical HMAC Secret (aligned with Moodle & Vercel):
+--   MAMXANH_HMAC_SECRET = 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY'
 -- ============================================================================
 
 -- 1. Digital Training Certificates (HMAC-SHA256)

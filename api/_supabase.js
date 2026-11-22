@@ -1,6 +1,10 @@
 const crypto = require('crypto');
 
-const SECRET = process.env.MAMXANH_HMAC_SECRET || 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
+const CANONICAL_MOODLE_SECRET = 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
+const SECRET = String(process.env.MAMXANH_HMAC_SECRET || CANONICAL_MOODLE_SECRET).trim() || CANONICAL_MOODLE_SECRET;
+const HMAC_VERIFICATION_SECRETS = SECRET === CANONICAL_MOODLE_SECRET
+  ? [SECRET]
+  : [SECRET, CANONICAL_MOODLE_SECRET];
 
 const RLS_HELP_VI =
   'Cấu hình SUPABASE_SERVICE_KEY trên Vercel đang dùng khóa anon/publishable (chỉ có quyền đọc RLS 42501). Vui lòng đổi sang khóa service_role (secret) trong Supabase -> Settings -> API để ghi vĩnh viễn vào PostgreSQL. Hệ thống đã tự động xử lý qua bộ nhớ Cloud Edge.';
@@ -129,7 +133,7 @@ async function supabaseFetch(restPath, options = {}) {
   return assertCleanUtf8(json);
 }
 
-function computeCertHmac(certCode, userId, courseId, score, timeCreated) {
+function computeCertHmac(certCode, userId, courseId, score, timeCreated, secretOverride = SECRET) {
   const canonical = [
     String(certCode).trim(),
     String(userId),
@@ -137,18 +141,31 @@ function computeCertHmac(certCode, userId, courseId, score, timeCreated) {
     Number(score).toFixed(2),
     String(timeCreated),
   ].join('|');
-  return crypto.createHmac('sha256', SECRET).update(canonical).digest('hex');
+  return crypto.createHmac('sha256', secretOverride || SECRET).update(canonical).digest('hex');
 }
 
-function computeBatchHmac(batchCode, region, areaM2, qrToken) {
+function computeBatchHmac(batchCode, region, areaM2, qrToken, secretOverride = SECRET) {
   const canonical = `${String(batchCode).trim()}|${String(region).trim()}|${Number(areaM2)}|${String(qrToken || '').trim()}`;
-  return crypto.createHmac('sha256', SECRET).update(canonical).digest('hex');
+  return crypto.createHmac('sha256', secretOverride || SECRET).update(canonical).digest('hex');
 }
 
 function timingSafeHexEqual(hexA, hexB) {
   const a = Buffer.from(String(hexA || ''), 'utf8');
   const b = Buffer.from(String(hexB || ''), 'utf8');
   return a.length > 0 && a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function verifyHmacWithSecrets(storedHmac, computeForSecret) {
+  const target = String(storedHmac || '').trim();
+  let primaryComputed = '';
+  for (const sec of HMAC_VERIFICATION_SECRETS) {
+    const computed = computeForSecret(sec);
+    if (!primaryComputed) primaryComputed = computed;
+    if (target && timingSafeHexEqual(target, computed)) {
+      return { valid: true, recomputed: computed, matchedSecret: sec };
+    }
+  }
+  return { valid: false, recomputed: primaryComputed, matchedSecret: null };
 }
 
 function formatViDateTime(isoOrUnix) {
@@ -537,6 +554,79 @@ const FALLBACK_NEWS = [
   { id: 4, category: 'Thông báo Đào tạo', title: 'Kế hoạch mở lớp tập huấn Dâu tây & Hoa Cúc Công nghệ cao đợt tháng 11/2026', summary: 'Học phần DAUTAY-CNC-01 gồm 04 chuyên đề trực tuyến, H5P, SCORM 1.2 và thực hành QR+GPS tại Đà Lạt.', content: '<p><strong>1. Cấu trúc chương trình:</strong> 04 chuyên đề từ xử lý giá thể, điều tiết vi khí hậu, tưới nhỏ giọt Fertigation đến phòng trừ IPM.</p><p><strong>2. Điều kiện cấp chứng nhận:</strong> Quiz cuối khóa >= 70% và hoàn thành chấm Rubric 4 tiêu chí tại vườn >= 60 điểm.</p>', published_at: '2026-11-05T08:00:00Z' },
 ];
 
+const DEFAULT_STARTER_COURSES = ['CHAMSOC01', 'IOTNHAMANG01', 'DAUTAY-CNC-01'];
+
+function buildJwtClaims(user) {
+  return assertCleanUtf8({
+    sub: Number(user.id),
+    username: String(user.username || ''),
+    email: String(user.email || ''),
+    full_name: String(user.full_name || user.username || 'Nông hộ Mầm Xanh'),
+    role: String(user.role || 'student'),
+    farm_name: String(user.farm_name || ''),
+    region: String(user.region || 'Lâm Đồng'),
+    area_m2: Number(user.area_m2 || 1000),
+    main_crop: String(user.main_crop || ''),
+  });
+}
+
+function ensureStarterEnrollmentsInFallback(userId, courseCodes = DEFAULT_STARTER_COURSES) {
+  if (!FALLBACK_ENROLLMENTS.some(e => Number(e.user_id) === Number(userId))) {
+    let nextEnrollId = FALLBACK_ENROLLMENTS.reduce((m, e) => Math.max(m, Number(e.id)), 0) + 1;
+    for (const code of courseCodes) {
+      FALLBACK_ENROLLMENTS.push({
+        id: nextEnrollId++,
+        user_id: Number(userId),
+        course_code: code,
+        progress_pct: 10,
+        quiz_score: 0,
+        attendance_count: 0,
+        status: 'enrolled',
+        enrolled_at: new Date().toISOString(),
+      });
+    }
+  }
+}
+
+function computePhiAlerts(batches = [], logs = []) {
+  const batchMap = new Map((Array.isArray(batches) ? batches : []).map(b => [b.batch_code, b]));
+  const latestByBatch = new Map();
+  for (const l of (Array.isArray(logs) ? logs : [])) {
+    if (!l || !l.batch_code) continue;
+    const prev = latestByBatch.get(l.batch_code);
+    const phiDays = Number(l.phi_days || 0);
+    const prevPhi = prev ? Number(prev.phi_days || 0) : -1;
+    // Prefer latest log with active PHI > 0, otherwise most recent log for that batch
+    if (!prev || (phiDays > 0 && prevPhi <= 0) || (Boolean(phiDays > 0) === Boolean(prevPhi > 0) && new Date(l.logged_at) > new Date(prev.logged_at))) {
+      latestByBatch.set(l.batch_code, l);
+    }
+  }
+
+  const nowMs = Date.now();
+  const alerts = [];
+  for (const [batchCode, log] of latestByBatch.entries()) {
+    const batch = batchMap.get(batchCode) || {};
+    const phiDays = Number(log.phi_days || 0);
+    const loggedMs = new Date(log.logged_at || nowMs).getTime();
+    const safeMs = loggedMs + phiDays * 86400000;
+    const remainingDays = phiDays > 0 ? Math.max(0, Math.ceil((safeMs - nowMs) / 86400000)) : 0;
+    alerts.push(assertCleanUtf8({
+      batch_code: batchCode,
+      product_name: batch.product_name || batchCode,
+      region: batch.region || 'Lâm Đồng',
+      activity_label: ACTIVITY_LABELS[log.activity_type] || log.activity_type,
+      phi_days: phiDays,
+      remaining_days: remainingDays,
+      logged_at_display: formatViDateTime(log.logged_at),
+      safe_harvest_date: formatViDateTime(new Date(safeMs).toISOString()),
+      status: remainingDays > 0 ? 'waiting_phi' : 'safe_harvest',
+    }));
+  }
+  return alerts
+    .sort((a, b) => Number(b.remaining_days) - Number(a.remaining_days) || Number(b.phi_days) - Number(a.phi_days))
+    .slice(0, 6);
+}
+
 async function authenticateRequest(req, res, allowedRoles = null) {
   setJsonHeaders(res);
   const token = extractBearerToken(req);
@@ -552,7 +642,8 @@ async function authenticateRequest(req, res, allowedRoles = null) {
 
   let user = null;
   let source = 'embedded-fallback';
-  if (hasSupabaseConfig() && inspectServiceKeyRole() === 'service_role') {
+  const keyRole = inspectServiceKeyRole();
+  if (hasSupabaseConfig() && keyRole === 'service_role') {
     try {
       const rows = await supabaseFetch(`lms_users?id=eq.${encodeURIComponent(claims.sub)}&select=*&limit=1`);
       if (Array.isArray(rows) && rows.length > 0) {
@@ -560,11 +651,36 @@ async function authenticateRequest(req, res, allowedRoles = null) {
         source = 'supabase-live';
       }
     } catch {
-      // Fallback to embedded users if RLS blocks lms_users read
+      // Fallback to embedded/stateless claims if RLS blocks lms_users read
     }
   }
   if (!user) {
     user = FALLBACK_USERS.find(u => Number(u.id) === Number(claims.sub) || u.username === claims.username) || null;
+  }
+
+  // Cross-Lambda resilience: reconstruct authenticated user safely from cryptographically verified HS256 JWT claims
+  if (!user && claims.username && claims.role) {
+    const recoveredUser = assertCleanUtf8({
+      id: Number(claims.sub),
+      username: String(claims.username),
+      email: String(claims.email || `${claims.username}@mamxanh.vn`),
+      salt: '',
+      password_hash: '',
+      full_name: String(claims.full_name || claims.username),
+      role: String(claims.role),
+      farm_name: String(claims.farm_name || ''),
+      region: String(claims.region || 'Lâm Đồng'),
+      area_m2: Number(claims.area_m2 || 1000),
+      main_crop: String(claims.main_crop || ''),
+      is_active: true,
+      reconstructed_from_jwt: true,
+      created_at: new Date().toISOString(),
+    });
+    FALLBACK_USERS.push(recoveredUser);
+    if (recoveredUser.role === 'student') {
+      ensureStarterEnrollmentsInFallback(recoveredUser.id);
+    }
+    user = recoveredUser;
   }
 
   if (!user) {
@@ -600,6 +716,7 @@ async function authenticateRequest(req, res, allowedRoles = null) {
 
 module.exports = {
   SECRET,
+  CANONICAL_MOODLE_SECRET,
   RLS_HELP_VI,
   RLS_HELP_EN,
   assertCleanUtf8,
@@ -614,11 +731,15 @@ module.exports = {
   supabaseCount,
   computeCertHmac,
   computeBatchHmac,
+  verifyHmacWithSecrets,
   timingSafeHexEqual,
   formatViDateTime,
   parseJsonBody,
   hashPassword,
   verifyPassword,
+  buildJwtClaims,
+  ensureStarterEnrollmentsInFallback,
+  computePhiAlerts,
   signJwt,
   verifyJwt,
   sanitizeUser,

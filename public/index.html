@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mầm Xanh LMS 2.0 — Hệ thống Tập huấn Nông nghiệp Công nghệ cao (Cloud)</title>
   <link rel="icon" type="image/png" href="/assets/logo_fit_dlu.png" />
+  <script src="/assets/qrcode.min.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -56,7 +57,7 @@
       border-bottom: 1px solid var(--mx-border);
     }
     .mx-nav-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0 18px;
+      max-width: 1380px; margin: 0 auto; padding: 0 18px;
       min-height: 66px;
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
       flex-wrap: nowrap;
@@ -80,13 +81,13 @@
       flex: 1 1 auto; min-width: 0; gap: 10px;
     }
     .mx-nav-links {
-      display: flex; align-items: center; gap: 4px;
+      display: flex; align-items: center; gap: 3px;
       flex-wrap: nowrap; min-width: 0; overflow-x: auto; scrollbar-width: none;
     }
     .mx-nav-links::-webkit-scrollbar { display: none; }
     .mx-nav-link {
-      color: var(--mx-text-muted); text-decoration: none; font-weight: 600; font-size: 0.85rem;
-      padding: 6px 10px; min-height: 44px; min-width: 44px;
+      color: var(--mx-text-muted); text-decoration: none; font-weight: 600; font-size: 0.83rem;
+      padding: 6px 8px; min-height: 44px; min-width: 44px;
       display: inline-flex; align-items: center; justify-content: center;
       border-radius: 6px; background: transparent; border: none; cursor: pointer; font-family: inherit;
       white-space: nowrap; flex-shrink: 0; touch-action: manipulation;
@@ -204,8 +205,10 @@
       background: var(--mx-surface-muted); color: var(--mx-text-muted); max-width: 100%;
     }
     .mx-db-pill.live { background: var(--mx-accent-soft); color: var(--mx-primary); border-color: #b7d2c6; }
+    .mx-db-pill.warn { background: var(--mx-warn-bg); color: var(--mx-warn-text); border-color: var(--mx-warn-border); }
     .mx-db-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mx-text-subtle); flex-shrink: 0; }
     .mx-db-pill.live .mx-db-dot { background: #1e7e4f; }
+    .mx-db-pill.warn .mx-db-dot { background: #b45309; }
     code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       background: var(--mx-surface-muted); padding: 2px 6px; border-radius: 4px; font-size: 0.86em; color: var(--mx-text-main);
@@ -235,7 +238,7 @@
     .mx-inline-msg.warn { background: var(--mx-warn-bg); border-color: var(--mx-warn-border); color: var(--mx-warn-text); }
     .mx-inline-msg.error { background: var(--mx-danger-bg); border-color: #f5c2c7; color: var(--mx-danger); }
 
-    /* Progress & Verification Output */
+    /* Progress & Verification Output & QR Cards */
     .mx-progress-track { width: 100%; height: 8px; border-radius: 999px; background: var(--mx-surface-muted); overflow: hidden; margin: 8px 0; }
     .mx-progress-fill { height: 100%; background: var(--mx-primary); border-radius: 999px; transition: width 0.25s ease; }
     .mx-verify-result {
@@ -243,11 +246,30 @@
       background: var(--mx-accent-soft); min-width: 0; max-width: 100%; overflow-wrap: anywhere;
     }
     .mx-verify-result.invalid { border-color: var(--mx-danger); background: var(--mx-danger-bg); }
+    .mx-cert-qr-flex {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+    }
+    .mx-cert-qr-main { flex: 1 1 280px; min-width: 0; }
+    .mx-qr-box {
+      flex: 0 0 auto; background: #ffffff; border: 1px solid var(--mx-border-strong);
+      border-radius: 10px; padding: 10px; display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .mx-qr-box canvas, .mx-qr-box img, .mx-qr-box svg { display: block; width: 104px; height: 104px; }
+    .mx-qr-caption { font-size: 0.72rem; font-weight: 700; color: var(--mx-text-muted); letter-spacing: 0.02em; }
+    .mx-phi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 12px;
+    }
+    .mx-phi-card {
+      background: var(--mx-bg); border: 1px solid var(--mx-border); border-left: 4px solid var(--mx-primary);
+      border-radius: 10px; padding: 14px; min-width: 0;
+    }
+    .mx-phi-card.locked { border-left-color: #b45309; background: var(--mx-warn-bg); }
 
     .mx-table-wrap, .table-wrap { width: 100%; max-width: 100%; overflow-x: auto; margin-top: 12px; -webkit-overflow-scrolling: touch; }
     table.mx-table { width: 100%; border-collapse: collapse; background: var(--mx-surface); font-size: 0.88rem; }
     table.mx-table th, table.mx-table td { padding: 10px 12px; border: 1px solid var(--mx-border); text-align: left; vertical-align: middle; }
     table.mx-table th { background: var(--mx-surface-muted); color: var(--mx-text-muted); font-size: 0.8125rem; text-transform: uppercase; }
+    table.mx-table code, table.mx-table .mx-badge { white-space: nowrap; }
 
     /* Cards & Gallery */
     .mx-shot-card {
@@ -1034,26 +1056,44 @@
       }
       const res = await fetch(url, { ...options, headers });
       const json = await res.json().catch(() => ({ ok: false }));
-      if (json && json.source) updateDbStatusBadge(json.source);
+      if (json && json.source) updateDbStatusBadge(json.source, json.key_role);
       return { res, json };
     }
 
-    function updateDbStatusBadge(source) {
+    let lastDbSource = 'embedded-fallback';
+    let lastKeyRole = '';
+    function updateDbStatusBadge(source, keyRole) {
+      if (source) lastDbSource = source;
+      if (keyRole !== undefined && keyRole !== null && keyRole !== '') lastKeyRole = String(keyRole);
+      const effSource = source || lastDbSource;
+      const effRole = (keyRole !== undefined && keyRole !== null && keyRole !== '') ? String(keyRole) : lastKeyRole;
       const badge = document.getElementById('db-status-badge');
       const txt = document.getElementById('db-status-text');
       if (!badge || !txt) return;
-      if (source === 'supabase-live') {
+      badge.classList.remove('live', 'warn');
+      if (effSource === 'supabase-live' && (effRole === 'service_role' || !effRole)) {
         badge.classList.add('live');
-        txt.textContent = 'Database: Supabase PostgreSQL Live';
+        txt.textContent = effRole === 'service_role'
+          ? t('Database: Supabase PostgreSQL Live (Read/Write)', 'Database: Supabase PostgreSQL Live (Read/Write)')
+          : t('Database: Supabase PostgreSQL Live', 'Database: Supabase PostgreSQL Live');
+      } else if (effSource === 'supabase-live') {
+        badge.classList.add('warn');
+        txt.textContent = t('Database: Supabase Read-Only (Cần Service Key)', 'Database: Supabase Read-Only (Needs Service Key)');
       } else {
-        badge.classList.remove('live');
-        txt.textContent = 'Database: Fallback Mode';
+        txt.textContent = t('Database: Fallback Mode', 'Database: Fallback Mode');
       }
     }
 
-    function sourcePillHtml(source) {
-      const isLive = source === 'supabase-live';
-      return `<span class="mx-db-pill ${isLive ? 'live' : ''}"><span class="mx-db-dot"></span>${isLive ? 'Supabase PostgreSQL Live' : 'Fallback Mode'}</span>`;
+    function sourcePillHtml(source, keyRole) {
+      const effRole = (keyRole !== undefined && keyRole !== null && keyRole !== '') ? String(keyRole) : lastKeyRole;
+      if (source === 'supabase-live' && (effRole === 'service_role' || !effRole)) {
+        const label = effRole === 'service_role' ? 'Supabase PostgreSQL Live (Read/Write)' : 'Supabase PostgreSQL Live';
+        return `<span class="mx-db-pill live"><span class="mx-db-dot"></span>${label}</span>`;
+      }
+      if (source === 'supabase-live') {
+        return `<span class="mx-db-pill warn"><span class="mx-db-dot"></span>${escapeHtml(t('Supabase Read-Only (Cần Service Key)', 'Supabase Read-Only (Needs Service Key)'))}</span>`;
+      }
+      return `<span class="mx-db-pill"><span class="mx-db-dot"></span>Fallback Mode</span>`;
     }
 
     function roleLabel(role) {
@@ -1084,31 +1124,32 @@
       }
 
       const links = [
-        { id: 'dashboard', label: t('Bảng Điều khiển', 'Dashboard') },
+        { id: 'dashboard', label: t('Tổng quan', 'Dashboard') },
       ];
 
       if (currentUser.role === 'student') {
         links.push(
-          { id: 'courses', label: t('Các khóa học của tôi', 'My Courses') },
-          { id: 'public_tools', label: t('Sổ Nhật ký VietGAP', 'VietGAP Diary') },
-          { id: 'certificates', label: t('Chứng nhận số của tôi', 'My Certificates') },
-          { id: 'profile', label: t('Hồ sơ & Đổi mật khẩu', 'Profile & Password') }
+          { id: 'courses', label: t('Khóa học', 'Courses') },
+          { id: 'public_tools', label: t('Nhật ký VietGAP', 'VietGAP Diary') },
+          { id: 'certificates', label: t('Chứng nhận QR', 'QR Certs') },
+          { id: 'profile', label: t('Hồ sơ', 'Profile') }
         );
       } else if (currentUser.role === 'teacher') {
         links.push(
-          { id: 'grading', label: t('Chấm điểm Rubric & Thực địa', 'Rubric & Field Grading') },
-          { id: 'cloner', label: t('Nhân bản Khóa học (Cloner)', 'Course Cloner') },
+          { id: 'grading', label: t('Chấm Rubric', 'Rubric') },
+          { id: 'cloner', label: 'Cloner' },
           { id: 'courses', label: t('Khóa học', 'Courses') },
-          { id: 'public_tools', label: t('Sổ Nhật ký VietGAP', 'VietGAP Diary') },
+          { id: 'public_tools', label: t('Nhật ký VietGAP', 'VietGAP Diary') },
           { id: 'profile', label: t('Hồ sơ', 'Profile') }
         );
       } else if (currentUser.role === 'admin') {
         links.push(
-          { id: 'admin_users', label: t('Quản trị Người dùng', 'User Management') },
-          { id: 'admin_news', label: t('Đăng tin Khuyến nông', 'Publish News') },
-          { id: 'admin_audit', label: t('Kiểm toán Hệ thống', 'System Audit') },
-          { id: 'grading', label: t('Chấm Rubric', 'Grade Rubric') },
-          { id: 'cloner', label: t('Nhân bản (Cloner)', 'Cloner') }
+          { id: 'admin_users', label: t('Quản trị User', 'Users') },
+          { id: 'admin_news', label: t('Đăng tin', 'News') },
+          { id: 'admin_audit', label: t('Kiểm toán DB', 'Audit') },
+          { id: 'grading', label: t('Chấm Rubric', 'Rubric') },
+          { id: 'cloner', label: 'Cloner' },
+          { id: 'profile', label: t('Hồ sơ', 'Profile') }
         );
       }
 
@@ -1263,6 +1304,236 @@
           : t('Đăng ký tài khoản thành công! Chào mừng bạn đến với Mầm Xanh LMS 2.0.', 'Account registered successfully! Welcome to Mầm Xanh LMS 2.0.'),
         'success'
       );
+    }
+
+    // ==================== QR CODE ENGINE, PNG CERT EXPORT & PHI WIDGET ====================
+    window._mxCertCache = {};
+    function cacheCertForExport(cert) {
+      if (!cert || !cert.cert_code) return '';
+      window._mxCertCache[cert.cert_code] = cert;
+      return cert.cert_code;
+    }
+
+    function buildVerifyUrl(code) {
+      const origin = (window.location && window.location.origin && window.location.origin !== 'null')
+        ? window.location.origin
+        : 'https://mam-xanh-lms-2-0.vercel.app';
+      return `${origin}/?verify=${encodeURIComponent(String(code || '').trim())}`;
+    }
+
+    function renderQrInto(containerId, code, size = 104) {
+      const el = document.getElementById(containerId);
+      if (!el || !code) return;
+      el.innerHTML = '';
+      const verifyUrl = buildVerifyUrl(code);
+      if (typeof window.QRCode === 'function') {
+        try {
+          new window.QRCode(el, {
+            text: verifyUrl,
+            width: size,
+            height: size,
+            colorDark: '#1c2522',
+            colorLight: '#ffffff',
+            correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : 0,
+          });
+          el.setAttribute('data-qr-url', verifyUrl);
+          return;
+        } catch {}
+      }
+      el.innerHTML = `<code style="font-size:0.7rem;">${escapeHtml(code)}</code>`;
+    }
+
+    function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = String(text || '').split(/\s+/);
+      let line = '';
+      let curY = y;
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line ? `${line} ${words[i]}` : words[i];
+        if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+          ctx.fillText(line, x, curY);
+          line = words[i];
+          curY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) ctx.fillText(line, x, curY);
+      return curY + lineHeight;
+    }
+
+    function downloadCertificatePng(certCode) {
+      const cert = window._mxCertCache[certCode];
+      if (!cert) {
+        showToast(t('Không tìm thấy dữ liệu chứng nhận để xuất PNG.', 'Certificate data not found for PNG export.'), 'error');
+        return;
+      }
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 840;
+        const ctx = canvas.getContext('2d');
+
+        // Botanical Off-White background & double frame
+        ctx.fillStyle = '#F9FAF9';
+        ctx.fillRect(0, 0, 1200, 840);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(36, 36, 1128, 768);
+        ctx.strokeStyle = '#234E3E';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(36, 36, 1128, 768);
+        ctx.strokeStyle = '#B7D2C6';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(52, 52, 1096, 736);
+
+        // Top botanical banner stripe
+        ctx.fillStyle = '#234E3E';
+        ctx.fillRect(52, 52, 1096, 14);
+
+        // Optional FIT-DLU logo from navbar if loaded cleanly
+        const logoImg = document.querySelector('.mx-brand img');
+        if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+          try { ctx.drawImage(logoImg, 86, 90, 74, 74); } catch {}
+        }
+
+        ctx.fillStyle = '#234E3E';
+        ctx.font = '700 18px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText('MẦM XANH LMS 2.0 • HỆ THỐNG TẬP HUẤN NÔNG NGHIỆP CÔNG NGHỆ CAO', 180, 120);
+        ctx.fillStyle = '#4A5552';
+        ctx.font = '600 15px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText('Khoa Công nghệ Thông tin - Trường Đại học Đà Lạt | Chuẩn VietGAP & HMAC-SHA256', 180, 148);
+
+        // Certificate title
+        ctx.fillStyle = '#1C2522';
+        ctx.font = '800 38px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText('CHỨNG NHẬN HOÀN THÀNH KHÓA TẬP HUẤN', 86, 232);
+        ctx.fillStyle = '#234E3E';
+        ctx.font = '600 18px Inter, Arial, sans-serif';
+        ctx.fillText('DIGITAL COMPETENCY CERTIFICATE • VERIFIED ON CLOUD LEDGER', 86, 266);
+
+        // Recipient block
+        ctx.fillStyle = '#4A5552';
+        ctx.font = '600 17px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText('Trân trọng chứng nhận học viên / đại diện nông hộ:', 86, 326);
+
+        ctx.fillStyle = '#234E3E';
+        ctx.font = '800 42px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText(String(cert.student_name || cert.learner_name || ''), 86, 378);
+
+        if (cert.farm_name) {
+          ctx.fillStyle = '#33403C';
+          ctx.font = '600 20px "Be Vietnam Pro", Inter, Arial, sans-serif';
+          ctx.fillText('Đơn vị / Nông trại: ' + String(cert.farm_name), 86, 416);
+        }
+
+        ctx.fillStyle = '#4A5552';
+        ctx.font = '600 17px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText('Đã hoàn thành xuất sắc chương trình đào tạo và thực hành hiện trường:', 86, 466);
+
+        ctx.fillStyle = '#1C2522';
+        ctx.font = '700 25px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        const courseText = `[${cert.course_code || cert.course_shortname || ''}] ${cert.course_name || cert.course_fullname || ''}`;
+        const nextY = wrapCanvasText(ctx, courseText, 86, 504, 800, 34);
+
+        // Score pill
+        ctx.fillStyle = '#EAF2EE';
+        ctx.fillRect(86, Math.max(nextY + 10, 560), 340, 54);
+        ctx.strokeStyle = '#B7D2C6';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(86, Math.max(nextY + 10, 560), 340, 54);
+        ctx.fillStyle = '#234E3E';
+        ctx.font = '800 22px "Be Vietnam Pro", Inter, Arial, sans-serif';
+        ctx.fillText(`Điểm tổng kết: ${Number(cert.final_score || 0).toFixed(2)}%`, 108, Math.max(nextY + 45, 595));
+
+        // Metadata & HMAC footer
+        const metaY = 678;
+        ctx.fillStyle = '#33403C';
+        ctx.font = '600 16px ui-monospace, Menlo, Consolas, monospace';
+        ctx.fillText(`Mã chứng nhận: ${cert.cert_code}`, 86, metaY);
+        ctx.fillText(`Ngày cấp: ${String(cert.issued_at || '').slice(0, 10)}`, 86, metaY + 28);
+        ctx.fillStyle = '#5C6864';
+        ctx.font = '500 13px ui-monospace, Menlo, Consolas, monospace';
+        ctx.fillText(`HMAC-SHA256: ${String(cert.hmac_signature || cert.stored_hmac || '')}`, 86, metaY + 58);
+
+        // Generate real QR on temp div canvas & paint onto PNG
+        if (typeof window.QRCode === 'function') {
+          const tmp = document.createElement('div');
+          tmp.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+          document.body.appendChild(tmp);
+          try {
+            new window.QRCode(tmp, {
+              text: buildVerifyUrl(cert.cert_code),
+              width: 170,
+              height: 170,
+              colorDark: '#1c2522',
+              colorLight: '#ffffff',
+              correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : 0,
+            });
+            const qrCanvas = tmp.querySelector('canvas');
+            if (qrCanvas) {
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillRect(928, 536, 194, 214);
+              ctx.strokeStyle = '#CFD9D4';
+              ctx.lineWidth = 1.5;
+              ctx.strokeRect(928, 536, 194, 214);
+              ctx.drawImage(qrCanvas, 940, 548, 170, 170);
+              ctx.fillStyle = '#4A5552';
+              ctx.font = '700 13px "Be Vietnam Pro", Inter, Arial, sans-serif';
+              ctx.fillText('Quét mã QR xác thực', 958, 738);
+            }
+          } finally {
+            document.body.removeChild(tmp);
+          }
+        }
+
+        const link = document.createElement('a');
+        link.download = `${String(cert.cert_code).replace(/[^a-zA-Z0-9_-]/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast(t(`Đã xuất file ảnh chứng nhận ${cert.cert_code}.png`, `Downloaded certificate ${cert.cert_code}.png`), 'success');
+      } catch (err) {
+        showToast(t('Lỗi tạo ảnh PNG: ', 'PNG export error: ') + err.message, 'error');
+      }
+    }
+
+    function renderPhiCountdownWidget(alerts) {
+      const list = Array.isArray(alerts) ? alerts : [];
+      if (!list.length) return '';
+      return `
+        <section class="mx-section mx-card">
+          <div class="mx-section-head">
+            <div>
+              <div class="mx-eyebrow">${escapeHtml(t('CẢNH BÁO AN TOÀN THU HOẠCH VIETGAP', 'VIETGAP HARVEST SAFETY ALERTS'))}</div>
+              <h2 class="mx-section-title">${escapeHtml(t('Đếm ngược Thời gian Cách ly (PHI) theo Lô Nông sản', 'Pre-Harvest Interval (PHI) Countdown by Produce Batch'))}</h2>
+            </div>
+            <button type="button" class="mx-btn mx-btn-secondary" onclick="switchView('public_tools')">${escapeHtml(t('Mở Sổ Nhật ký VietGAP', 'Open VietGAP Diary'))}</button>
+          </div>
+          <div class="mx-phi-grid">
+            ${list.map(a => {
+              const isLocked = Number(a.remaining_days || 0) > 0;
+              return `
+                <article class="mx-phi-card ${isLocked ? 'locked' : ''}">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+                    <code>${escapeHtml(a.batch_code)}</code>
+                    <span class="mx-badge ${isLocked ? 'mx-badge-warn' : ''}">
+                      ${escapeHtml(isLocked ? t(`Cách ly còn ${a.remaining_days} ngày`, `${a.remaining_days}d PHI lock`) : t('An toàn thu hoạch', 'Safe to harvest'))}
+                    </span>
+                  </div>
+                  <div style="font-weight:700;font-size:0.92rem;color:var(--mx-text-main);margin-bottom:4px;">${escapeHtml(a.product_name)}</div>
+                  <div style="font-size:0.82rem;color:var(--mx-text-muted);line-height:1.5;">
+                    ${escapeHtml(a.activity_label)} (${escapeHtml(a.region)})<br />
+                    PHI: <strong>${Number(a.phi_days || 0)} ${escapeHtml(t('ngày', 'days'))}</strong> • ${escapeHtml(t('Mở khóa:', 'Safe:'))} <strong>${escapeHtml(a.safe_harvest_date)}</strong>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <button type="button" class="mx-btn mx-btn-secondary" style="width:100%;" onclick="verifyCertFromLms('${escapeHtml(a.batch_code)}')">${escapeHtml(t('Truy xuất Lô QR', 'Trace Batch QR'))}</button>
+                  </div>
+                </article>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
     }
 
     async function handleOAuthRedirectOnLoad() {
@@ -1421,7 +1692,7 @@
               </p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-              ${sourcePillHtml(dashData.source)}
+              ${sourcePillHtml(dashData.source, dashData.key_role)}
             </div>
           </div>
 
@@ -1461,6 +1732,8 @@
             </div>
           </section>
         ` : ''}
+
+        ${renderPhiCountdownWidget(dashData.phi_alerts || [])}
 
         <section class="mx-section">
           <div class="mx-section-head">
@@ -1565,9 +1838,10 @@
       const p = json.pedagogy;
       const enr = json.enrollment || { progress_pct: 0, quiz_score: 0, attendance_count: 0, status: 'enrolled' };
       const subs = json.practice_submissions || [];
-      const latestSub = subs[0] || null;
+      const latestSub = subs.find(s => s.graded_by) || subs[0] || null;
       const questions = json.quiz_questions || [];
       const cert = json.certificate;
+      if (cert) cacheCertForExport(cert);
 
       ws.innerHTML = `
         <section class="mx-section mx-card">
@@ -1577,15 +1851,15 @@
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px;">
                 <span class="mx-badge">${escapeHtml(c.code)}</span>
                 <span class="mx-badge">${escapeHtml(c.category)}</span>
-                ${sourcePillHtml(json.source)}
+                ${sourcePillHtml(json.source, json.key_role)}
               </div>
               <h1 class="mx-section-title" style="font-size:1.52rem;">${escapeHtml(c.fullname)}</h1>
             </div>
             <div style="min-width:220px;background:var(--mx-bg);border:1px solid var(--mx-border);border-radius:10px;padding:14px;">
               <div style="font-size:0.8125rem;font-weight:700;color:var(--mx-text-subtle);">${escapeHtml(t('TIẾN ĐỘ HỌC PHẦN', 'COURSE PROGRESS'))}</div>
-              <div style="font-size:1.35rem;font-weight:800;color:var(--mx-primary);">${Number(enr.progress_pct)}%</div>
-              <div class="mx-progress-track"><div class="mx-progress-fill" style="width:${Math.min(100, Number(enr.progress_pct))}%;"></div></div>
-              <div style="font-size:0.84rem;color:var(--mx-text-muted);">Quiz: <strong>${Number(enr.quiz_score)}%</strong> • ${escapeHtml(t('Điểm danh:', 'Check-ins:'))} <strong>${enr.attendance_count}</strong></div>
+              <div id="course-progress-pct" style="font-size:1.35rem;font-weight:800;color:var(--mx-primary);">${Number(enr.progress_pct)}%</div>
+              <div class="mx-progress-track"><div id="course-progress-bar" class="mx-progress-fill" style="width:${Math.min(100, Number(enr.progress_pct))}%;"></div></div>
+              <div style="font-size:0.84rem;color:var(--mx-text-muted);"><span id="course-quiz-summary">Quiz: <strong>${Number(enr.quiz_score)}%</strong></span> • ${escapeHtml(t('Điểm danh:', 'Check-ins:'))} <strong>${enr.attendance_count}</strong></div>
             </div>
           </div>
 
@@ -1599,12 +1873,12 @@
           <!-- PANEL 1-3: PEDAGOGY -->
           <div id="panel-lessons" class="mx-course-panel">
             <div style="background:var(--mx-accent-soft);border:1px solid var(--mx-border);border-radius:12px;padding:18px;margin-bottom:18px;">
-              <div class="mx-eyebrow">PHẦN 1 • TÀI LIỆU CHUẨN VIETGAP (PDF SUMMARY)</div>
+              <div class="mx-eyebrow">${escapeHtml(t('PHẦN 1 • TÀI LIỆU CHUẨN VIETGAP (PDF SUMMARY)', 'PART 1 • VIETGAP STANDARD DOCS (PDF SUMMARY)'))}</div>
               <h3 style="margin:0 0 6px;">${escapeHtml(p.pdf_title)}</h3>
               <p style="margin:0;color:var(--mx-text-body);">${escapeHtml(p.pdf_summary)}</p>
             </div>
 
-            <div class="mx-eyebrow">PHẦN 2 • 4 CHUYÊN ĐỀ VIDEO &amp; BÀI GIẢNG</div>
+            <div class="mx-eyebrow">${escapeHtml(t('PHẦN 2 • 4 CHUYÊN ĐỀ VIDEO & BÀI GIẢNG', 'PART 2 • 4 VIDEO LECTURES & MODULES'))}</div>
             <div class="mx-grid-2" style="margin-bottom:18px;">
               ${p.modules.map(m => `
                 <div class="mx-card" style="padding:16px;">
@@ -1618,19 +1892,19 @@
             </div>
 
             <div style="background:var(--mx-bg);border:1px solid var(--mx-border);border-left:4px solid var(--mx-primary);border-radius:10px;padding:18px;">
-              <div class="mx-eyebrow">PHẦN 3 • HỌC LIỆU TƯƠNG TÁC H5P &amp; SCORM 1.2</div>
+              <div class="mx-eyebrow">${escapeHtml(t('PHẦN 3 • HỌC LIỆU TƯƠNG TÁC H5P & SCORM 1.2', 'PART 3 • INTERACTIVE H5P & SCORM 1.2 CONTENT'))}</div>
               <p style="margin:0;color:var(--mx-text-body);">${escapeHtml(p.h5p_prompt)}</p>
             </div>
           </div>
 
           <!-- PANEL 4: REAL 5-QUESTION QUIZ -->
           <div id="panel-quiz" class="mx-course-panel" style="display:none;">
-            <div class="mx-eyebrow">PHẦN 4 • BÀI KIỂM TRA TRẮC NGHIỆM CUỐI KHÓA (CẦN ĐẠT &ge; 70%)</div>
-            <p class="mx-section-sub">Kết quả được chấm trực tiếp trên máy chủ Vercel API và ghi nhận vào bảng <code>lms_quiz_attempts</code> của Supabase.</p>
+            <div class="mx-eyebrow">${escapeHtml(t('PHẦN 4 • BÀI KIỂM TRA TRẮC NGHIỆM CUỐI KHÓA (CẦN ĐẠT >= 70%)', 'PART 4 • FINAL MULTIPLE-CHOICE QUIZ (PASS >= 70%)'))}</div>
+            <p class="mx-section-sub">${escapeHtml(t('Kết quả được chấm trực tiếp trên máy chủ Vercel API và ghi nhận vào bảng lms_quiz_attempts của Supabase.', 'Results are graded server-side and recorded in Supabase lms_quiz_attempts.'))}</p>
             <form id="course-quiz-form" onsubmit="event.preventDefault(); submitCourseQuiz('${escapeHtml(c.code)}', ${questions.length});">
               ${questions.map(q => `
                 <div class="mx-quiz-q">
-                  <div style="font-weight:700;margin-bottom:6px;">Câu ${q.index + 1}: ${escapeHtml(q.question)}</div>
+                  <div style="font-weight:700;margin-bottom:6px;">${escapeHtml(t(`Câu ${q.index + 1}:`, `Question ${q.index + 1}:`))} ${escapeHtml(q.question)}</div>
                   ${q.options.map((opt, optIdx) => `
                     <label class="mx-quiz-opt">
                       <input type="radio" name="quiz_q_${q.index}" value="${optIdx}" required />
@@ -1639,54 +1913,54 @@
                   `).join('')}
                 </div>
               `).join('')}
-              <button type="submit" id="quiz-submit-btn" class="mx-btn mx-btn-primary">Nộp bài &amp; Chấm điểm Trắc nghiệm</button>
+              <button type="submit" id="quiz-submit-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Nộp bài & Chấm điểm Trắc nghiệm', 'Submit & Grade Quiz'))}</button>
             </form>
             <div id="quiz-result-box"></div>
           </div>
 
           <!-- PANEL 5: QR + GPS FIELD PRACTICE CHECK-IN -->
           <div id="panel-practice" class="mx-course-panel" style="display:none;">
-            <div class="mx-eyebrow">PHẦN 5 • TRẠM THỰC HÀNH HIỆN TRƯỜNG QR + ĐỊNH VỊ GPS</div>
+            <div class="mx-eyebrow">${escapeHtml(t('PHẦN 5 • TRẠM THỰC HÀNH HIỆN TRƯỜNG QR + ĐỊNH VỊ GPS', 'PART 5 • QR + GPS FIELD PRACTICE STATION'))}</div>
             <div style="background:var(--mx-accent-soft);border:1px solid var(--mx-border);border-radius:10px;padding:16px;margin-bottom:16px;">
-              <strong>Trạm thực hành quy chuẩn:</strong> ${escapeHtml(p.station_name)}<br />
-              <strong>Tọa độ chuẩn vườn mẫu:</strong> <code>${p.target_lat}, ${p.target_lng}</code> • <strong>Mẫu mã QR trạm:</strong> <code>${escapeHtml(p.expected_qr_prefix)}-2026</code>
+              <strong>${escapeHtml(t('Trạm thực hành quy chuẩn:', 'Standard Practice Station:'))}</strong> ${escapeHtml(p.station_name)}<br />
+              <strong>${escapeHtml(t('Tọa độ chuẩn vườn mẫu:', 'Target Coordinates:'))}</strong> <code>${p.target_lat}, ${p.target_lng}</code> • <strong>${escapeHtml(t('Mẫu mã QR trạm:', 'Station QR Sample:'))}</strong> <code>${escapeHtml(p.expected_qr_prefix)}-2026</code>
             </div>
 
             <form onsubmit="event.preventDefault(); submitFieldPractice('${escapeHtml(c.code)}');" style="display:flex;flex-direction:column;gap:12px;max-width:640px;">
               <div>
-                <label for="fp-qr-code" style="display:block;font-weight:700;margin-bottom:4px;">Mã điểm danh QR tại vườn *</label>
+                <label for="fp-qr-code" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Mã điểm danh QR tại vườn *', 'Field QR Check-in Code *'))}</label>
                 <input id="fp-qr-code" type="text" class="mx-input" required value="${escapeHtml(p.expected_qr_prefix)}-2026" placeholder="VD: QR-CHAMSOC01-2026" />
               </div>
               <div class="mx-grid-2">
                 <div>
-                  <label for="fp-lat" style="display:block;font-weight:700;margin-bottom:4px;">Vĩ độ GPS (Latitude)</label>
+                  <label for="fp-lat" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Vĩ độ GPS (Latitude)', 'GPS Latitude'))}</label>
                   <input id="fp-lat" type="text" class="mx-input" required value="${p.target_lat}" />
                 </div>
                 <div>
-                  <label for="fp-lng" style="display:block;font-weight:700;margin-bottom:4px;">Kinh độ GPS (Longitude)</label>
+                  <label for="fp-lng" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Kinh độ GPS (Longitude)', 'GPS Longitude'))}</label>
                   <input id="fp-lng" type="text" class="mx-input" required value="${p.target_lng}" />
                 </div>
               </div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button type="button" class="mx-btn mx-btn-secondary" onclick="fillBrowserGps()">Đọc Tọa độ GPS từ Trình duyệt</button>
-                <button type="submit" id="fp-submit-btn" class="mx-btn mx-btn-primary">Gửi Điểm danh Thực hành QR + GPS</button>
+                <button type="button" class="mx-btn mx-btn-secondary" onclick="fillBrowserGps()">${escapeHtml(t('Đọc Tọa độ GPS từ Trình duyệt', 'Read Browser GPS'))}</button>
+                <button type="submit" id="fp-submit-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Gửi Điểm danh Thực hành QR + GPS', 'Submit QR + GPS Check-in'))}</button>
               </div>
             </form>
             <div id="fp-result-box"></div>
 
             ${subs.length ? `
               <div class="mx-table-wrap table-wrap" style="margin-top:18px;">
-                <h4 style="margin:0 0 8px;">Lịch sử nộp Thực hành tại khóa học này</h4>
+                <h4 style="margin:0 0 8px;">${escapeHtml(t('Lịch sử nộp Thực hành tại khóa học này', 'Submission History in This Course'))}</h4>
                 <table class="mx-table">
-                  <thead><tr><th>Mã QR</th><th>Tọa độ GPS</th><th>Khoảng cách</th><th>Điểm Rubric</th><th>Trạng thái</th></tr></thead>
+                  <thead><tr><th>${escapeHtml(t('Mã QR', 'QR Code'))}</th><th>${escapeHtml(t('Tọa độ GPS', 'GPS Coords'))}</th><th>${escapeHtml(t('Khoảng cách', 'Distance'))}</th><th>${escapeHtml(t('Điểm Rubric', 'Rubric Score'))}</th><th>${escapeHtml(t('Trạng thái', 'Status'))}</th></tr></thead>
                   <tbody>
                     ${subs.map(s => `
                       <tr>
                         <td><code>${escapeHtml(s.checkin_code)}</code></td>
                         <td><code>${escapeHtml(s.gps_lat)}, ${escapeHtml(s.gps_lng)}</code></td>
                         <td>${Number(s.distance_m)} m</td>
-                        <td><strong>${s.graded_by ? Number(s.total_grade) + '/100' : 'Chưa chấm'}</strong></td>
-                        <td>${s.graded_by ? 'Đã chấm bởi ' + escapeHtml(s.graded_by) : 'Chờ CBKT chấm'}</td>
+                        <td><strong>${s.graded_by ? Number(s.total_grade) + '/100' : t('Chưa chấm', 'Pending')}</strong></td>
+                        <td>${s.graded_by ? escapeHtml(t('Đã chấm bởi ', 'Graded by ') + s.graded_by) : escapeHtml(t('Chờ CBKT chấm', 'Awaiting CBKT'))}</td>
                       </tr>
                     `).join('')}
                   </tbody>
@@ -1699,19 +1973,19 @@
           <div id="panel-rubric" class="mx-course-panel" style="display:none;">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
               <div>
-                <div class="mx-eyebrow">PHẦN 6 • PHIẾU ĐÁNH GIÁ RUBRIC 4 TIÊU CHÍ &amp; CHỨNG NHẬN SỐ QR</div>
-                <h3 style="margin:0;">Kết quả Chấm điểm Thực địa &amp; Cấp Chứng nhận</h3>
+                <div class="mx-eyebrow">${escapeHtml(t('PHẦN 6 • PHIẾU ĐÁNH GIÁ RUBRIC 4 TIÊU CHÍ & CHỨNG NHẬN SỐ QR', 'PART 6 • 4-CRITERIA RUBRIC & DIGITAL QR CERTIFICATE'))}</div>
+                <h3 style="margin:0;">${escapeHtml(t('Kết quả Chấm điểm Thực địa & Cấp Chứng nhận', 'Field Practice Grading & Certificate Issuance'))}</h3>
               </div>
-              <button type="button" class="mx-btn mx-btn-secondary no-print" onclick="window.print()">In Phiếu Rubric A4</button>
+              <button type="button" class="mx-btn mx-btn-secondary no-print" onclick="window.print()">${escapeHtml(t('In Phiếu Rubric A4', 'Print Rubric Sheet A4'))}</button>
             </div>
 
             <div class="mx-table-wrap table-wrap">
               <table class="mx-table">
                 <thead>
                   <tr>
-                    <th>Tiêu chí Đánh giá Thực hành VietGAP</th>
-                    <th>Điểm tối đa</th>
-                    <th>Điểm đạt được</th>
+                    <th>${escapeHtml(t('Tiêu chí Đánh giá Thực hành VietGAP', 'VietGAP Field Practice Criterion'))}</th>
+                    <th>${escapeHtml(t('Điểm tối đa', 'Max Score'))}</th>
+                    <th>${escapeHtml(t('Điểm đạt được', 'Awarded'))}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1723,9 +1997,9 @@
                     </tr>
                   `).join('')}
                   <tr>
-                    <td><strong>TỔNG ĐIỂM RUBRIC THỰC HÀNH</strong></td>
+                    <td><strong>${escapeHtml(t('TỔNG ĐIỂM RUBRIC THỰC HÀNH', 'TOTAL RUBRIC SCORE'))}</strong></td>
                     <td><strong>100</strong></td>
-                    <td><strong>${latestSub && latestSub.graded_by ? Number(latestSub.total_grade) + ' / 100' : 'Chờ Cán bộ kỹ thuật chấm'}</strong></td>
+                    <td><strong>${latestSub && latestSub.graded_by ? Number(latestSub.total_grade) + ' / 100' : escapeHtml(t('Chờ Cán bộ kỹ thuật chấm', 'Pending Officer Review'))}</strong></td>
                   </tr>
                 </tbody>
               </table>
@@ -1733,34 +2007,44 @@
 
             ${latestSub && latestSub.graded_by ? `
               <div style="margin-top:14px;padding:14px;background:var(--mx-bg);border:1px solid var(--mx-border);border-radius:8px;">
-                <strong>Nhận xét của Cán bộ kỹ thuật (${escapeHtml(latestSub.graded_by)}):</strong>
-                <p style="margin:4px 0 0;">${escapeHtml(latestSub.feedback || 'Đạt chuẩn kỹ thuật quy trình VietGAP.')}</p>
+                <strong>${escapeHtml(t(`Nhận xét của Cán bộ kỹ thuật (${latestSub.graded_by}):`, `Technical Officer Feedback (${latestSub.graded_by}):`))}</strong>
+                <p style="margin:4px 0 0;">${escapeHtml(latestSub.feedback || t('Đạt chuẩn kỹ thuật quy trình VietGAP.', 'Meets VietGAP technical standards.'))}</p>
               </div>
             ` : ''}
 
             <div style="margin-top:20px;">
               ${cert ? `
                 <div class="mx-verify-result">
-                  <span class="mx-badge" style="margin-bottom:8px;">ĐÃ CẤP CHỨNG NHẬN SỐ QR HMAC-SHA256</span>
-                  <h3 style="margin:0 0 6px;">${escapeHtml(cert.student_name)} — ${escapeHtml(cert.course_code)}</h3>
-                  <div style="font-size:0.92rem;line-height:1.8;">
-                    <strong>Mã chứng nhận:</strong> <code>${escapeHtml(cert.cert_code)}</code><br />
-                    <strong>Điểm tổng kết:</strong> <strong>${Number(cert.final_score).toFixed(2)}%</strong><br />
-                    <span style="word-break:break-all;"><strong>Chữ ký số HMAC-SHA256:</strong> <code>${escapeHtml(cert.hmac_signature)}</code></span>
-                  </div>
-                  <div style="margin-top:12px;">
-                    <button type="button" class="mx-btn mx-btn-primary no-print" onclick="verifyCertFromLms('${escapeHtml(cert.cert_code)}')">Kiểm tra công khai trên /api/verify</button>
+                  <div class="mx-cert-qr-flex">
+                    <div class="mx-cert-qr-main">
+                      <span class="mx-badge" style="margin-bottom:8px;">${escapeHtml(t('ĐÃ CẤP CHỨNG NHẬN SỐ QR HMAC-SHA256', 'ISSUED HMAC-SHA256 QR CERTIFICATE'))}</span>
+                      <h3 style="margin:0 0 6px;">${escapeHtml(cert.student_name)} — ${escapeHtml(cert.course_code)}</h3>
+                      <div style="font-size:0.92rem;line-height:1.8;">
+                        <strong>${escapeHtml(t('Mã chứng nhận:', 'Certificate Code:'))}</strong> <code>${escapeHtml(cert.cert_code)}</code><br />
+                        <strong>${escapeHtml(t('Điểm tổng kết:', 'Final Score:'))}</strong> <strong>${Number(cert.final_score).toFixed(2)}%</strong><br />
+                        <span style="word-break:break-all;"><strong>${escapeHtml(t('Chữ ký số HMAC-SHA256:', 'HMAC-SHA256 Signature:'))}</strong> <code>${escapeHtml(cert.hmac_signature)}</code></span>
+                      </div>
+                      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
+                        <button type="button" class="mx-btn mx-btn-primary" onclick="verifyCertFromLms('${escapeHtml(cert.cert_code)}')">${escapeHtml(t('Kiểm tra công khai trên /api/verify', 'Verify on Public /api/verify'))}</button>
+                        <button type="button" class="mx-btn mx-btn-secondary" onclick="downloadCertificatePng('${escapeHtml(cert.cert_code)}')">${escapeHtml(t('Tải ảnh Chứng nhận PNG', 'Download PNG Certificate'))}</button>
+                      </div>
+                    </div>
+                    <div class="mx-qr-box">
+                      <div id="course-cert-qr"></div>
+                      <span class="mx-qr-caption">${escapeHtml(t('Quét xác thực QR', 'Scan to Verify'))}</span>
+                    </div>
                   </div>
                 </div>
               ` : `
                 <div class="mx-inline-msg warn">
-                  Chứng nhận số QR HMAC-SHA256 sẽ tự động được cấp ngay khi học viên đạt cả hai điều kiện: Bài Quiz cuối khóa &ge; 70% và Điểm thực hành Rubric &ge; 60/100 điểm.
+                  ${escapeHtml(t('Chứng nhận số QR HMAC-SHA256 sẽ tự động được cấp ngay khi học viên đạt cả hai điều kiện: Bài Quiz cuối khóa >= 70% và Điểm thực hành Rubric >= 60/100 điểm.', 'HMAC-SHA256 QR Certificate is automatically issued once Final Quiz >= 70% and Field Rubric >= 60/100.'))}
                 </div>
               `}
             </div>
           </div>
         </section>
       `;
+      if (cert) renderQrInto('course-cert-qr', cert.cert_code, 104);
     }
 
     function switchCoursePanel(panelId, btn) {
@@ -1777,7 +2061,7 @@
       for (let i = 0; i < totalQ; i++) {
         const checked = document.querySelector(`input[name="quiz_q_${i}"]:checked`);
         if (!checked) {
-          box.innerHTML = `<div class="mx-inline-msg error">Vui lòng chọn đáp án cho tất cả ${totalQ} câu hỏi.</div>`;
+          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(t(`Vui lòng chọn đáp án cho tất cả ${totalQ} câu hỏi.`, `Please answer all ${totalQ} questions.`))}</div>`;
           return;
         }
         answers.push(Number(checked.value));
@@ -1790,29 +2074,53 @@
           body: { action: 'submit_quiz', course_code: courseCode, answers },
         });
         if (!res.ok || !json.ok) {
-          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Lỗi nộp bài.')}</div>`;
-          showToast(json.message_vi || 'Lỗi nộp bài.', 'error');
+          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || t('Lỗi nộp bài.', 'Quiz submission failed.'))}</div>`;
+          showToast(json.message_vi || t('Lỗi nộp bài.', 'Quiz submission failed.'), 'error');
           return;
         }
+
+        const pctEl = document.getElementById('course-progress-pct');
+        const barEl = document.getElementById('course-progress-bar');
+        const qzEl = document.getElementById('course-quiz-summary');
+        if (pctEl && json.progress_pct !== undefined) pctEl.textContent = `${Number(json.progress_pct)}%`;
+        if (barEl && json.progress_pct !== undefined) barEl.style.width = `${Math.min(100, Number(json.progress_pct))}%`;
+        if (qzEl && json.best_quiz_score !== undefined) qzEl.innerHTML = `Quiz: <strong>${Number(json.best_quiz_score)}%</strong>`;
+
         const passed = Number(json.score_100) >= 70;
-        showToast(`Đã chấm bài Quiz: ${json.correct_count}/${json.total_questions} câu đúng (${Number(json.score_100).toFixed(2)}%)`, passed ? 'success' : 'warn');
+        showToast(t(`Đã chấm bài Quiz: ${json.correct_count}/${json.total_questions} câu đúng (${Number(json.score_100).toFixed(2)}%)`, `Quiz graded: ${json.correct_count}/${json.total_questions} correct (${Number(json.score_100).toFixed(2)}%)`), passed ? 'success' : 'warn');
+
+        if (json.certificate_issued && json.certificate) cacheCertForExport(json.certificate);
+        const certCode = json.certificate && json.certificate.cert_code ? json.certificate.cert_code : '';
+
         box.innerHTML = `
           <div class="mx-verify-result ${passed ? '' : 'invalid'}" style="margin-top:16px;">
             <span class="mx-badge ${passed ? '' : 'mx-badge-danger'}" style="margin-bottom:8px;">
-              ${passed ? 'ĐẠT YÊU CẦU TRẮC NGHIỆM' : 'CHƯA ĐẠT (CẦN >= 70%)'}
+              ${escapeHtml(passed ? t('ĐẠT YÊU CẦU TRẮC NGHIỆM', 'QUIZ PASSED') : t('CHƯA ĐẠT (CẦN >= 70%)', 'NOT PASSED (NEED >= 70%)'))}
             </span>
-            <h3 style="margin:0 0 6px;">Kết quả: ${json.correct_count}/${json.total_questions} câu đúng (${Number(json.score_100).toFixed(2)}%)</h3>
+            <h3 style="margin:0 0 6px;">${escapeHtml(t('Kết quả:', 'Result:'))} ${json.correct_count}/${json.total_questions} ${escapeHtml(t('câu đúng', 'correct'))} (${Number(json.score_100).toFixed(2)}%)</h3>
             ${json.certificate_issued && json.certificate ? `
-              <p style="margin:6px 0 0;font-weight:700;color:var(--mx-primary);">
-                Hệ thống đã tự động ký cấp Chứng nhận số QR: <code>${escapeHtml(json.certificate.cert_code)}</code>
-              </p>
+              <div class="mx-cert-qr-flex" style="margin-top:10px;">
+                <div class="mx-cert-qr-main">
+                  <p style="margin:0 0 8px;font-weight:700;color:var(--mx-primary);">
+                    ${escapeHtml(t('Hệ thống đã tự động ký cấp Chứng nhận số QR:', 'Automatically issued Digital QR Certificate:'))} <code>${escapeHtml(certCode)}</code>
+                  </p>
+                  ${json.cert_email && json.cert_email.sent ? `<p style="margin:0 0 8px;font-size:0.86rem;color:var(--mx-primary);">${escapeHtml(t('Email thông báo cấp chứng nhận đã được gửi.', 'Certificate notification email has been sent.'))}</p>` : ''}
+                  <button type="button" class="mx-btn mx-btn-secondary" onclick="downloadCertificatePng('${escapeHtml(certCode)}')">${escapeHtml(t('Tải ảnh Chứng nhận PNG', 'Download PNG Certificate'))}</button>
+                </div>
+                <div class="mx-qr-box">
+                  <div id="quiz-issued-cert-qr"></div>
+                  <span class="mx-qr-caption">${escapeHtml(t('Quét xác thực QR', 'Scan to Verify'))}</span>
+                </div>
+              </div>
             ` : `
               <p style="margin:6px 0 0;color:var(--mx-text-body);">
-                ${passed ? 'Bạn đã hoàn thành phần Quiz (>= 70%). Tiếp tục hoàn thành Điểm danh Thực hành GPS & chờ CBKT chấm Rubric (>= 60đ) để mở khóa Chứng nhận số.' : 'Bạn có thể ôn lại Phần 1–3 và làm lại bài kiểm tra.'}
+                ${escapeHtml(passed ? t('Bạn đã hoàn thành phần Quiz (>= 70%). Tiếp tục hoàn thành Điểm danh Thực hành GPS & chờ CBKT chấm Rubric (>= 60đ) để mở khóa Chứng nhận số.', 'Quiz passed (>= 70%). Complete GPS Check-in and Field Rubric (>= 60/100) to unlock your QR Certificate.') : t('Bạn có thể ôn lại Phần 1–3 và làm lại bài kiểm tra.', 'Review Parts 1-3 and retake the quiz.'))}
               </p>
             `}
           </div>
         `;
+        if (certCode) renderQrInto('quiz-issued-cert-qr', certCode, 96);
+        loadDashboardData();
       } finally {
         setBtnLoading(btn, false);
       }
@@ -1876,6 +2184,7 @@
       const ws = document.getElementById('lms-workspace');
       const certs = (dashData && dashData.certificates) || [];
       const enrollments = (dashData && dashData.enrollments) || [];
+      certs.forEach(cacheCertForExport);
 
       ws.innerHTML = `
         <section class="mx-section mx-card">
@@ -1890,34 +2199,43 @@
           <h3 style="margin:18px 0 10px;">1. ${escapeHtml(t(`Danh sách Chứng nhận Số Đã được Cấp (${certs.length})`, `Issued Digital Certificates (${certs.length})`))}</h3>
           ${certs.length ? `
             <div class="mx-grid-2">
-              ${certs.map(ct => `
+              ${certs.map((ct, idx) => `
                 <div class="mx-verify-result" style="margin-top:0;">
-                  <span class="mx-badge" style="margin-bottom:8px;">HMAC-SHA256 VERIFIED</span>
-                  <h4 style="margin:0 0 4px;">[${escapeHtml(ct.course_code)}] ${escapeHtml(ct.course_name)}</h4>
-                  <div style="font-size:0.88rem;line-height:1.7;">
-                    <strong>Mã chứng nhận:</strong> <code>${escapeHtml(ct.cert_code)}</code><br />
-                    <strong>Điểm tổng kết:</strong> <strong>${Number(ct.final_score).toFixed(2)}%</strong><br />
-                    <span style="word-break:break-all;"><strong>Chữ ký số:</strong> <code>${escapeHtml(ct.hmac_signature)}</code></span>
-                  </div>
-                  <div style="margin-top:10px;">
-                    <button type="button" class="mx-btn mx-btn-primary no-print" onclick="verifyCertFromLms('${escapeHtml(ct.cert_code)}')">${escapeHtml(t('Kiểm tra công khai QR', 'Verify Public QR'))}</button>
+                  <div class="mx-cert-qr-flex">
+                    <div class="mx-cert-qr-main">
+                      <span class="mx-badge" style="margin-bottom:8px;">HMAC-SHA256 VERIFIED</span>
+                      <h4 style="margin:0 0 4px;">[${escapeHtml(ct.course_code)}] ${escapeHtml(ct.course_name)}</h4>
+                      <div style="font-size:0.88rem;line-height:1.7;">
+                        <strong>${escapeHtml(t('Mã chứng nhận:', 'Certificate Code:'))}</strong> <code>${escapeHtml(ct.cert_code)}</code><br />
+                        <strong>${escapeHtml(t('Điểm tổng kết:', 'Final Score:'))}</strong> <strong>${Number(ct.final_score).toFixed(2)}%</strong><br />
+                        <span style="word-break:break-all;"><strong>${escapeHtml(t('Chữ ký số:', 'Digital Signature:'))}</strong> <code>${escapeHtml(ct.hmac_signature)}</code></span>
+                      </div>
+                      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
+                        <button type="button" class="mx-btn mx-btn-primary" onclick="verifyCertFromLms('${escapeHtml(ct.cert_code)}')">${escapeHtml(t('Kiểm tra công khai QR', 'Verify Public QR'))}</button>
+                        <button type="button" class="mx-btn mx-btn-secondary" onclick="downloadCertificatePng('${escapeHtml(ct.cert_code)}')">${escapeHtml(t('Tải ảnh Chứng nhận PNG', 'Download PNG Certificate'))}</button>
+                      </div>
+                    </div>
+                    <div class="mx-qr-box">
+                      <div id="cert-qr-${idx}"></div>
+                      <span class="mx-qr-caption">${escapeHtml(t('Quét xác thực QR', 'Scan to Verify'))}</span>
+                    </div>
                   </div>
                 </div>
               `).join('')}
             </div>
-          ` : '<div class="mx-inline-msg warn">Bạn chưa có chứng nhận nào. Hoàn thành Quiz &ge; 70% và Thực hành Rubric &ge; 60 điểm để được tự động ký cấp chứng nhận.</div>'}
+          ` : `<div class="mx-inline-msg warn">${escapeHtml(t('Bạn chưa có chứng nhận nào. Hoàn thành Quiz >= 70% và Thực hành Rubric >= 60 điểm để được tự động ký cấp chứng nhận.', 'No certificates issued yet. Complete Quiz >= 70% and Field Rubric >= 60/100 to earn a digital certificate.'))}</div>`}
 
           <h3 style="margin:24px 0 10px;">2. ${escapeHtml(t('Bảng điểm Học thuật Tổng hợp', 'Comprehensive Academic Transcript'))}</h3>
           <div class="mx-table-wrap table-wrap">
             <table class="mx-table">
               <thead>
                 <tr>
-                  <th>Mã học phần</th>
-                  <th>Tên khóa học</th>
-                  <th>Tiến độ</th>
-                  <th>Điểm Quiz</th>
-                  <th>Thực hành Rubric</th>
-                  <th>Chứng nhận QR</th>
+                  <th>${escapeHtml(t('Mã học phần', 'Course Code'))}</th>
+                  <th>${escapeHtml(t('Tên khóa học', 'Course Title'))}</th>
+                  <th>${escapeHtml(t('Tiến độ', 'Progress'))}</th>
+                  <th>${escapeHtml(t('Điểm Quiz', 'Quiz Score'))}</th>
+                  <th>${escapeHtml(t('Thực hành Rubric', 'Field Rubric'))}</th>
+                  <th>${escapeHtml(t('Chứng nhận QR', 'QR Certificate'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1927,8 +2245,8 @@
                     <td>${escapeHtml(e.fullname)}</td>
                     <td>${Number(e.progress_pct)}%</td>
                     <td><strong>${Number(e.quiz_score).toFixed(2)}%</strong></td>
-                    <td>${e.practice_sub && e.practice_sub.graded_by ? `<strong>${Number(e.practice_sub.total_grade)}/100</strong>` : 'Chưa chấm'}</td>
-                    <td>${e.certificate ? `<code>${escapeHtml(e.certificate.cert_code)}</code>` : 'Chưa cấp'}</td>
+                    <td>${e.practice_sub && e.practice_sub.graded_by ? `<strong>${Number(e.practice_sub.total_grade)}/100</strong>` : escapeHtml(t('Chưa chấm', 'Pending'))}</td>
+                    <td>${e.certificate ? `<code>${escapeHtml(e.certificate.cert_code)}</code>` : escapeHtml(t('Chưa cấp', 'Not Issued'))}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -1936,11 +2254,12 @@
           </div>
         </section>
       `;
+      certs.forEach((ct, idx) => renderQrInto('cert-qr-' + idx, ct.cert_code, 104));
     }
 
     function renderProfileView() {
       const ws = document.getElementById('lms-workspace');
-      const u = dashData.user;
+      const u = (dashData && dashData.user) || currentUser;
       ws.innerHTML = `
         <section class="mx-section mx-card" style="max-width:680px;">
           <div class="mx-eyebrow">${escapeHtml(t('THÔNG TIN CÁ NHÂN & BẢO MẬT', 'PROFILE & SECURITY'))}</div>
@@ -1948,25 +2267,25 @@
           <form onsubmit="event.preventDefault(); submitProfileUpdate();" style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
             <div class="mx-grid-2">
               <div>
-                <label style="display:block;font-weight:700;margin-bottom:4px;">Tên đăng nhập</label>
-                <input type="text" class="mx-input" value="${escapeHtml(u.username)}" disabled />
+                <label for="prof-username" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Tên đăng nhập', 'Username'))}</label>
+                <input id="prof-username" type="text" class="mx-input" value="${escapeHtml(u.username)}" disabled />
               </div>
               <div>
-                <label style="display:block;font-weight:700;margin-bottom:4px;">Vai trò hệ thống</label>
-                <input type="text" class="mx-input" value="${escapeHtml(roleLabel(u.role))}" disabled />
+                <label for="prof-role" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Vai trò hệ thống', 'System Role'))}</label>
+                <input id="prof-role" type="text" class="mx-input" value="${escapeHtml(roleLabel(u.role))}" disabled />
               </div>
             </div>
             <div>
-              <label for="prof-fullname" style="display:block;font-weight:700;margin-bottom:4px;">Họ và tên</label>
+              <label for="prof-fullname" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Họ và tên', 'Full Name'))}</label>
               <input id="prof-fullname" type="text" class="mx-input" required value="${escapeHtml(u.full_name)}" />
             </div>
             <div class="mx-grid-2">
               <div>
-                <label for="prof-farm" style="display:block;font-weight:700;margin-bottom:4px;">Tên Nông trại / Đơn vị</label>
-                <input id="prof-farm" type="text" class="mx-input" value="${escapeHtml(u.farm_name || '')}" placeholder="Nhập tên Nông trại / HTX của bạn" />
+                <label for="prof-farm" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Tên Nông trại / Đơn vị', 'Farm / Organization'))}</label>
+                <input id="prof-farm" type="text" class="mx-input" value="${escapeHtml(u.farm_name || '')}" placeholder="${escapeHtml(t('Nhập tên Nông trại / HTX của bạn', 'Enter farm or co-op name'))}" />
               </div>
               <div>
-                <label for="prof-region" style="display:block;font-weight:700;margin-bottom:4px;">Vùng trồng</label>
+                <label for="prof-region" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Vùng trồng', 'Growing Region'))}</label>
                 <select id="prof-region" class="mx-select">
                   <option value="Lâm Đồng" ${u.region === 'Lâm Đồng' ? 'selected' : ''}>Lâm Đồng</option>
                   <option value="Đắk Lắk" ${u.region === 'Đắk Lắk' ? 'selected' : ''}>Đắk Lắk</option>
@@ -1976,26 +2295,26 @@
             </div>
             <div class="mx-grid-2">
               <div>
-                <label for="prof-area" style="display:block;font-weight:700;margin-bottom:4px;">Diện tích (m²)</label>
+                <label for="prof-area" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Diện tích (m²)', 'Farm Area (m²)'))}</label>
                 <input id="prof-area" type="number" class="mx-input" value="${Number(u.area_m2 || 1000)}" />
               </div>
               <div>
-                <label for="prof-crop" style="display:block;font-weight:700;margin-bottom:4px;">Cây trồng chủ lực</label>
-                <input id="prof-crop" type="text" class="mx-input" value="${escapeHtml(u.main_crop || '')}" placeholder="Ví dụ: Dâu tây, Rau thủy canh CNC..." />
+                <label for="prof-crop" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Cây trồng chủ lực', 'Main Crops'))}</label>
+                <input id="prof-crop" type="text" class="mx-input" value="${escapeHtml(u.main_crop || '')}" placeholder="${escapeHtml(t('Ví dụ: Dâu tây, Rau thủy canh CNC...', 'e.g., Strawberry, Hydroponic Greens...'))}" />
               </div>
             </div>
             <hr style="border:none;border-top:1px solid var(--mx-border);margin:6px 0;" />
             <div class="mx-grid-2">
               <div>
-                <label for="prof-cur-pw" style="display:block;font-weight:700;margin-bottom:4px;">Mật khẩu hiện tại (nếu đổi mật khẩu)</label>
-                <input id="prof-cur-pw" type="password" class="mx-input" autocomplete="current-password" placeholder="Để trống nếu không đổi" />
+                <label for="prof-cur-pw" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Mật khẩu hiện tại (nếu đổi mật khẩu)', 'Current Password (optional)'))}</label>
+                <input id="prof-cur-pw" type="password" class="mx-input" autocomplete="current-password" placeholder="${escapeHtml(t('Để trống nếu không đổi', 'Leave blank to keep current'))}" />
               </div>
               <div>
-                <label for="prof-new-pw" style="display:block;font-weight:700;margin-bottom:4px;">Mật khẩu mới (&ge; 6 ký tự)</label>
-                <input id="prof-new-pw" type="password" class="mx-input" autocomplete="new-password" placeholder="Mật khẩu mới" />
+                <label for="prof-new-pw" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Mật khẩu mới (>= 6 ký tự)', 'New Password (>= 6 chars)'))}</label>
+                <input id="prof-new-pw" type="password" class="mx-input" autocomplete="new-password" placeholder="${escapeHtml(t('Mật khẩu mới', 'New password'))}" />
               </div>
             </div>
-            <button type="submit" id="prof-save-btn" class="mx-btn mx-btn-primary">Lưu Cập nhật Hồ sơ lên Supabase</button>
+            <button type="submit" id="prof-save-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Lưu Cập nhật Hồ sơ lên Supabase', 'Save Profile Updates'))}</button>
           </form>
           <div id="prof-msg"></div>
         </section>
@@ -2021,10 +2340,12 @@
           },
         });
         if (!res.ok || !json.ok) {
-          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Lỗi cập nhật.')}</div>`;
-          showToast(json.message_vi || 'Lỗi cập nhật.', 'error');
+          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || t('Lỗi cập nhật.', 'Update failed.'))}</div>`;
+          showToast(json.message_vi || t('Lỗi cập nhật.', 'Update failed.'), 'error');
         } else {
+          if (json.token) setToken(json.token);
           currentUser = json.user;
+          if (dashData) dashData.user = json.user;
           document.getElementById('prof-cur-pw').value = '';
           document.getElementById('prof-new-pw').value = '';
           box.innerHTML = `<div class="mx-inline-msg">${escapeHtml(json.message_vi)}</div>`;
@@ -2042,20 +2363,20 @@
 
       ws.innerHTML = `
         <section class="mx-section mx-card">
-          <div class="mx-eyebrow">NGHIỆP VỤ CÁN BỘ KỸ THUẬT • CHẤM ĐIỂM RUBRIC 4 TIÊU CHÍ</div>
-          <h1 class="mx-section-title">Danh sách Nộp bài Thực hành Hiện trường (QR + GPS)</h1>
-          <p class="mx-section-sub">Khi Cán bộ kỹ thuật chấm đạt &ge; 60 điểm và học viên đã đạt Quiz &ge; 70%, hệ thống sẽ tự động ký cấp Chứng nhận số QR HMAC-SHA256 vào bảng <code>mamxanh_certificates</code>.</p>
+          <div class="mx-eyebrow">${escapeHtml(t('NGHIỆP VỤ CÁN BỘ KỸ THUẬT • CHẤM ĐIỂM RUBRIC 4 TIÊU CHÍ', 'TECHNICAL OFFICER • 4-CRITERIA RUBRIC GRADING'))}</div>
+          <h1 class="mx-section-title">${escapeHtml(t('Danh sách Nộp bài Thực hành Hiện trường (QR + GPS)', 'Field Practice Submissions (QR + GPS)'))}</h1>
+          <p class="mx-section-sub">${escapeHtml(t('Khi Cán bộ kỹ thuật chấm đạt >= 60 điểm và học viên đã đạt Quiz >= 70%, hệ thống sẽ tự động ký cấp Chứng nhận số QR HMAC-SHA256 vào bảng mamxanh_certificates.', 'When Field Rubric >= 60 and Quiz >= 70%, an HMAC-SHA256 QR Certificate is automatically issued to mamxanh_certificates.'))}</p>
 
           <div class="mx-table-wrap table-wrap">
             <table class="mx-table">
               <thead>
                 <tr>
-                  <th>Học viên / Nông hộ</th>
-                  <th>Khóa học</th>
-                  <th>Mã QR / Tọa độ GPS</th>
-                  <th>Quiz hiện tại</th>
-                  <th>Trạng thái Rubric</th>
-                  <th>Chấm điểm</th>
+                  <th>${escapeHtml(t('Học viên / Nông hộ', 'Student / Farm'))}</th>
+                  <th>${escapeHtml(t('Khóa học', 'Course'))}</th>
+                  <th>${escapeHtml(t('Mã QR / Tọa độ GPS', 'QR / GPS Coords'))}</th>
+                  <th>${escapeHtml(t('Quiz hiện tại', 'Quiz Score'))}</th>
+                  <th>${escapeHtml(t('Trạng thái Rubric', 'Rubric Status'))}</th>
+                  <th>${escapeHtml(t('Chấm điểm', 'Action'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -2068,13 +2389,13 @@
                     <td>
                       ${s.graded_by
                         ? `<span class="mx-badge">${Number(s.total_grade)}/100 (${escapeHtml(s.graded_by)})</span>`
-                        : '<span class="mx-badge mx-badge-warn">Chờ chấm</span>'}
+                        : `<span class="mx-badge mx-badge-warn">${escapeHtml(t('Chờ chấm', 'Pending'))}</span>`}
                     </td>
                     <td>
-                      <button type="button" class="mx-btn mx-btn-primary" onclick="openRubricGrader(${s.id})">Chấm Rubric</button>
+                      <button type="button" class="mx-btn mx-btn-primary" onclick="openRubricGrader(${s.id})">${escapeHtml(t('Chấm Rubric', 'Grade Rubric'))}</button>
                     </td>
                   </tr>
-                `).join('') : '<tr><td colspan="6">Chưa có bài nộp thực hành nào.</td></tr>'}
+                `).join('') : `<tr><td colspan="6">${escapeHtml(t('Chưa có bài nộp thực hành nào.', 'No field submissions yet.'))}</td></tr>`}
               </tbody>
             </table>
           </div>
@@ -2089,32 +2410,32 @@
       const panel = document.getElementById('grader-panel');
       panel.innerHTML = `
         <div class="mx-card" style="background:var(--mx-bg);border:2px solid var(--mx-primary);">
-          <h3 style="margin:0 0 10px;">Phiếu Chấm điểm Rubric — ${escapeHtml(s.student_name)} (${escapeHtml(s.course_code)})</h3>
+          <h3 style="margin:0 0 10px;">${escapeHtml(t('Phiếu Chấm điểm Rubric', 'Rubric Grading Sheet'))} — ${escapeHtml(s.student_name)} (${escapeHtml(s.course_code)})</h3>
           <form onsubmit="event.preventDefault(); submitRubricGrade(${s.id});" style="display:flex;flex-direction:column;gap:12px;">
             <div class="mx-grid-4">
               <div>
-                <label for="gr-prep" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">1. Chuẩn bị &amp; Bảo hộ (0–25)</label>
+                <label for="gr-prep" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">${escapeHtml(t('1. Chuẩn bị & Bảo hộ (0–25)', '1. Prep & PPE (0-25)'))}</label>
                 <input id="gr-prep" type="number" class="mx-input" min="0" max="25" required value="${s.graded_by ? s.crit_prep : 23}" />
               </div>
               <div>
-                <label for="gr-tech" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">2. Thao tác Kỹ thuật (0–25)</label>
+                <label for="gr-tech" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">${escapeHtml(t('2. Thao tác Kỹ thuật (0–25)', '2. Field Technique (0-25)'))}</label>
                 <input id="gr-tech" type="number" class="mx-input" min="0" max="25" required value="${s.graded_by ? s.crit_tech : 22}" />
               </div>
               <div>
-                <label for="gr-bio" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">3. An toàn Sinh học (0–25)</label>
+                <label for="gr-bio" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">${escapeHtml(t('3. An toàn Sinh học (0–25)', '3. Biosafety & PHI (0-25)'))}</label>
                 <input id="gr-bio" type="number" class="mx-input" min="0" max="25" required value="${s.graded_by ? s.crit_biosafe : 24}" />
               </div>
               <div>
-                <label for="gr-qual" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">4. Nhật ký &amp; Kết quả (0–25)</label>
+                <label for="gr-qual" style="display:block;font-weight:700;font-size:0.84rem;margin-bottom:4px;">${escapeHtml(t('4. Nhật ký & Kết quả (0–25)', '4. Diary & Quality (0-25)'))}</label>
                 <input id="gr-qual" type="number" class="mx-input" min="0" max="25" required value="${s.graded_by ? s.crit_quality : 23}" />
               </div>
             </div>
             <div>
-              <label for="gr-feedback" style="display:block;font-weight:700;margin-bottom:4px;">Nhận xét của Cán bộ kỹ thuật</label>
-              <textarea id="gr-feedback" class="mx-textarea" required placeholder="Nhập đánh giá thao tác thực địa tại nhà màng...">${escapeHtml(s.feedback || 'Thao tác chuẩn quy trình VietGAP, kiểm soát pH/EC chính xác và ghi chép nhật ký đầy đủ.')}</textarea>
+              <label for="gr-feedback" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Nhận xét của Cán bộ kỹ thuật', 'Technical Officer Feedback'))}</label>
+              <textarea id="gr-feedback" class="mx-textarea" required placeholder="${escapeHtml(t('Nhập đánh giá thao tác thực địa tại nhà màng...', 'Enter field evaluation comments...'))}">${escapeHtml(s.feedback || 'Thao tác chuẩn quy trình VietGAP, kiểm soát pH/EC chính xác và ghi chép nhật ký đầy đủ.')}</textarea>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button type="submit" id="gr-submit-btn" class="mx-btn mx-btn-primary">Lưu Điểm Rubric &amp; Cấp Chứng nhận (nếu đạt)</button>
+              <button type="submit" id="gr-submit-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Lưu Điểm Rubric & Cấp Chứng nhận (nếu đạt)', 'Save Rubric & Issue Cert (if passed)'))}</button>
             </div>
           </form>
           <div id="gr-msg"></div>
@@ -2141,14 +2462,17 @@
           },
         });
         if (!res.ok || !json.ok) {
-          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Lỗi chấm điểm.')}</div>`;
-          showToast(json.message_vi || 'Lỗi chấm điểm.', 'error');
+          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || t('Lỗi chấm điểm.', 'Grading failed.'))}</div>`;
+          showToast(json.message_vi || t('Lỗi chấm điểm.', 'Grading failed.'), 'error');
           return;
         }
-        showToast(json.message_vi, 'success');
+        const emailSuffix = (json.certificate_issued && json.cert_email && json.cert_email.sent)
+          ? t(' Đã gửi email thông báo chứng nhận cho học viên.', ' Certificate notification email sent.')
+          : '';
+        showToast((json.message_vi || '') + emailSuffix, 'success');
         await loadDashboardData();
         renderGradingView();
-        document.getElementById('grader-panel').innerHTML = `<div class="mx-inline-msg">${escapeHtml(json.message_vi)}</div>`;
+        document.getElementById('grader-panel').innerHTML = `<div class="mx-inline-msg">${escapeHtml((json.message_vi || '') + emailSuffix)}</div>`;
       } finally {
         setBtnLoading(btn, false);
       }
@@ -2160,32 +2484,32 @@
 
       ws.innerHTML = `
         <section class="mx-section mx-card" style="max-width:740px;">
-          <div class="mx-eyebrow">CÔNG CỤ NHÂN BẢN KHÓA HỌC (COURSE CLONER)</div>
-          <h1 class="mx-section-title">Nhân bản Nhanh Học phần Chuẩn cho Hợp tác xã Địa phương</h1>
-          <p class="mx-section-sub">Sao chép toàn bộ 6 phần sư phạm, Quiz và cấu trúc Rubric sang mã lớp mới trên bảng <code>lms_courses</code> của Supabase.</p>
+          <div class="mx-eyebrow">${escapeHtml(t('CÔNG CỤ NHÂN BẢN KHÓA HỌC (COURSE CLONER)', 'COURSE CLONER UTILITY'))}</div>
+          <h1 class="mx-section-title">${escapeHtml(t('Nhân bản Nhanh Học phần Chuẩn cho Hợp tác xã Địa phương', 'Clone Standardized Course for Local Co-ops'))}</h1>
+          <p class="mx-section-sub">${escapeHtml(t('Sao chép toàn bộ 6 phần sư phạm, Quiz và cấu trúc Rubric sang mã lớp mới trên bảng lms_courses của Supabase.', 'Clone all 6 pedagogical sections, Quiz, and Rubric schema to a new class code in Supabase lms_courses.'))}</p>
 
           <form onsubmit="event.preventDefault(); submitCloneCourse();" style="display:flex;flex-direction:column;gap:14px;">
             <div>
-              <label for="cl-source" style="display:block;font-weight:700;margin-bottom:4px;">Chọn Khóa học Nguồn *</label>
+              <label for="cl-source" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Chọn Khóa học Nguồn *', 'Select Source Course *'))}</label>
               <select id="cl-source" class="mx-select">
                 ${courses.map(c => `<option value="${escapeHtml(c.code)}">${escapeHtml(c.code)} — ${escapeHtml(c.fullname)}</option>`).join('')}
               </select>
             </div>
             <div class="mx-grid-2">
               <div>
-                <label for="cl-new-code" style="display:block;font-weight:700;margin-bottom:4px;">Mã lớp học mới (VD: DAUTAY-LACDUONG-02) *</label>
+                <label for="cl-new-code" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Mã lớp học mới (VD: DAUTAY-LACDUONG-02) *', 'New Class Code (e.g. DAUTAY-LACDUONG-02) *'))}</label>
                 <input id="cl-new-code" type="text" class="mx-input" required placeholder="CHAMSOC-HTX-02" />
               </div>
               <div>
-                <label for="cl-category" style="display:block;font-weight:700;margin-bottom:4px;">Chuyên mục đào tạo</label>
+                <label for="cl-category" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Chuyên mục đào tạo', 'Training Category'))}</label>
                 <input id="cl-category" type="text" class="mx-input" value="Chuyển giao Hợp tác xã" />
               </div>
             </div>
             <div>
-              <label for="cl-fullname" style="display:block;font-weight:700;margin-bottom:4px;">Tên đầy đủ lớp học mới *</label>
-              <input id="cl-fullname" type="text" class="mx-input" required placeholder="Tập huấn Kỹ thuật Nhà màng & VietGAP - HTX Lạc Dương Đợt 2" />
+              <label for="cl-fullname" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Tên đầy đủ lớp học mới *', 'Full Course Title *'))}</label>
+              <input id="cl-fullname" type="text" class="mx-input" required placeholder="${escapeHtml(t('Tập huấn Kỹ thuật Nhà màng & VietGAP - HTX Lạc Dương Đợt 2', 'Greenhouse & VietGAP Workshop - Lac Duong Co-op Batch 2'))}" />
             </div>
-            <button type="submit" id="cl-submit-btn" class="mx-btn mx-btn-primary">Nhân bản Khóa học lên Supabase</button>
+            <button type="submit" id="cl-submit-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Nhân bản Khóa học lên Supabase', 'Clone Course to Database'))}</button>
           </form>
           <div id="cl-msg"></div>
         </section>
@@ -2208,8 +2532,8 @@
           },
         });
         if (!res.ok || !json.ok) {
-          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Lỗi nhân bản.')}</div>`;
-          showToast(json.message_vi || 'Lỗi nhân bản.', 'error');
+          box.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || t('Lỗi nhân bản.', 'Clone failed.'))}</div>`;
+          showToast(json.message_vi || t('Lỗi nhân bản.', 'Clone failed.'), 'error');
           return;
         }
         box.innerHTML = `<div class="mx-inline-msg">${escapeHtml(json.message_vi)}</div>`;
@@ -2226,7 +2550,7 @@
       const ws = document.getElementById('lms-workspace');
       const { res, json } = await apiFetch('/api/lms?action=admin_manage');
       if (!res.ok || !json.ok) {
-        ws.innerHTML = `<div class="mx-card"><div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Truy cập bị từ chối.')}</div></div>`;
+        ws.innerHTML = `<div class="mx-card"><div class="mx-inline-msg error">${escapeHtml(json.message_vi || t('Truy cập bị từ chối.', 'Access denied.'))}</div></div>`;
         return;
       }
       adminData = json;
@@ -2235,30 +2559,30 @@
         const users = json.users || [];
         ws.innerHTML = `
           <section class="mx-section mx-card">
-            <div class="mx-eyebrow">QUẢN TRỊ VIÊN • PHÂN QUYỀN TÀI KHOẢN</div>
-            <h1 class="mx-section-title">Quản lý Người dùng &amp; Phân quyền 3 Vai trò (${users.length} tài khoản)</h1>
+            <div class="mx-eyebrow">${escapeHtml(t('QUẢN TRỊ VIÊN • PHÂN QUYỀN TÀI KHOẢN', 'ADMINISTRATOR • ROLE MANAGEMENT'))}</div>
+            <h1 class="mx-section-title">${escapeHtml(t(`Quản lý Người dùng & Phân quyền 3 Vai trò (${users.length} tài khoản)`, `User & 3-Role Management (${users.length} accounts)`))}</h1>
             <div class="mx-table-wrap table-wrap">
               <table class="mx-table">
-                <thead><tr><th>Username / Email</th><th>Họ tên &amp; Nông trại</th><th>Vai trò</th><th>Trạng thái</th><th>Cập nhật</th></tr></thead>
+                <thead><tr><th>Username / Email</th><th>${escapeHtml(t('Họ tên & Nông trại', 'Name & Farm'))}</th><th>${escapeHtml(t('Vai trò', 'Role'))}</th><th>${escapeHtml(t('Trạng thái', 'Status'))}</th><th>${escapeHtml(t('Cập nhật', 'Update'))}</th></tr></thead>
                 <tbody>
                   ${users.map(u => `
                     <tr>
                       <td><code>${escapeHtml(u.username)}</code><br /><span style="font-size:0.82rem;color:var(--mx-text-muted);">${escapeHtml(u.email)}</span></td>
                       <td><strong>${escapeHtml(u.full_name)}</strong><br /><span style="font-size:0.82rem;color:var(--mx-text-muted);">${escapeHtml(u.farm_name)} (${escapeHtml(u.region)})</span></td>
                       <td>
-                        <select id="adm-role-${u.id}" class="mx-select" style="min-width:140px;">
-                          <option value="student" ${u.role === 'student' ? 'selected' : ''}>student (Nông hộ)</option>
-                          <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>teacher (CBKT)</option>
-                          <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin (Quản trị)</option>
+                        <select id="adm-role-${u.id}" aria-label="${escapeHtml(t('Vai trò cho ' + u.username, 'Role for ' + u.username))}" class="mx-select" style="min-width:140px;">
+                          <option value="student" ${u.role === 'student' ? 'selected' : ''}>student (${escapeHtml(t('Nông hộ', 'Student'))})</option>
+                          <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>teacher (${escapeHtml(t('CBKT', 'Officer'))})</option>
+                          <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin (${escapeHtml(t('Quản trị', 'Admin'))})</option>
                         </select>
                       </td>
                       <td>
-                        <select id="adm-active-${u.id}" class="mx-select" style="min-width:120px;">
-                          <option value="true" ${u.is_active ? 'selected' : ''}>Hoạt động</option>
-                          <option value="false" ${!u.is_active ? 'selected' : ''}>Tạm khóa</option>
+                        <select id="adm-active-${u.id}" aria-label="${escapeHtml(t('Trạng thái cho ' + u.username, 'Status for ' + u.username))}" class="mx-select" style="min-width:120px;">
+                          <option value="true" ${u.is_active ? 'selected' : ''}>${escapeHtml(t('Hoạt động', 'Active'))}</option>
+                          <option value="false" ${!u.is_active ? 'selected' : ''}>${escapeHtml(t('Tạm khóa', 'Disabled'))}</option>
                         </select>
                       </td>
-                      <td><button type="button" class="mx-btn mx-btn-primary" onclick="saveAdminUser(${u.id})">Lưu</button></td>
+                      <td><button type="button" class="mx-btn mx-btn-primary" onclick="saveAdminUser(${u.id})">${escapeHtml(t('Lưu', 'Save'))}</button></td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -2271,12 +2595,12 @@
         const news = json.news || [];
         ws.innerHTML = `
           <section class="mx-section mx-card">
-            <div class="mx-eyebrow">QUẢN TRỊ VIÊN • BẢN TIN KHUYẾN NÔNG</div>
-            <h1 class="mx-section-title">Đăng Tin Khuyến nông &amp; Thông báo Đào tạo Mới</h1>
+            <div class="mx-eyebrow">${escapeHtml(t('QUẢN TRỊ VIÊN • BẢN TIN KHUYẾN NÔNG', 'ADMINISTRATOR • EXTENSION NEWS'))}</div>
+            <h1 class="mx-section-title">${escapeHtml(t('Đăng Tin Khuyến nông & Thông báo Đào tạo Mới', 'Publish Extension News & Training Alerts'))}</h1>
             <form onsubmit="event.preventDefault(); publishAdminNews();" style="display:flex;flex-direction:column;gap:12px;max-width:740px;margin-bottom:20px;">
               <div class="mx-grid-2">
                 <div>
-                  <label for="news-cat" style="display:block;font-weight:700;margin-bottom:4px;">Chuyên mục</label>
+                  <label for="news-cat" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Chuyên mục', 'Category'))}</label>
                   <select id="news-cat" class="mx-select">
                     <option value="Kỹ thuật Canh tác">Kỹ thuật Canh tác</option>
                     <option value="Bảo vệ Thực vật">Bảo vệ Thực vật</option>
@@ -2285,22 +2609,22 @@
                   </select>
                 </div>
                 <div>
-                  <label for="news-title" style="display:block;font-weight:700;margin-bottom:4px;">Tiêu đề bài viết *</label>
-                  <input id="news-title" type="text" class="mx-input" required placeholder="VD: Hướng dẫn phòng trừ sương mai mùa mưa Đà Lạt" />
+                  <label for="news-title" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Tiêu đề bài viết *', 'Article Title *'))}</label>
+                  <input id="news-title" type="text" class="mx-input" required placeholder="${escapeHtml(t('VD: Hướng dẫn phòng trừ sương mai mùa mưa Đà Lạt', 'e.g., Preventing late blight during Dalat rainy season'))}" />
                 </div>
               </div>
               <div>
-                <label for="news-summary" style="display:block;font-weight:700;margin-bottom:4px;">Tóm tắt ngắn *</label>
-                <input id="news-summary" type="text" class="mx-input" required placeholder="Mô tả ngắn gọn nội dung chính..." />
+                <label for="news-summary" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Tóm tắt ngắn *', 'Short Summary *'))}</label>
+                <input id="news-summary" type="text" class="mx-input" required placeholder="${escapeHtml(t('Mô tả ngắn gọn nội dung chính...', 'Brief article summary...'))}" />
               </div>
               <div>
-                <label for="news-content" style="display:block;font-weight:700;margin-bottom:4px;">Nội dung chi tiết *</label>
-                <textarea id="news-content" class="mx-textarea" required placeholder="Nhập nội dung hướng dẫn kỹ thuật..."></textarea>
+                <label for="news-content" style="display:block;font-weight:700;margin-bottom:4px;">${escapeHtml(t('Nội dung chi tiết *', 'Detailed Content *'))}</label>
+                <textarea id="news-content" class="mx-textarea" required placeholder="${escapeHtml(t('Nhập nội dung hướng dẫn kỹ thuật...', 'Enter technical guide content...'))}"></textarea>
               </div>
-              <button type="submit" id="news-pub-btn" class="mx-btn mx-btn-primary">Đăng bài lên Cổng Thông tin (Supabase)</button>
+              <button type="submit" id="news-pub-btn" class="mx-btn mx-btn-primary">${escapeHtml(t('Đăng bài lên Cổng Thông tin (Supabase)', 'Publish to Portal'))}</button>
             </form>
             <div id="adm-news-msg"></div>
-            <h3 style="margin:18px 0 8px;">Danh sách bài viết đang phát hành (${news.length})</h3>
+            <h3 style="margin:18px 0 8px;">${escapeHtml(t(`Danh sách bài viết đang phát hành (${news.length})`, `Published Articles (${news.length})`))}</h3>
             <ul style="padding-left:20px;line-height:1.8;">
               ${news.map(n => `<li><strong>[${escapeHtml(n.category)}]</strong> ${escapeHtml(n.title)}</li>`).join('')}
             </ul>
@@ -2312,14 +2636,14 @@
           <section class="mx-section mx-card">
             <div class="mx-section-head">
               <div>
-                <div class="mx-eyebrow">KIỂM TOÁN CƠ SỞ DỮ LIỆU CLOUD</div>
-                <h1 class="mx-section-title">Thống kê 10 Bảng PostgreSQL — Mầm Xanh LMS 2.0</h1>
+                <div class="mx-eyebrow">${escapeHtml(t('KIỂM TOÁN CƠ SỞ DỮ LIỆU CLOUD', 'CLOUD DATABASE AUDIT'))}</div>
+                <h1 class="mx-section-title">${escapeHtml(t('Thống kê 10 Bảng PostgreSQL — Mầm Xanh LMS 2.0', '10 PostgreSQL Tables Metrics — Mam Xanh LMS 2.0'))}</h1>
               </div>
-              ${sourcePillHtml(json.source)}
+              ${sourcePillHtml(json.source, json.key_role)}
             </div>
             <div class="mx-table-wrap table-wrap">
               <table class="mx-table">
-                <thead><tr><th>Tên bảng PostgreSQL (public)</th><th>Số bản ghi trực tiếp</th></tr></thead>
+                <thead><tr><th>${escapeHtml(t('Tên bảng PostgreSQL (public)', 'PostgreSQL Table (public)'))}</th><th>${escapeHtml(t('Số bản ghi trực tiếp', 'Live Row Count'))}</th></tr></thead>
                 <tbody>
                   ${tables.map(t => `<tr><td><code>public.${escapeHtml(t.table)}</code></td><td><strong>${Number(t.rows).toLocaleString()}</strong></td></tr>`).join('')}
                 </tbody>
@@ -2515,9 +2839,9 @@
             <div class="mx-verify-result invalid">
               <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;">
                 <span class="mx-badge mx-badge-danger">${escapeHtml(t('KHÔNG TÌM THẤY MÃ', 'CODE NOT FOUND'))}</span>
-                ${sourcePillHtml(json.source)}
+                ${sourcePillHtml(json.source, json.key_role)}
               </div>
-              <p style="margin:0;font-weight:600;">${escapeHtml(json.message_vi || 'Không tìm thấy mã trên sổ cái.')}</p>
+              <p style="margin:0;font-weight:600;">${escapeHtml(json.message_vi || t('Không tìm thấy mã trên sổ cái.', 'Code not found on ledger.'))}</p>
             </div>`;
           return;
         }
@@ -2525,46 +2849,77 @@
         if (json.type === 'certificate') {
           const d = json.data;
           const ok = json.hmac_valid;
+          if (ok) {
+            cacheCertForExport({
+              cert_code: d.cert_code,
+              student_name: d.learner_name,
+              farm_name: d.farm_name,
+              course_code: d.course_shortname,
+              course_name: d.course_fullname,
+              final_score: d.final_score,
+              issued_at: d.issued_at,
+              hmac_signature: d.stored_hmac,
+            });
+          }
           out.innerHTML = `
             <div class="mx-verify-result ${ok ? '' : 'invalid'}">
-              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
-                <span class="mx-badge ${ok ? '' : 'mx-badge-danger'}">
-                  ${escapeHtml(ok ? 'XÁC THỰC HỢP LỆ • HMAC-SHA256 VERIFIED' : 'CẢNH BÁO: CHỮ KÝ SỐ KHÔNG HỢP LỆ / ĐÃ BỊ CAN THIỆP ĐIỂM SỐ')}
-                </span>
-                ${sourcePillHtml(json.source)}
+              <div class="mx-cert-qr-flex">
+                <div class="mx-cert-qr-main">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
+                    <span class="mx-badge ${ok ? '' : 'mx-badge-danger'}">
+                      ${escapeHtml(ok ? t('XÁC THỰC HỢP LỆ • HMAC-SHA256 VERIFIED', 'VERIFIED • HMAC-SHA256 VALID') : t('CẢNH BÁO: CHỮ KÝ SỐ KHÔNG HỢP LỆ / ĐÃ BỊ CAN THIỆP ĐIỂM SỐ', 'ALERT: INVALID DIGITAL SIGNATURE / SCORE TAMPERED'))}
+                    </span>
+                    ${sourcePillHtml(json.source, json.key_role)}
+                  </div>
+                  <h3 style="margin:0 0 4px;">${escapeHtml(d.learner_name)}</h3>
+                  <div style="font-weight:700;color:${ok ? 'var(--mx-primary)' : 'var(--mx-danger)'};margin-bottom:12px;">
+                    [${escapeHtml(d.course_shortname)}] ${escapeHtml(d.course_fullname)}
+                  </div>
+                  <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.92rem;">
+                    <li><strong>${escapeHtml(t('Mã chứng nhận:', 'Certificate Code:'))}</strong> <code>${escapeHtml(d.cert_code)}</code>${d.farm_name ? ' • <strong>' + escapeHtml(t('Nông trại:', 'Farm:')) + '</strong> ' + escapeHtml(d.farm_name) : ''}</li>
+                    <li><strong>${escapeHtml(t('Điểm tổng kết:', 'Final Score:'))}</strong> <strong>${Number(d.final_score).toFixed(2)}%</strong> ${json.tampered_simulation ? '<span class="mx-badge mx-badge-danger">' + escapeHtml(t(`Giả lập sửa điểm từ ${d.stored_score}% thành ${Number(d.final_score).toFixed(2)}%`, `Simulated tamper: ${d.stored_score}% -> ${Number(d.final_score).toFixed(2)}%`)) + '</span>' : ''}</li>
+                    <li><strong>${escapeHtml(t('Thời điểm ký cấp:', 'Issued At:'))}</strong> ${escapeHtml(d.issued_at)}</li>
+                    <li style="word-break:break-all;"><strong>${escapeHtml(t('Chữ ký gốc lưu trữ (HMAC-SHA256):', 'Stored HMAC-SHA256 Signature:'))}</strong> <code>${escapeHtml(d.stored_hmac)}</code></li>
+                    ${!ok ? `<li style="word-break:break-all;color:var(--mx-danger);"><strong>${escapeHtml(t('Mã băm tính lại trên Serverless (Không khớp):', 'Recomputed Serverless HMAC (Mismatch):'))}</strong> <code>${escapeHtml(d.recomputed_hmac)}</code></li>` : ''}
+                  </ul>
+                  ${ok ? `<div style="margin-top:12px;" class="no-print"><button type="button" class="mx-btn mx-btn-secondary" onclick="downloadCertificatePng('${escapeHtml(d.cert_code)}')">${escapeHtml(t('Tải ảnh Chứng nhận PNG', 'Download PNG Certificate'))}</button></div>` : ''}
+                </div>
+                <div class="mx-qr-box">
+                  <div id="verify-cert-qr"></div>
+                  <span class="mx-qr-caption">${escapeHtml(t('Quét xác thực QR', 'Scan to Verify'))}</span>
+                </div>
               </div>
-              <h3 style="margin:0 0 4px;">${escapeHtml(d.learner_name)}</h3>
-              <div style="font-weight:700;color:${ok ? 'var(--mx-primary)' : 'var(--mx-danger)'};margin-bottom:12px;">
-                [${escapeHtml(d.course_shortname)}] ${escapeHtml(d.course_fullname)}
-              </div>
-              <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.92rem;">
-                <li><strong>${escapeHtml(t('Mã chứng nhận:', 'Certificate Code:'))}</strong> <code>${escapeHtml(d.cert_code)}</code>${d.farm_name ? ' • <strong>' + escapeHtml(t('Nông trại:', 'Farm:')) + '</strong> ' + escapeHtml(d.farm_name) : ''}</li>
-                <li><strong>${escapeHtml(t('Điểm tổng kết:', 'Final Score:'))}</strong> <strong>${Number(d.final_score).toFixed(2)}%</strong> ${json.tampered_simulation ? '<span class="mx-badge mx-badge-danger">Giả lập sửa điểm từ ' + escapeHtml(d.stored_score) + '% thành ' + Number(d.final_score).toFixed(2) + '%</span>' : ''}</li>
-                <li><strong>${escapeHtml(t('Thời điểm ký cấp:', 'Issued At:'))}</strong> ${escapeHtml(d.issued_at)}</li>
-                <li style="word-break:break-all;"><strong>${escapeHtml(t('Chữ ký gốc lưu trữ (HMAC-SHA256):', 'Stored HMAC-SHA256 Signature:'))}</strong> <code>${escapeHtml(d.stored_hmac)}</code></li>
-                ${!ok ? `<li style="word-break:break-all;color:var(--mx-danger);"><strong>${escapeHtml(t('Mã băm tính lại trên Serverless (Không khớp):', 'Recomputed Serverless HMAC (Mismatch):'))}</strong> <code>${escapeHtml(d.recomputed_hmac)}</code></li>` : ''}
-              </ul>
             </div>`;
+          renderQrInto('verify-cert-qr', d.cert_code, 104);
           return;
         }
 
         if (json.type === 'batch') {
           const b = json.data;
+          const bOk = json.hmac_valid !== false;
           out.innerHTML = `
-            <div class="mx-verify-result">
-              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
-                <span class="mx-badge">${escapeHtml(t('ĐÃ XÁC THỰC HỘ CHIẾU NÔNG SẢN VIETGAP', 'VERIFIED VIETGAP PRODUCE PASSPORT'))}</span>
-                ${sourcePillHtml(json.source)}
-              </div>
-              <h3 style="margin:0 0 4px;">${escapeHtml(b.product_name)}</h3>
-              <div style="color:var(--mx-text-muted);margin-bottom:12px;">
-                <strong>${escapeHtml(t('Mã lô:', 'Batch Code:'))}</strong> <code>${escapeHtml(b.batch_code)}</code> • <strong>${escapeHtml(t('Giống:', 'Variety:'))}</strong> ${escapeHtml(b.crop_variety)} • <strong>${escapeHtml(t('Nông hộ:', 'Farm:'))}</strong> ${escapeHtml(b.farm_name)}
-              </div>
-              <div style="font-size:0.9rem;margin-bottom:10px;">
-                <strong>${escapeHtml(t('Vùng trồng & GPS:', 'Region & GPS:'))}</strong> ${escapeHtml(b.region)} (<code>${escapeHtml(b.gps)}</code>) • <strong>${escapeHtml(t('Quy mô:', 'Area:'))}</strong> ${Number(b.area_m2).toLocaleString()} m² • <strong>${escapeHtml(t('Sản lượng dự kiến:', 'Expected Yield:'))}</strong> ${Number(b.expected_yield_kg).toLocaleString()} kg
-              </div>
-              <div style="font-size:0.86rem;word-break:break-all;margin-bottom:10px;">
-                <strong>${escapeHtml(t('Chữ ký số lô hàng (HMAC-SHA256):', 'Batch HMAC-SHA256 Signature:'))}</strong> <code>${escapeHtml(b.hmac_signature)}</code>
+            <div class="mx-verify-result ${bOk ? '' : 'invalid'}">
+              <div class="mx-cert-qr-flex" style="margin-bottom:10px;">
+                <div class="mx-cert-qr-main">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
+                    <span class="mx-badge ${bOk ? '' : 'mx-badge-danger'}">${escapeHtml(bOk ? t('ĐÃ XÁC THỰC HỘ CHIẾU NÔNG SẢN VIETGAP', 'VERIFIED VIETGAP PRODUCE PASSPORT') : t('CẢNH BÁO CHỮ KÝ LÔ HÀNG KHÔNG HỢP LỆ', 'INVALID BATCH SIGNATURE'))}</span>
+                    ${sourcePillHtml(json.source, json.key_role)}
+                  </div>
+                  <h3 style="margin:0 0 4px;">${escapeHtml(b.product_name)}</h3>
+                  <div style="color:var(--mx-text-muted);margin-bottom:12px;">
+                    <strong>${escapeHtml(t('Mã lô:', 'Batch Code:'))}</strong> <code>${escapeHtml(b.batch_code)}</code> • <strong>${escapeHtml(t('Giống:', 'Variety:'))}</strong> ${escapeHtml(b.crop_variety)} • <strong>${escapeHtml(t('Nông hộ:', 'Farm:'))}</strong> ${escapeHtml(b.farm_name)}
+                  </div>
+                  <div style="font-size:0.9rem;margin-bottom:10px;">
+                    <strong>${escapeHtml(t('Vùng trồng & GPS:', 'Region & GPS:'))}</strong> ${escapeHtml(b.region)} (<code>${escapeHtml(b.gps)}</code>) • <strong>${escapeHtml(t('Quy mô:', 'Area:'))}</strong> ${Number(b.area_m2).toLocaleString()} m² • <strong>${escapeHtml(t('Sản lượng dự kiến:', 'Expected Yield:'))}</strong> ${Number(b.expected_yield_kg).toLocaleString()} kg
+                  </div>
+                  <div style="font-size:0.86rem;word-break:break-all;margin-bottom:6px;">
+                    <strong>${escapeHtml(t('Chữ ký số lô hàng (HMAC-SHA256):', 'Batch HMAC-SHA256 Signature:'))}</strong> <code>${escapeHtml(b.hmac_signature)}</code>
+                  </div>
+                </div>
+                <div class="mx-qr-box">
+                  <div id="verify-batch-qr"></div>
+                  <span class="mx-qr-caption">${escapeHtml(t('Quét truy xuất lô', 'Scan to Trace'))}</span>
+                </div>
               </div>
               <div class="mx-table-wrap table-wrap">
                 <table class="mx-table">
@@ -2575,6 +2930,7 @@
                 </table>
               </div>
             </div>`;
+          renderQrInto('verify-batch-qr', b.batch_code, 104);
         }
       } catch (err) {
         if (mySeq !== verifyReqSeq) return;
@@ -2888,6 +3244,7 @@ docker compose up -d --build
         el.placeholder = currentLang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-vi-placeholder');
       });
       renderNavbar();
+      updateDbStatusBadge();
       renderHeroSpotlight();
       renderNewsGrid();
       renderCoursesGrid();
@@ -2896,8 +3253,12 @@ docker compose up -d --build
       if (currentUser && currentView !== 'public' && currentView !== 'public_tools') {
         if (currentView === 'dashboard') renderDashboardView();
         else if (currentView === 'courses') renderMyCoursesView();
+        else if (currentView === 'course_detail' && currentCourseCode) renderCourseDetailView(currentCourseCode);
         else if (currentView === 'certificates') renderCertificatesAndTranscriptView();
         else if (currentView === 'profile') renderProfileView();
+        else if (currentView === 'grading') renderGradingView();
+        else if (currentView === 'cloner') renderClonerView();
+        else if (currentView === 'admin_users' || currentView === 'admin_news' || currentView === 'admin_audit') renderAdminViews(currentView);
       }
     }
 
@@ -2910,10 +3271,13 @@ docker compose up -d --build
       runFertCalc();
       renderNavbar();
 
+      const verifyParam = new URLSearchParams(window.location.search).get('verify');
+      const initialVerifyCode = verifyParam ? verifyParam.trim().toUpperCase() : 'MXCERT-2026-CHAMSOC01-0042';
+
       await Promise.all([
         loadNewsPublic(),
         loadCoursesPublic(),
-        runVerify('MXCERT-2026-CHAMSOC01-0042', 0),
+        runVerify(initialVerifyCode, 0),
         loadAgriopsFeed(),
         loadFertigationHistory(),
       ]);
@@ -2923,12 +3287,17 @@ docker compose up -d --build
         const { res, json } = await apiFetch('/api/auth?action=me');
         if (res.ok && json.ok && json.user) {
           currentUser = json.user;
-          await switchView('dashboard');
+          if (!verifyParam) {
+            await switchView('dashboard');
+            return;
+          }
+          renderNavbar();
         } else {
           setToken('');
           renderNavbar();
         }
       }
+      if (verifyParam) showPublicSection('verify-section');
     });
   </script>
 </body>

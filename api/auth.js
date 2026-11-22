@@ -15,6 +15,7 @@ const {
   parseJsonBody,
   hashPassword,
   verifyPassword,
+  buildJwtClaims,
   signJwt,
   sanitizeUser,
   authenticateRequest,
@@ -272,7 +273,7 @@ module.exports = async function handler(req, res) {
         { username, email, password_hash, salt, fullName, farmName, region, areaM2, mainCrop },
         supabaseEnabled
       );
-      const token = signJwt({ sub: created.user.id, username: created.user.username, role: created.user.role });
+      const token = signJwt(buildJwtClaims(created.user));
       const welcomeEmail = await sendWelcomeEmail({
         full_name: created.user.full_name,
         username: created.user.username,
@@ -282,6 +283,7 @@ module.exports = async function handler(req, res) {
       return res.status(201).json({
         ok: true,
         source: created.source,
+        key_role: keyRole,
         ...(created.rlsFallback ? { rls_fallback: true, rls_hint_vi: RLS_HELP_VI, rls_hint_en: RLS_HELP_EN } : {}),
         token,
         user: sanitizeUser(created.user),
@@ -387,10 +389,11 @@ module.exports = async function handler(req, res) {
             message_en: 'Account is disabled.',
           });
         }
-        const token = signJwt({ sub: existing.user.id, username: existing.user.username, role: existing.user.role });
+        const token = signJwt(buildJwtClaims(existing.user));
         return res.status(200).json({
           ok: true,
           source: existing.source,
+          key_role: keyRole,
           is_new_user: false,
           provider,
           token,
@@ -416,7 +419,7 @@ module.exports = async function handler(req, res) {
         supabaseEnabled
       );
 
-      const token = signJwt({ sub: created.user.id, username: created.user.username, role: created.user.role });
+      const token = signJwt(buildJwtClaims(created.user));
       const oauthMethodLabel =
         provider === 'google'
           ? 'Google OAuth 2.0'
@@ -432,6 +435,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         source: created.source,
+        key_role: keyRole,
         ...(created.rlsFallback ? { rls_fallback: true, rls_hint_vi: RLS_HELP_VI } : {}),
         is_new_user: true,
         provider,
@@ -517,10 +521,11 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const token = signJwt({ sub: foundUser.id, username: foundUser.username, role: foundUser.role });
+    const token = signJwt(buildJwtClaims(foundUser));
     return res.status(200).json({
       ok: true,
       source,
+      key_role: keyRole,
       ...(rlsFallbackUsed ? { rls_fallback: true, rls_hint_vi: RLS_HELP_VI } : {}),
       token,
       user: sanitizeUser(foundUser),
@@ -575,6 +580,8 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           ok: true,
           source: 'supabase-live',
+          key_role: keyRole,
+          token: signJwt(buildJwtClaims(row)),
           user: sanitizeUser(row),
           message_vi: 'Đã cập nhật hồ sơ & mật khẩu lên Supabase PostgreSQL.',
         });
@@ -592,6 +599,8 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       source: auth.source,
+      key_role: keyRole,
+      token: signJwt(buildJwtClaims(currentUser)),
       user: sanitizeUser(currentUser),
       message_vi: 'Đã lưu cập nhật hồ sơ thành công.',
     });
