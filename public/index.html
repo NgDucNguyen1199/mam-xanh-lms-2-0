@@ -87,14 +87,42 @@
     }
     .mx-lang-btn.active { background: var(--mx-accent-soft); color: var(--mx-primary); border-color: var(--mx-border-strong); }
 
-    .mx-input, .mx-select {
+    .mx-input, .mx-select, .mx-textarea {
       width: 100%; min-height: 44px; padding: 8px 12px; font-family: inherit; font-size: 0.94rem;
       color: var(--mx-text-main); background: var(--mx-surface); border: 1px solid var(--mx-border-strong);
       border-radius: var(--mx-radius-md);
     }
-    .mx-input:focus, .mx-select:focus {
+    .mx-textarea { min-height: 84px; resize: vertical; }
+    .mx-input:focus, .mx-select:focus, .mx-textarea:focus {
       outline: none; border-color: var(--mx-primary); box-shadow: 0 0 0 3px rgba(35, 78, 62, 0.12);
     }
+    .mx-section-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .mx-db-pill {
+      display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 700; border: 1px solid var(--mx-border-strong);
+      background: var(--mx-surface-muted); color: var(--mx-text-muted);
+    }
+    .mx-db-pill.live {
+      background: var(--mx-accent-soft); color: var(--mx-primary); border-color: #b7d2c6;
+    }
+    .mx-db-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--mx-text-subtle); flex-shrink: 0;
+    }
+    .mx-db-pill.live .mx-db-dot { background: #1e7e4f; }
+    .mx-tab-row { display: inline-flex; gap: 6px; background: var(--mx-surface-muted); padding: 4px; border-radius: 10px; border: 1px solid var(--mx-border); margin-bottom: 16px; }
+    .mx-tab-btn {
+      min-height: 44px; padding: 6px 14px; border-radius: 8px; border: none; background: transparent;
+      color: var(--mx-text-muted); font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    }
+    .mx-tab-btn.active { background: var(--mx-surface); color: var(--mx-primary); box-shadow: var(--mx-shadow-sm); }
+    .mx-inline-msg {
+      margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+      border: 1px solid var(--mx-border); background: var(--mx-accent-soft); color: var(--mx-primary);
+    }
+    .mx-inline-msg.warn { background: #fdf8eb; border-color: #ebd699; color: #705200; }
+    .mx-inline-msg.error { background: var(--mx-danger-bg); border-color: #f5c2c7; color: var(--mx-danger); }
 
     /* Layout Container */
     .mx-container { max-width: 1240px; margin: 0 auto; padding: 28px 20px 60px; }
@@ -196,10 +224,10 @@
       </a>
       <nav class="mx-nav-links" aria-label="Primary">
         <a href="#verify-section" class="mx-nav-link" data-vi="Xác thực QR & VietGAP" data-en="QR & VietGAP Lookup">Xác thực QR &amp; VietGAP</a>
+        <a href="#diary-section" class="mx-nav-link" data-vi="Nhật ký VietGAP Live" data-en="VietGAP Live Diary">Nhật ký VietGAP Live</a>
         <a href="#calculator-section" class="mx-nav-link" data-vi="Máy tính Pha phân" data-en="Fertigation Calc">Máy tính Pha phân</a>
         <a href="#news-section" class="mx-nav-link" data-vi="Bản tin Khuyến nông" data-en="Extension Press">Bản tin Khuyến nông</a>
         <a href="#courses-section" class="mx-nav-link" data-vi="8 Khóa học" data-en="8 Courses">8 Khóa học</a>
-        <a href="#gallery-section" class="mx-nav-link" data-vi="Giao diện Hệ thống" data-en="UI Showcase">Giao diện Hệ thống</a>
       </nav>
       <div class="mx-nav-actions">
         <button type="button" class="mx-lang-btn active" id="btn-lang-vi" onclick="setLang('vi')">VI</button>
@@ -244,7 +272,7 @@
 
       <aside class="mx-hero-aside">
         <div>
-          <span class="mx-badge" style="margin-bottom:10px;">VERCEL SERVERLESS + MOODLE 4.5 LTS</span>
+          <span class="mx-badge" style="margin-bottom:10px;">VERCEL SERVERLESS + SUPABASE POSTGRESQL</span>
           <h3 style="margin:0 0 8px;font-size:1.12rem;" data-vi="Thông tin Nhóm Thực hiện" data-en="Project Research Team">Thông tin Nhóm Thực hiện</h3>
           <p style="margin:0 0 10px;font-size:0.9rem;color:var(--mx-text-body);">
             <strong data-vi="Giảng viên hướng dẫn:" data-en="Supervisor:">Giảng viên hướng dẫn:</strong> Thầy Trần Ngô Như Khánh<br>
@@ -263,14 +291,22 @@
 
     <!-- FEATURE 1: LIVE SERVERLESS HMAC-SHA256 & VIETGAP VERIFICATION -->
     <section id="verify-section" class="mx-section mx-card">
-      <div class="mx-eyebrow" data-vi="TÍNH NĂNG 1 • SERVERLESS API (/api/verify)" data-en="FEATURE 1 • SERVERLESS API (/api/verify)">
-        TÍNH NĂNG 1 • SERVERLESS API (/api/verify)
+      <div class="mx-section-head">
+        <div>
+          <div class="mx-eyebrow" data-vi="TÍNH NĂNG 1 • SERVERLESS API (/api/verify)" data-en="FEATURE 1 • SERVERLESS API (/api/verify)">
+            TÍNH NĂNG 1 • SERVERLESS API (/api/verify)
+          </div>
+          <h2 class="mx-section-title" data-vi="Cổng Xác thực Chứng nhận Số QR (HMAC-SHA256) &amp; Hộ chiếu Nông sản VietGAP" data-en="Digital QR Certificate (HMAC-SHA256) &amp; VietGAP Traceability Verification">
+            Cổng Xác thực Chứng nhận Số QR (HMAC-SHA256) &amp; Hộ chiếu Nông sản VietGAP
+          </h2>
+        </div>
+        <div id="db-status-badge" class="mx-db-pill" title="Trạng thái kết nối PostgreSQL Cloud">
+          <span class="mx-db-dot"></span>
+          <span id="db-status-text">Database: Checking...</span>
+        </div>
       </div>
-      <h2 class="mx-section-title" data-vi="Cổng Xác thực Chứng nhận Số QR (HMAC-SHA256) &amp; Hộ chiếu Nông sản VietGAP" data-en="Digital QR Certificate (HMAC-SHA256) &amp; VietGAP Traceability Verification">
-        Cổng Xác thực Chứng nhận Số QR (HMAC-SHA256) &amp; Hộ chiếu Nông sản VietGAP
-      </h2>
-      <p class="mx-section-sub" data-vi="Thực thi xác thực mật mã học Node.js crypto.createHmac('sha256') trực tiếp trên Vercel Serverless. Nhập mã hoặc bấm 1 chạm vào các mã mẫu bên dưới." data-en="Executes live Node.js crypto.createHmac('sha256') verification on Vercel Serverless. Enter a code or click a 1-tap sample below.">
-        Thực thi xác thực mật mã học Node.js <code>crypto.createHmac('sha256')</code> trực tiếp trên Vercel Serverless. Nhập mã hoặc bấm 1 chạm vào các mã mẫu bên dưới.
+      <p class="mx-section-sub" data-vi="Thực thi xác thực mật mã học Node.js crypto.createHmac('sha256') trực tiếp trên Vercel Serverless kết nối Supabase PostgreSQL. Nhập mã hoặc bấm 1 chạm vào các mã mẫu bên dưới." data-en="Executes live Node.js crypto.createHmac('sha256') verification on Vercel Serverless backed by Supabase PostgreSQL. Enter a code or click a 1-tap sample below.">
+        Thực thi xác thực mật mã học Node.js <code>crypto.createHmac('sha256')</code> trực tiếp trên Vercel Serverless kết nối Supabase PostgreSQL. Nhập mã hoặc bấm 1 chạm vào các mã mẫu bên dưới.
       </p>
 
       <form onsubmit="event.preventDefault(); runVerify(document.getElementById('verify-code-input').value, 0);" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
@@ -287,6 +323,134 @@
       </div>
 
       <div id="verify-output"></div>
+    </section>
+
+    <!-- LIVE CLOUD DEMO: VIETGAP ELECTRONIC DIARY (SUPABASE POSTGRESQL) -->
+    <section id="diary-section" class="mx-section mx-card">
+      <div class="mx-eyebrow" data-vi="TÍNH NĂNG CLOUD LIVE • SUPABASE POSTGRESQL (/api/agriops)" data-en="CLOUD LIVE FEATURE • SUPABASE POSTGRESQL (/api/agriops)">
+        TÍNH NĂNG CLOUD LIVE • SUPABASE POSTGRESQL (/api/agriops)
+      </div>
+      <h2 class="mx-section-title" data-vi="Sổ Nhật ký Điện tử VietGAP Trực tuyến (Live Cloud Demo)" data-en="Live Cloud VietGAP Electronic Cultivation Diary">
+        Sổ Nhật ký Điện tử VietGAP Trực tuyến (Live Cloud Demo)
+      </h2>
+      <p class="mx-section-sub" data-vi="Ghi nhận trực tiếp tác nghiệp chăm sóc hoặc khởi tạo lô nông sản mới vào cơ sở dữ liệu PostgreSQL trên Supabase. Dữ liệu sau khi lưu sẽ hiển thị ngay lập tức trong Sổ nhật ký và Hộ chiếu QR ở mục Xác thực." data-en="Record cultivation operations or register a new VietGAP batch directly to Supabase PostgreSQL. Saved entries immediately sync to the live ledger and QR traceability lookup.">
+        Ghi nhận trực tiếp tác nghiệp chăm sóc hoặc khởi tạo lô nông sản mới vào cơ sở dữ liệu PostgreSQL trên Supabase. Dữ liệu sau khi lưu sẽ hiển thị ngay lập tức trong Sổ nhật ký và Hộ chiếu QR ở mục Xác thực.
+      </p>
+
+      <div class="mx-grid-2">
+        <div>
+          <div class="mx-tab-row" role="tablist">
+            <button type="button" id="tab-btn-log" class="mx-tab-btn active" onclick="switchAgriTab('log')" data-vi="Ghi Nhật ký Chăm sóc" data-en="Add Field Diary Log">Ghi Nhật ký Chăm sóc</button>
+            <button type="button" id="tab-btn-batch" class="mx-tab-btn" onclick="switchAgriTab('batch')" data-vi="Khởi tạo Lô VietGAP mới" data-en="Register New Batch">Khởi tạo Lô VietGAP mới</button>
+          </div>
+
+          <form id="diary-log-form" onsubmit="event.preventDefault(); submitDiaryLog();" style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <label for="diary-batch-select" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Chọn Lô hàng VietGAP" data-en="Select VietGAP Batch">Chọn Lô hàng VietGAP</label>
+              <select id="diary-batch-select" class="mx-select">
+                <option value="VG-LD-202611-0001">VG-LD-202611-0001 — Xà lách Thủy canh Giòn Đà Lạt Lô A1</option>
+                <option value="VG-LD-202611-0027">VG-LD-202611-0027 — Ớt Chuông Đà Lạt Sấy Lạnh Xuất Khẩu Lô E2E</option>
+              </select>
+            </div>
+            <div class="mx-grid-2">
+              <div>
+                <label for="diary-activity" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Hạng mục tác nghiệp" data-en="Activity Category">Hạng mục tác nghiệp</label>
+                <select id="diary-activity" class="mx-select">
+                  <option value="watering_fert">Tưới &amp; Châm phân tự động</option>
+                  <option value="bio_ipm">Phòng trừ sinh học (IPM)</option>
+                  <option value="env_check">Kiểm tra môi trường &amp; Giá thể</option>
+                  <option value="harvest">Thu hoạch &amp; Đóng gói QR</option>
+                </select>
+              </div>
+              <div>
+                <label for="diary-phi" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Thời gian cách ly PHI (ngày)" data-en="PHI Days">Thời gian cách ly PHI (ngày)</label>
+                <input id="diary-phi" type="number" class="mx-input" value="0" min="0" max="60">
+              </div>
+            </div>
+            <div class="mx-grid-2">
+              <div>
+                <label for="diary-ph" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Độ pH đo được" data-en="Measured pH">Độ pH đo được</label>
+                <input id="diary-ph" type="text" class="mx-input" value="6.0" placeholder="5.8 - 6.2">
+              </div>
+              <div>
+                <label for="diary-ec" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Độ dẫn điện EC (mS/cm)" data-en="Measured EC (mS/cm)">Độ dẫn điện EC (mS/cm)</label>
+                <input id="diary-ec" type="text" class="mx-input" value="1.6" placeholder="1.4 - 1.8">
+              </div>
+            </div>
+            <div>
+              <label for="diary-notes" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Ghi chú canh tác thực tế" data-en="Field Operation Notes">Ghi chú canh tác thực tế</label>
+              <textarea id="diary-notes" class="mx-textarea" required placeholder="VD: Bơm nhỏ giọt Stock A-B đợt sáng 15 phút, lá non sinh trưởng đồng đều, không phát hiện bọ trĩ."></textarea>
+            </div>
+            <div>
+              <button type="submit" id="diary-submit-btn" class="mx-btn mx-btn-primary" style="width:100%;" data-vi="Lưu vào Supabase DB" data-en="Save to Supabase DB">Lưu vào Supabase DB</button>
+            </div>
+          </form>
+
+          <form id="diary-batch-form" onsubmit="event.preventDefault(); submitNewBatch();" style="display:none;flex-direction:column;gap:12px;">
+            <div>
+              <label for="batch-product" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Tên nông sản / Lô hàng" data-en="Batch Product Name">Tên nông sản / Lô hàng</label>
+              <input id="batch-product" type="text" class="mx-input" required placeholder="VD: Dâu tây Albion Nhà màng P7 Lô mới">
+            </div>
+            <div class="mx-grid-2">
+              <div>
+                <label for="batch-variety" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Giống cây trồng" data-en="Crop Variety">Giống cây trồng</label>
+                <input id="batch-variety" type="text" class="mx-input" value="Giống F1 Chuẩn Sạch Bệnh">
+              </div>
+              <div>
+                <label for="batch-region" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Vùng trồng" data-en="Region">Vùng trồng</label>
+                <select id="batch-region" class="mx-select">
+                  <option value="Lâm Đồng">Lâm Đồng</option>
+                  <option value="Đắk Lắk">Đắk Lắk</option>
+                  <option value="Đồng Nai">Đồng Nai</option>
+                </select>
+              </div>
+            </div>
+            <div class="mx-grid-2">
+              <div>
+                <label for="batch-area" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Diện tích (m²)" data-en="Area (m²)">Diện tích (m²)</label>
+                <input id="batch-area" type="number" class="mx-input" value="1500" min="50">
+              </div>
+              <div>
+                <label for="batch-yield" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Sản lượng dự kiến (kg)" data-en="Expected Yield (kg)">Sản lượng dự kiến (kg)</label>
+                <input id="batch-yield" type="number" class="mx-input" value="950" min="10">
+              </div>
+            </div>
+            <div>
+              <label for="batch-farm" style="display:block;font-weight:700;margin-bottom:4px;" data-vi="Nông trại / Hợp tác xã" data-en="Farm / Cooperative">Nông trại / Hợp tác xã</label>
+              <input id="batch-farm" type="text" class="mx-input" value="Nông trại Mầm Xanh Đà Lạt">
+            </div>
+            <div>
+              <button type="submit" id="batch-submit-btn" class="mx-btn mx-btn-primary" style="width:100%;" data-vi="Tạo Lô &amp; Ký số HMAC trên Supabase" data-en="Create Batch &amp; Sign HMAC">Tạo Lô &amp; Ký số HMAC trên Supabase</button>
+            </div>
+          </form>
+
+          <div id="diary-status-msg"></div>
+        </div>
+
+        <div style="background:var(--mx-bg);border:1px solid var(--mx-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <h3 style="margin:0;font-size:1.06rem;" data-vi="Dữ liệu Nhật ký Canh tác Thời gian thực" data-en="Real-time Cultivation Diary Feed">Dữ liệu Nhật ký Canh tác Thời gian thực</h3>
+            <button type="button" class="mx-btn mx-btn-secondary" style="padding:4px 14px;font-size:0.84rem;" onclick="loadAgriopsFeed()" data-vi="Làm mới" data-en="Refresh">Làm mới</button>
+          </div>
+          <p style="margin:0 0 10px;font-size:0.85rem;color:var(--mx-text-muted);" data-vi="Bấm vào mã lô để nạp ngay Hộ chiếu Truy xuất QR ở mục Xác thực phía trên." data-en="Click any batch code to immediately load its QR Traceability Passport above.">
+            Bấm vào mã lô để nạp ngay Hộ chiếu Truy xuất QR ở mục Xác thực phía trên.
+          </p>
+          <div class="mx-table-wrap" style="margin-top:0;max-height:380px;overflow-y:auto;">
+            <table class="mx-table">
+              <thead>
+                <tr>
+                  <th data-vi="Mã lô / Thời gian" data-en="Batch / Time">Mã lô / Thời gian</th>
+                  <th data-vi="Nội dung canh tác" data-en="Notes">Nội dung canh tác</th>
+                  <th>pH / EC</th>
+                </tr>
+              </thead>
+              <tbody id="live-diary-tbody">
+                <tr><td colspan="3" style="color:var(--mx-text-subtle);">Đang tải dữ liệu nhật ký...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- FEATURE 2: FERTIGATION CALCULATOR -->
@@ -364,8 +528,15 @@
               <li><strong>Thời gian mở van (chia 4 lần/ngày):</strong> <span id="res-mins" style="font-weight:800;color:var(--mx-primary);">13 phút / lần</span></li>
             </ul>
           </div>
-          <div style="margin-top:14px;padding:12px;background:var(--mx-surface);border:1px solid var(--mx-border);border-left:4px solid var(--mx-primary);border-radius:8px;font-size:0.86rem;color:var(--mx-text-muted);">
-            <strong>Nguyên tắc vàng:</strong> Không đổ trực tiếp Stock A vào Stock B đậm đặc để tránh kết tủa thạch cao CaSO4 làm tắc đầu nhỏ giọt.
+          <div>
+            <div style="margin-top:14px;padding:12px;background:var(--mx-surface);border:1px solid var(--mx-border);border-left:4px solid var(--mx-primary);border-radius:8px;font-size:0.86rem;color:var(--mx-text-muted);">
+              <strong>Nguyên tắc vàng:</strong> Không đổ trực tiếp Stock A vào Stock B đậm đặc để tránh kết tủa thạch cao CaSO4 làm tắc đầu nhỏ giọt.
+            </div>
+            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button type="button" id="fert-save-btn" class="mx-btn mx-btn-primary" style="flex:1;" onclick="saveFertigationRecipe()" data-vi="Lưu Công thức lên Supabase" data-en="Save Recipe to Supabase">Lưu Công thức lên Supabase</button>
+            </div>
+            <div id="fert-save-status"></div>
+            <div id="fert-recent-list" style="margin-top:12px;font-size:0.82rem;color:var(--mx-text-muted);"></div>
           </div>
         </div>
       </div>
@@ -536,6 +707,33 @@
       `).join('');
     }
 
+    function escapeHtml(val) {
+      return String(val ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function updateDbStatusBadge(source) {
+      const badge = document.getElementById('db-status-badge');
+      const txt = document.getElementById('db-status-text');
+      if (!badge || !txt) return;
+      if (source === 'supabase-live') {
+        badge.classList.add('live');
+        txt.textContent = 'Database: Supabase PostgreSQL Live';
+      } else {
+        badge.classList.remove('live');
+        txt.textContent = 'Database: Fallback Mode';
+      }
+    }
+
+    function sourcePillHtml(source) {
+      const isLive = source === 'supabase-live';
+      return `<span class="mx-db-pill ${isLive ? 'live' : ''}" style="margin-bottom:10px;margin-left:8px;"><span class="mx-db-dot"></span>${isLive ? 'Supabase PostgreSQL Live' : 'Fallback Mode'}</span>`;
+    }
+
     async function runVerify(code, tamper) {
       const input = document.getElementById('verify-code-input');
       const out = document.getElementById('verify-output');
@@ -547,12 +745,14 @@
       try {
         const res = await fetch('/api/verify?code=' + encodeURIComponent(cleanCode) + '&tamper=' + (tamper ? '1' : '0'));
         const json = await res.json();
+        if (json && json.source) updateDbStatusBadge(json.source);
 
         if (!res.ok || !json.found) {
           out.innerHTML = `
             <div class="mx-verify-result invalid">
               <span class="mx-badge mx-badge-danger" style="margin-bottom:8px;">KHÔNG TÌM THẤY MÃ</span>
-              <p style="margin:0;font-weight:600;">${json.message_vi || 'Không tìm thấy mã trên sổ cái.'}</p>
+              ${sourcePillHtml(json.source)}
+              <p style="margin:0;font-weight:600;">${escapeHtml(json.message_vi || 'Không tìm thấy mã trên sổ cái.')}</p>
             </div>`;
           return;
         }
@@ -562,19 +762,22 @@
           const ok = json.hmac_valid;
           out.innerHTML = `
             <div class="mx-verify-result ${ok ? '' : 'invalid'}">
-              <span class="mx-badge ${ok ? '' : 'mx-badge-danger'}" style="margin-bottom:10px;">
-                ${ok ? 'XÁC THỰC HỢP LỆ • HMAC-SHA256 VERIFIED' : 'CẢNH BÁO: CHỮ KÝ SỐ KHÔNG HỢP LỆ / ĐÃ BỊ CAN THIỆP ĐIỂM SỐ'}
-              </span>
-              <h3 style="margin:0 0 4px;">${d.learner_name}</h3>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px;">
+                <span class="mx-badge ${ok ? '' : 'mx-badge-danger'}">
+                  ${ok ? 'XÁC THỰC HỢP LỆ • HMAC-SHA256 VERIFIED' : 'CẢNH BÁO: CHỮ KÝ SỐ KHÔNG HỢP LỆ / ĐÃ BỊ CAN THIỆP ĐIỂM SỐ'}
+                </span>
+                ${sourcePillHtml(json.source)}
+              </div>
+              <h3 style="margin:0 0 4px;">${escapeHtml(d.learner_name)}</h3>
               <div style="font-weight:700;color:${ok ? 'var(--mx-primary)' : 'var(--mx-danger)'};margin-bottom:12px;">
-                [${d.course_shortname}] ${d.course_fullname}
+                [${escapeHtml(d.course_shortname)}] ${escapeHtml(d.course_fullname)}
               </div>
               <ul style="list-style:none;padding:0;margin:0;line-height:1.9;font-size:0.92rem;">
-                <li><strong>Mã chứng nhận:</strong> <code>${d.cert_code}</code></li>
-                <li><strong>Điểm tổng kết:</strong> <strong>${Number(d.final_score).toFixed(2)}%</strong> ${json.tampered_simulation ? '<span class="mx-badge mx-badge-danger">Giả lập sửa điểm từ ' + d.stored_score + '% lên 100%</span>' : ''}</li>
-                <li><strong>Thời điểm ký cấp:</strong> ${d.issued_at}</li>
-                <li style="word-break:break-all;"><strong>Chữ ký gốc lưu trữ (HMAC-SHA256):</strong> <code>${d.stored_hmac}</code></li>
-                ${!ok ? `<li style="word-break:break-all;color:var(--mx-danger);"><strong>Mã băm tính lại trên Serverless (Không khớp):</strong> <code>${d.recomputed_hmac}</code></li>` : ''}
+                <li><strong>Mã chứng nhận:</strong> <code>${escapeHtml(d.cert_code)}</code>${d.farm_name ? ' • <strong>Nông trại:</strong> ' + escapeHtml(d.farm_name) : ''}</li>
+                <li><strong>Điểm tổng kết:</strong> <strong>${Number(d.final_score).toFixed(2)}%</strong> ${json.tampered_simulation ? '<span class="mx-badge mx-badge-danger">Giả lập sửa điểm từ ' + escapeHtml(d.stored_score) + '% thành ' + Number(d.final_score).toFixed(2) + '%</span>' : ''}</li>
+                <li><strong>Thời điểm ký cấp:</strong> ${escapeHtml(d.issued_at)}</li>
+                <li style="word-break:break-all;"><strong>Chữ ký gốc lưu trữ (HMAC-SHA256):</strong> <code>${escapeHtml(d.stored_hmac)}</code></li>
+                ${!ok ? `<li style="word-break:break-all;color:var(--mx-danger);"><strong>Mã băm tính lại trên Serverless (Không khớp):</strong> <code>${escapeHtml(d.recomputed_hmac)}</code></li>` : ''}
               </ul>
             </div>`;
           return;
@@ -584,40 +787,211 @@
           const b = json.data;
           out.innerHTML = `
             <div class="mx-verify-result">
-              <span class="mx-badge" style="margin-bottom:10px;">ĐÃ XÁC THỰC HỘ CHIẾU NÔNG SẢN VIETGAP</span>
-              <h3 style="margin:0 0 4px;">${b.product_name}</h3>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px;">
+                <span class="mx-badge">ĐÃ XÁC THỰC HỘ CHIẾU NÔNG SẢN VIETGAP</span>
+                ${sourcePillHtml(json.source)}
+              </div>
+              <h3 style="margin:0 0 4px;">${escapeHtml(b.product_name)}</h3>
               <div style="color:var(--mx-text-muted);margin-bottom:12px;">
-                <strong>Mã lô:</strong> <code>${b.batch_code}</code> • <strong>Giống:</strong> ${b.crop_variety} • <strong>Nông hộ:</strong> ${b.farm_name}
+                <strong>Mã lô:</strong> <code>${escapeHtml(b.batch_code)}</code> • <strong>Giống:</strong> ${escapeHtml(b.crop_variety)} • <strong>Nông hộ:</strong> ${escapeHtml(b.farm_name)}
               </div>
               <div style="font-size:0.9rem;margin-bottom:10px;">
-                <strong>Vùng trồng &amp; GPS:</strong> ${b.region} (<code>${b.gps}</code>) • <strong>Quy mô:</strong> ${b.area_m2.toLocaleString()} m² • <strong>Sản lượng dự kiến:</strong> ${b.expected_yield_kg.toLocaleString()} kg
+                <strong>Vùng trồng &amp; GPS:</strong> ${escapeHtml(b.region)} (<code>${escapeHtml(b.gps)}</code>) • <strong>Quy mô:</strong> ${Number(b.area_m2).toLocaleString()} m² • <strong>Sản lượng dự kiến:</strong> ${Number(b.expected_yield_kg).toLocaleString()} kg
               </div>
               <div style="font-size:0.86rem;word-break:break-all;margin-bottom:10px;">
-                <strong>Chữ ký số lô hàng (HMAC-SHA256):</strong> <code>${b.hmac_signature}</code>
+                <strong>Chữ ký số lô hàng (HMAC-SHA256):</strong> <code>${escapeHtml(b.hmac_signature)}</code>
               </div>
               <div class="mx-table-wrap">
                 <table class="mx-table">
                   <thead><tr><th>Thời gian</th><th>Nội dung canh tác điện tử</th><th>pH / EC</th><th>PHI</th></tr></thead>
                   <tbody>
-                    ${b.logs.map(l => `<tr><td>${l.time}</td><td>${l.activity}</td><td><code>pH ${l.ph} | EC ${l.ec}</code></td><td>${l.phi} ngày</td></tr>`).join('')}
+                    ${b.logs.map(l => `<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.activity)}</td><td><code>pH ${escapeHtml(l.ph)} | EC ${escapeHtml(l.ec)}</code></td><td>${Number(l.phi || 0)} ngày</td></tr>`).join('')}
                   </tbody>
                 </table>
               </div>
             </div>`;
         }
       } catch (err) {
-        out.innerHTML = `<div class="mx-verify-result invalid">Lỗi kết nối API xác thực: ${err.message}</div>`;
+        out.innerHTML = `<div class="mx-verify-result invalid">Lỗi kết nối API xác thực: ${escapeHtml(err.message)}</div>`;
       }
     }
+
+    function switchAgriTab(tab) {
+      const logForm = document.getElementById('diary-log-form');
+      const batchForm = document.getElementById('diary-batch-form');
+      const btnLog = document.getElementById('tab-btn-log');
+      const btnBatch = document.getElementById('tab-btn-batch');
+      if (tab === 'batch') {
+        logForm.style.display = 'none';
+        batchForm.style.display = 'flex';
+        btnLog.classList.remove('active');
+        btnBatch.classList.add('active');
+      } else {
+        logForm.style.display = 'flex';
+        batchForm.style.display = 'none';
+        btnLog.classList.add('active');
+        btnBatch.classList.remove('active');
+      }
+    }
+
+    async function loadAgriopsFeed() {
+      const tbody = document.getElementById('live-diary-tbody');
+      const sel = document.getElementById('diary-batch-select');
+      try {
+        const res = await fetch('/api/agriops');
+        const json = await res.json();
+        if (json && json.source) updateDbStatusBadge(json.source);
+
+        if (Array.isArray(json.batches) && json.batches.length > 0) {
+          const prevVal = sel.value;
+          sel.innerHTML = json.batches.map(b =>
+            `<option value="${escapeHtml(b.batch_code)}">${escapeHtml(b.batch_code)} — ${escapeHtml(b.product_name)}</option>`
+          ).join('');
+          if (json.batches.some(b => b.batch_code === prevVal)) {
+            sel.value = prevVal;
+          }
+        }
+
+        if (Array.isArray(json.logs) && json.logs.length > 0) {
+          tbody.innerHTML = json.logs.map(l => `
+            <tr>
+              <td style="white-space:nowrap;">
+                <button type="button" class="mx-badge" style="cursor:pointer;font-family:monospace;border:1px solid var(--mx-border-strong);" onclick="inspectBatchFromFeed('${escapeHtml(l.batch_code)}')">${escapeHtml(l.batch_code)}</button>
+                <div style="font-size:0.76rem;color:var(--mx-text-subtle);margin-top:4px;">${escapeHtml(l.time_display || l.logged_at)}</div>
+              </td>
+              <td>
+                <div style="font-size:0.76rem;font-weight:700;color:var(--mx-primary);margin-bottom:2px;">${escapeHtml(l.activity_label || l.activity_type)}</div>
+                <div>${escapeHtml(l.notes)}</div>
+              </td>
+              <td style="white-space:nowrap;"><code>pH ${escapeHtml(l.ph_val)}<br>EC ${escapeHtml(l.ec_val)}</code></td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="3" style="color:var(--mx-text-subtle);">Chưa có nhật ký canh tác nào.</td></tr>';
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="3" style="color:var(--mx-danger);">Lỗi tải dữ liệu nhật ký: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function inspectBatchFromFeed(batchCode) {
+      runVerify(batchCode, 0);
+      const sec = document.getElementById('verify-section');
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function submitDiaryLog() {
+      const btn = document.getElementById('diary-submit-btn');
+      const statusBox = document.getElementById('diary-status-msg');
+      const batchCode = document.getElementById('diary-batch-select').value;
+      const activityType = document.getElementById('diary-activity').value;
+      const phVal = document.getElementById('diary-ph').value.trim() || '6.0';
+      const ecVal = document.getElementById('diary-ec').value.trim() || '1.6';
+      const phiDays = parseInt(document.getElementById('diary-phi').value || '0', 10) || 0;
+      const notes = document.getElementById('diary-notes').value.trim();
+      if (!notes) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Đang lưu vào DB...';
+      statusBox.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/agriops', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add_log',
+            batch_code: batchCode,
+            activity_type: activityType,
+            ph_val: phVal,
+            ec_val: ecVal,
+            phi_days: phiDays,
+            notes,
+          }),
+        });
+        const json = await res.json();
+        if (json && json.source) updateDbStatusBadge(json.source);
+
+        if (!res.ok || !json.ok) {
+          statusBox.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Không thể lưu nhật ký.')}</div>`;
+        } else {
+          document.getElementById('diary-notes').value = '';
+          const msg = json.persisted
+            ? `Đã lưu dòng nhật ký vào Supabase PostgreSQL Live cho lô ${batchCode}.`
+            : (json.message_vi || `Đã ghi tạm nhật ký ở chế độ Fallback cho lô ${batchCode}.`);
+          statusBox.innerHTML = `<div class="mx-inline-msg ${json.persisted ? '' : 'warn'}">${escapeHtml(msg)} <button type="button" class="mx-btn mx-btn-secondary" style="margin-left:8px;padding:4px 10px;" onclick="inspectBatchFromFeed('${escapeHtml(batchCode)}')">Xem Hộ chiếu QR lô ${escapeHtml(batchCode)}</button></div>`;
+          await loadAgriopsFeed();
+          await runVerify(batchCode, 0);
+        }
+      } catch (err) {
+        statusBox.innerHTML = `<div class="mx-inline-msg error">Lỗi kết nối API: ${escapeHtml(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Lưu vào Supabase DB';
+      }
+    }
+
+    async function submitNewBatch() {
+      const btn = document.getElementById('batch-submit-btn');
+      const statusBox = document.getElementById('diary-status-msg');
+      const productName = document.getElementById('batch-product').value.trim();
+      if (!productName) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Đang tạo lô & ký HMAC...';
+      statusBox.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/agriops', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'create_batch',
+            product_name: productName,
+            crop_variety: document.getElementById('batch-variety').value.trim(),
+            region: document.getElementById('batch-region').value,
+            area_m2: document.getElementById('batch-area').value,
+            expected_yield_kg: document.getElementById('batch-yield').value,
+            farm_name: document.getElementById('batch-farm').value.trim(),
+          }),
+        });
+        const json = await res.json();
+        if (json && json.source) updateDbStatusBadge(json.source);
+
+        if (!res.ok || !json.ok) {
+          statusBox.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Không thể khởi tạo lô mới.')}</div>`;
+        } else {
+          const code = json.batch.batch_code;
+          document.getElementById('batch-product').value = '';
+          const msg = json.persisted
+            ? `Đã khởi tạo và ký số lô ${code} trực tiếp trên Supabase PostgreSQL Live.`
+            : `Đã tạo tạm lô ${code} (Fallback Mode).`;
+          statusBox.innerHTML = `<div class="mx-inline-msg ${json.persisted ? '' : 'warn'}">${escapeHtml(msg)}</div>`;
+          await loadAgriopsFeed();
+          document.getElementById('diary-batch-select').value = code;
+          await runVerify(code, 0);
+        }
+      } catch (err) {
+        statusBox.innerHTML = `<div class="mx-inline-msg error">Lỗi kết nối API: ${escapeHtml(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Tạo Lô & Ký số HMAC trên Supabase';
+      }
+    }
+
+    let lastFertRecipe = null;
 
     function runFertCalc() {
       const sel = document.getElementById('calc-crop');
       const opt = sel.options[sel.selectedIndex];
+      const stageSel = document.getElementById('calc-stage');
+      const stageOpt = stageSel.options[stageSel.selectedIndex];
+
       const baseEc = parseFloat(opt.getAttribute('data-ec')) || 1.6;
       const phRange = opt.getAttribute('data-ph') || '5.8 - 6.2';
       const waterPerM2 = parseFloat(opt.getAttribute('data-water')) || 3.5;
 
-      const stage = parseFloat(document.getElementById('calc-stage').value) || 1.0;
+      const stage = parseFloat(stageSel.value) || 1.0;
       const area = Math.max(10, parseFloat(document.getElementById('calc-area').value) || 1000);
       const tank = Math.max(10, parseFloat(document.getElementById('calc-tank').value) || 500);
       const rawEc = Math.max(0, parseFloat(document.getElementById('calc-raw-ec').value) || 0.2);
@@ -625,18 +999,82 @@
 
       const targetEc = Math.max(rawEc + 0.4, baseEc * stage);
       const deltaEc = Math.max(0.2, targetEc - rawEc);
-      const stockL = ((deltaEc * 3.0 * tank) / 1000.0).toFixed(2);
+      const stockL = (deltaEc * 3.0 * tank) / 1000.0;
       const acidMl = Math.round(tank * 0.07);
       const dailyWater = Math.round(area * waterPerM2 * stage);
       const pulseMins = Math.max(5, Math.round(((dailyWater / 4) / (area * 4 * emitter)) * 60));
 
       document.getElementById('res-ec').textContent = targetEc.toFixed(2) + ' mS/cm';
       document.getElementById('res-ph').textContent = phRange;
-      document.getElementById('res-a').textContent = stockL + ' Lít';
-      document.getElementById('res-b').textContent = stockL + ' Lít';
+      document.getElementById('res-a').textContent = stockL.toFixed(2) + ' Lít';
+      document.getElementById('res-b').textContent = stockL.toFixed(2) + ' Lít';
       document.getElementById('res-acid').textContent = acidMl + ' ml';
       document.getElementById('res-water').textContent = dailyWater.toLocaleString() + ' Lít/ngày';
       document.getElementById('res-mins').textContent = pulseMins + ' phút / lần';
+
+      lastFertRecipe = {
+        crop_stage: `${opt.textContent.trim()} — ${stageOpt.textContent.trim()}`,
+        tank_volume_l: tank,
+        target_ec: Number(targetEc.toFixed(2)),
+        target_ph: phRange,
+        stock_a_ml: Math.round(stockL * 1000),
+        stock_b_ml: Math.round(stockL * 1000),
+        acid_ml: acidMl,
+      };
+    }
+
+    async function loadFertigationHistory() {
+      const box = document.getElementById('fert-recent-list');
+      try {
+        const res = await fetch('/api/fertigation');
+        const json = await res.json();
+        if (!Array.isArray(json.records) || json.records.length === 0) {
+          box.innerHTML = '';
+          return;
+        }
+        box.innerHTML = `
+          <div style="font-weight:700;color:var(--mx-text-main);margin-bottom:4px;">Công thức gần nhất trên Cloud (${json.source === 'supabase-live' ? 'Supabase Live' : 'Fallback'}):</div>
+          <ul style="margin:0;padding-left:18px;line-height:1.6;">
+            ${json.records.slice(0, 3).map(r => `<li><strong>${escapeHtml(r.crop_stage)}</strong> — Bồn ${r.tank_volume_l}L | EC ${r.target_ec} | A/B ${(Number(r.stock_a_ml) / 1000).toFixed(2)}L | H3PO4 ${r.acid_ml}ml</li>`).join('')}
+          </ul>
+        `;
+      } catch {
+        box.innerHTML = '';
+      }
+    }
+
+    async function saveFertigationRecipe() {
+      if (!lastFertRecipe) runFertCalc();
+      const btn = document.getElementById('fert-save-btn');
+      const statusBox = document.getElementById('fert-save-status');
+      btn.disabled = true;
+      btn.textContent = 'Đang lưu lên Supabase...';
+      statusBox.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/fertigation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(lastFertRecipe),
+        });
+        const json = await res.json();
+        if (json && json.source) updateDbStatusBadge(json.source);
+
+        if (!res.ok || !json.ok) {
+          statusBox.innerHTML = `<div class="mx-inline-msg error">${escapeHtml(json.message_vi || 'Lỗi lưu công thức.')}</div>`;
+        } else {
+          const msg = json.persisted
+            ? 'Đã lưu công thức pha phân vào bảng fertigation_records trên Supabase PostgreSQL Live.'
+            : (json.message_vi || 'Đã lưu tạm công thức (Fallback Mode).');
+          statusBox.innerHTML = `<div class="mx-inline-msg ${json.persisted ? '' : 'warn'}">${escapeHtml(msg)}</div>`;
+          await loadFertigationHistory();
+        }
+      } catch (err) {
+        statusBox.innerHTML = `<div class="mx-inline-msg error">Lỗi kết nối API: ${escapeHtml(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Lưu Công thức lên Supabase';
+      }
     }
 
     function openArticle(id) {
@@ -688,6 +1126,8 @@ docker compose up -d --build
       renderStaticLists();
       runFertCalc();
       runVerify('MXCERT-2026-CHAMSOC01-0042', 0);
+      loadAgriopsFeed();
+      loadFertigationHistory();
     });
   </script>
 </body>
