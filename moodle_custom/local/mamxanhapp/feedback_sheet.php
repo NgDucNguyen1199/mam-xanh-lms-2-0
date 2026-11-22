@@ -69,14 +69,36 @@ $PAGE->set_heading(local_mamxanhapp_t('Phiếu Chấm điểm Rubric 4 Tiêu ch�
 
 // Load farmer household profile
 $profile = $DB->get_record('local_farmerprofile', ['userid' => $targetuserid]);
-$farmname = $profile ? $profile->farm_name : local_mamxanhapp_t('Nông hộ Công nghệ cao Lâm Đồng', 'Lam Dong Smart Farm Household');
-$region = $profile ? $profile->region : 'Lâm Đồng';
+$farmname = ($profile && !empty($profile->farm_name))
+    ? $profile->farm_name
+    : local_mamxanhapp_t('Chưa khai báo hồ sơ nông hộ', 'Farm profile not configured');
+$region = ($profile && !empty($profile->region)) ? $profile->region : ($learner->city ?: 'Lâm Đồng');
 if ($en) {
     $rmap = ['Lâm Đồng' => 'Lam Dong', 'Đắk Lắk' => 'Dak Lak', 'Đồng Nai' => 'Dong Nai'];
     $region = $rmap[$region] ?? $region;
 }
 
-// Locate Capstone Assignment & Rubric Definition in this course
+// 1. Primary Source: Locate mod_fieldpractice instance & graded submission (mdl_fieldpractice_sub)
+$fpinstance = null;
+$fpsub = null;
+if ($DB->get_manager()->table_exists('fieldpractice') && $DB->get_manager()->table_exists('fieldpractice_sub')) {
+    $fps = $DB->get_records('fieldpractice', ['course' => $courseid], 'id ASC');
+    foreach ($fps as $fp) {
+        if (!$fpinstance) {
+            $fpinstance = $fp;
+        }
+        $sub = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $targetuserid]);
+        if ($sub) {
+            $fpinstance = $fp;
+            $fpsub = $sub;
+            if ($sub->total_grade !== null && ((int)$sub->graded_time > 0 || (float)$sub->total_grade > 0)) {
+                break;
+            }
+        }
+    }
+}
+
+// 2. Secondary Source (only if course has no mod_fieldpractice): Capstone Assignment
 $assigns = $DB->get_records('assign', ['course' => $courseid], 'id ASC');
 $capstone = null;
 foreach ($assigns as $asg) {
@@ -89,139 +111,117 @@ if (!$capstone && !empty($assigns)) {
     $capstone = end($assigns);
 }
 
-$assignname = $capstone
-    ? $capstone->name
-    : local_mamxanhapp_t('Bài tập Thực hành Cuối khóa: Báo cáo Quy trình Kỹ thuật & Nhật ký VietGAP', 'Capstone Practical Assignment: Technical Protocol & VietGAP Field Report');
+$assignname = $fpinstance
+    ? format_string($fpinstance->name)
+    : ($capstone
+        ? format_string($capstone->name)
+        : local_mamxanhapp_t('Thực hành Tại vườn: Điểm danh QR & Rubric 4 Tiêu chí', 'Field Practice: QR Check-in & 4-Criteria Rubric'));
 
 $rubricname = local_mamxanhapp_t('Rubric Đánh giá Thực hành Hiện trường 4 Tiêu chí Chuẩn VietGAP (Thang 100 điểm)', '4-Criteria VietGAP Practical Field Assessment Rubric (100-Point Scale)');
 $criteriarows = [];
 $overallfeedback = '';
-$gradeddate = '14/11/2026 16:30';
+$isgraded = false;
+$gradeddate = local_mamxanhapp_t('Chưa chấm điểm', 'Not graded yet');
 
-// Query Moodle Rubric tables (mdl_grading_areas -> mdl_grading_definitions -> mdl_gradingform_rubric_criteria -> mdl_gradingform_rubric_levels)
-$def = null;
-$ag = null;
-if ($capstone) {
-    $ag = $DB->get_record('assign_grades', ['assignment' => $capstone->id, 'userid' => $targetuserid]);
-    if ($ag && !empty($ag->timemodified)) {
-        $gradeddate = date('d/m/Y H:i', (int)$ag->timemodified);
-    }
-    $cm = get_coursemodule_from_instance('assign', $capstone->id, $courseid, false, IGNORE_MISSING);
-    if ($cm) {
-        $cmctx = context_module::instance($cm->id);
-        $area = $DB->get_record('grading_areas', ['contextid' => $cmctx->id, 'component' => 'mod_assign', 'areaname' => 'submissions']);
-        if ($area) {
-            $def = $DB->get_record('grading_definitions', ['areaid' => $area->id, 'method' => 'rubric']);
-        }
-    }
+$graderuser = null;
+if ($fpsub && (int)$fpsub->graderid > 0) {
+    $graderuser = $DB->get_record('user', ['id' => (int)$fpsub->graderid, 'deleted' => 0]);
 }
+if (!$graderuser) {
+    $graderuser = $DB->get_record('user', ['username' => 'cbkt_pilot', 'deleted' => 0]);
+}
+$gradername = $graderuser
+    ? (fullname($graderuser) . ' (' . $graderuser->username . ')')
+    : local_mamxanhapp_t('Kỹ sư Trần Minh Tuấn (CBKT)', 'Eng. Tran Minh Tuan (CBKT)');
 
-$fillingsbycrit = [];
-if ($def) {
-    $rubricname = format_string($def->name);
-    if ($ag) {
-        $instances = $DB->get_records('grading_instances', ['definitionid' => $def->id, 'itemid' => $ag->id], 'id DESC', '*', 0, 1);
-        if (!empty($instances)) {
-            $inst = reset($instances);
-            if (!empty($inst->feedback)) {
-                $overallfeedback = strip_tags($inst->feedback);
-            }
-            $fills = $DB->get_records('gradingform_rubric_fillings', ['instanceid' => $inst->id]);
-            foreach ($fills as $f) {
-                $fillingsbycrit[(int)$f->criterionid] = $f;
-            }
-        }
-    }
+$standardcrit = [
+    1 => [
+        'desc' => local_mamxanhapp_t('Tiêu chí 1: Chuẩn bị Vật tư, Giá thể & Hiệu chuẩn Thiết bị Đo (EC/pH/Ẩm kế)', 'Criterion 1: Material, Substrate Preparation & Sensor Calibration (EC/pH/Moisture)'),
+        'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Thiếu bước xử lý giá thể hoặc không hiệu chuẩn bút đo EC/pH.', 'Needs Improvement (0 pts): Missing substrate treatment or uncalibrated EC/pH meters.'),
+        'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Chuẩn bị đủ vật tư và thiết bị nhưng ghi chép thông số đầu vào chưa chi tiết.', 'Satisfactory (15 pts): Adequate materials and tools; initial baseline readings partially logged.'),
+        'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Xử lý giá thể chuẩn kỹ thuật, hiệu chuẩn chính xác bút đo EC/pH và kiểm tra nguồn nước.', 'Excellent (25 pts): Full substrate buffering, accurate EC/pH calibration, and source water verification.'),
+        'rem_pass' => local_mamxanhapp_t('Hồ sơ chuẩn bị vật tư, giá thể và thiết bị đo EC/pH đầy đủ, hiệu chuẩn chính xác trước khi vận hành.', 'Materials, substrate preparation, and EC/pH meter calibration documented accurately prior to operation.'),
+        'rem_low'  => local_mamxanhapp_t('Cần bổ sung bước kiểm tra hiệu chuẩn bút đo EC/pH và vệ sinh khử trùng dụng cụ trước ca thực hành.', 'Need to complete EC/pH meter calibration check and tool sanitization before field practice.'),
+    ],
+    2 => [
+        'desc' => local_mamxanhapp_t('Tiêu chí 2: Thực hành Quy trình Kỹ thuật Canh tác & Điều tiết Dinh dưỡng / Vi khí hậu', 'Criterion 2: Technical Cultivation Execution & Nutrient / Microclimate Regulation'),
+        'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Pha sai nồng độ dinh dưỡng hoặc tưới không đúng ngưỡng giai đoạn sinh trưởng.', 'Needs Improvement (0 pts): Incorrect nutrient concentration or improper irrigation schedule.'),
+        'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Vận hành đúng quy trình tưới và chăm sóc cơ bản, sai số EC/pH nhỏ.', 'Satisfactory (15 pts): Proper basic irrigation and crop care with minor EC/pH variance.'),
+        'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Kiểm soát chuẩn xác ngưỡng EC/pH, nhiệt ẩm nhà màng và kỹ thuật chăm sóc theo giai đoạn.', 'Excellent (25 pts): Precision control of EC/pH regimes, greenhouse microclimate, and stage-specific care.'),
+        'rem_pass' => local_mamxanhapp_t('Thực hiện đúng quy trình kỹ thuật canh tác, thông số tưới nhỏ giọt và pha châm phân nằm trong ngưỡng tối ưu.', 'Cultivation protocol, drip irrigation parameters, and fertigation dosing strictly within optimal range.'),
+        'rem_low'  => local_mamxanhapp_t('Thao tác pha dinh dưỡng A-B và điều chỉnh lưu lượng tưới nhỏ giọt còn sai số, cần thực hành lại tại vườn.', 'A-B nutrient mixing and drip irrigation flow regulation had deviations; requires re-practice at garden.'),
+    ],
+    3 => [
+        'desc' => local_mamxanhapp_t('Tiêu chí 3: Tuân thủ An toàn Sinh học, Phác đồ IPM & Thời gian Cách ly (PHI)', 'Criterion 3: Bio-Safety Compliance, IPM Protocol & Pre-Harvest Interval (PHI)'),
+        'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Vi phạm nguyên tắc sử dụng thuốc BVTV hoặc thiếu biện pháp phòng trừ sinh học.', 'Needs Improvement (0 pts): Violation of pesticide safety rules or lack of biological pest control.'),
+        'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Áp dụng đúng biện pháp IPM cơ bản và ghi nhận thời gian cách ly.', 'Satisfactory (15 pts): Applied standard IPM measures and recorded Pre-Harvest Interval.'),
+        'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Ưu tiên chế phẩm sinh học (Trichoderma, thiên địch), tuân thủ tuyệt đối PHI chuẩn VietGAP.', 'Excellent (25 pts): Prioritized biological agents (Trichoderma, beneficials) and 100% VietGAP PHI compliance.'),
+        'rem_pass' => local_mamxanhapp_t('Tuân thủ nghiêm ngặt quy định an toàn sinh học IPM, ưu tiên chế phẩm Trichoderma/vi sinh và đảm bảo thời gian cách ly PHI.', 'Strict adherence to biological IPM, Trichoderma bio-agents, and Pre-Harvest Interval (PHI) safety.'),
+        'rem_low'  => local_mamxanhapp_t('Chưa nắm vững quy định tính ngày cách ly thu hoạch (PHI) và định lượng chế phẩm sinh học IPM.', 'Needs stronger compliance with Pre-Harvest Interval (PHI) calculation and biological IPM dosage.'),
+    ],
+    4 => [
+        'desc' => local_mamxanhapp_t('Tiêu chí 4: Chất lượng Nông sản & Hồ sơ Nhật ký Đồng ruộng Điện tử VietGAP', 'Criterion 4: Produce Quality & Electronic VietGAP Field Logbook Completeness'),
+        'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Thiếu nhật ký canh tác hoặc báo cáo thu hoạch sơ sài, không đủ điều kiện truy xuất.', 'Needs Improvement (0 pts): Incomplete cultivation diary or missing traceability data.'),
+        'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Có nhật ký canh tác và đánh giá sản lượng đạt yêu cầu cơ bản.', 'Satisfactory (15 pts): Field diary and yield evaluation meet baseline requirements.'),
+        'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Nhật ký VietGAP điện tử đầy đủ, minh chứng rõ ràng, đủ điều kiện cấp mã QR truy xuất.', 'Excellent (25 pts): Comprehensive electronic VietGAP logbook with clear evidence, ready for QR certification.'),
+        'rem_pass' => local_mamxanhapp_t('Nhật ký đồng ruộng điện tử VietGAP ghi chép đầy đủ, số liệu minh bạch, đạt chuẩn truy xuất QR.', 'Electronic VietGAP field logbook complete, transparent metrics, ready for QR traceability.'),
+        'rem_low'  => local_mamxanhapp_t('Nhật ký canh tác điện tử VietGAP còn thiếu thông số pH/EC thực tế và thời gian cách ly lô nông sản.', 'Electronic VietGAP logbook is missing actual pH/EC measurements and batch quarantine records.'),
+    ],
+];
 
-    $criteria = $DB->get_records('gradingform_rubric_criteria', ['definitionid' => $def->id], 'sortorder ASC');
-    $idx = 0;
-    foreach ($criteria as $crit) {
-        $idx++;
-        $levels = $DB->get_records('gradingform_rubric_levels', ['criterionid' => $crit->id], 'score ASC');
-        $lvllist = array_values($levels);
-        $fill = $fillingsbycrit[(int)$crit->id] ?? null;
+if ($fpsub && $fpsub->total_grade !== null && ((int)$fpsub->graded_time > 0 || (float)$fpsub->total_grade > 0)) {
+    $isgraded = true;
+    $ts = (int)$fpsub->graded_time > 0 ? (int)$fpsub->graded_time : (int)$fpsub->checkin_time;
+    $gradeddate = $ts > 0 ? date('d/m/Y H:i', $ts) : date('d/m/Y H:i');
+    $overallfeedback = trim((string)$fpsub->feedback);
 
-        $selectedlevelid = $fill ? (int)$fill->levelid : 0;
-        $selectedscore = 25.0;
-        if ($selectedlevelid > 0 && isset($levels[$selectedlevelid])) {
-            $selectedscore = (float)$levels[$selectedlevelid]->score;
-        } else if (!empty($lvllist)) {
-            $lastlvl = end($lvllist);
-            $selectedlevelid = (int)$lastlvl->id;
-            $selectedscore = (float)$lastlvl->score;
-        }
+    $rawscores = [
+        1 => (float)$fpsub->crit_prep,
+        2 => (float)$fpsub->crit_tech,
+        3 => (float)$fpsub->crit_biosafe,
+        4 => (float)$fpsub->crit_quality,
+    ];
 
-        $defaultremarks = [
-            1 => local_mamxanhapp_t('Hồ sơ chuẩn bị vật tư, giá thể và thiết bị đo EC/pH đầy đủ, hiệu chuẩn chính xác trước khi vận hành.', 'Materials, substrate preparation, and EC/pH meter calibration documented accurately prior to operation.'),
-            2 => local_mamxanhapp_t('Thực hiện đúng quy trình kỹ thuật canh tác, thông số tưới nhỏ giọt và pha châm phân nằm trong ngưỡng tối ưu.', 'Cultivation protocol, drip irrigation parameters, and fertigation dosing strictly within optimal range.'),
-            3 => local_mamxanhapp_t('Tuân thủ nghiêm ngặt quy định an toàn sinh học IPM, ưu tiên chế phẩm Trichoderma/vi sinh và đảm bảo thời gian cách ly PHI.', 'Strict adherence to biological IPM, Trichoderma bio-agents, and Pre-Harvest Interval (PHI) safety.'),
-            4 => local_mamxanhapp_t('Báo cáo thực hành và Nhật ký đồng ruộng VietGAP ghi chép đầy đủ, số liệu minh bạch, đạt chuẩn truy xuất QR.', 'Practical report and VietGAP field logbook complete, transparent metrics, ready for QR traceability.'),
-        ];
-        $remark = ($fill && trim((string)$fill->remark) !== '')
-            ? trim((string)$fill->remark)
-            : ($defaultremarks[$idx] ?? $defaultremarks[1]);
-
+    foreach ($standardcrit as $idx => $fc) {
+        $sc = $rawscores[$idx];
+        $lvlid = ($sc >= 20.0) ? 3 : (($sc >= 10.0) ? 2 : 1);
+        $rem = ($sc >= 15.0) ? $fc['rem_pass'] : $fc['rem_low'];
         $criteriarows[] = (object)[
             'index'           => $idx,
-            'description'     => trim(strip_tags($crit->description)),
-            'levels'          => $lvllist,
-            'selectedlevelid' => $selectedlevelid,
-            'selectedscore'   => $selectedscore,
-            'maxscore'        => 25.0,
-            'remark'          => $remark,
-        ];
-    }
-}
-
-// Fallback 4-criteria rubric if definition not yet attached to this course
-if (empty($criteriarows)) {
-    $fallbackcrit = [
-        [
-            'desc' => local_mamxanhapp_t('Tiêu chí 1: Chuẩn bị Vật tư, Giá thể & Hiệu chuẩn Thiết bị Đo (EC/pH/Ẩm kế)', 'Criterion 1: Material, Substrate Preparation & Sensor Calibration (EC/pH/Moisture)'),
-            'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Thiếu bước xử lý giá thể hoặc không hiệu chuẩn bút đo EC/pH.', 'Needs Improvement (0 pts): Missing substrate treatment or uncalibrated EC/pH meters.'),
-            'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Chuẩn bị đủ vật tư và thiết bị nhưng ghi chép thông số đầu vào chưa chi tiết.', 'Satisfactory (15 pts): Adequate materials and tools; initial baseline readings partially logged.'),
-            'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Xử lý giá thể chuẩn kỹ thuật, hiệu chuẩn chính xác bút đo EC/pH và kiểm tra nguồn nước.', 'Excellent (25 pts): Full substrate buffering, accurate EC/pH calibration, and source water verification.'),
-            'score'=> 25.0,
-            'rem'  => local_mamxanhapp_t('Hồ sơ chuẩn bị vật tư, giá thể và thiết bị đo EC/pH đầy đủ, hiệu chuẩn chính xác trước khi vận hành.', 'Materials, substrate preparation, and EC/pH meter calibration documented accurately prior to operation.'),
-        ],
-        [
-            'desc' => local_mamxanhapp_t('Tiêu chí 2: Thực hành Quy trình Kỹ thuật Canh tác & Điều tiết Dinh dưỡng / Vi khí hậu', 'Criterion 2: Technical Cultivation Execution & Nutrient / Microclimate Regulation'),
-            'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Pha sai nồng độ dinh dưỡng hoặc tưới không đúng ngưỡng giai đoạn sinh trưởng.', 'Needs Improvement (0 pts): Incorrect nutrient concentration or improper irrigation schedule.'),
-            'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Vận hành đúng quy trình tưới và chăm sóc cơ bản, sai số EC/pH nhỏ.', 'Satisfactory (15 pts): Proper basic irrigation and crop care with minor EC/pH variance.'),
-            'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Kiểm soát chuẩn xác ngưỡng EC/pH, nhiệt ẩm nhà màng và kỹ thuật chăm sóc theo giai đoạn.', 'Excellent (25 pts): Precision control of EC/pH regimes, greenhouse microclimate, and stage-specific care.'),
-            'score'=> 25.0,
-            'rem'  => local_mamxanhapp_t('Thực hiện đúng quy trình kỹ thuật canh tác, thông số tưới nhỏ giọt và pha châm phân nằm trong ngưỡng tối ưu.', 'Cultivation protocol, drip irrigation parameters, and fertigation dosing strictly within optimal range.'),
-        ],
-        [
-            'desc' => local_mamxanhapp_t('Tiêu chí 3: Tuân thủ An toàn Sinh học, Phác đồ IPM & Thời gian Cách ly (PHI)', 'Criterion 3: Bio-Safety Compliance, IPM Protocol & Pre-Harvest Interval (PHI)'),
-            'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Vi phạm nguyên tắc sử dụng thuốc BVTV hoặc thiếu biện pháp phòng trừ sinh học.', 'Needs Improvement (0 pts): Violation of pesticide safety rules or lack of biological pest control.'),
-            'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Áp dụng đúng biện pháp IPM cơ bản và ghi nhận thời gian cách ly.', 'Satisfactory (15 pts): Applied standard IPM measures and recorded Pre-Harvest Interval.'),
-            'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Ưu tiên chế phẩm sinh học (Trichoderma, thiên địch), tuân thủ tuyệt đối PHI chuẩn VietGAP.', 'Excellent (25 pts): Prioritized biological agents (Trichoderma, beneficials) and 100% VietGAP PHI compliance.'),
-            'score'=> 25.0,
-            'rem'  => local_mamxanhapp_t('Tuân thủ nghiêm ngặt quy định an toàn sinh học IPM, ưu tiên chế phẩm Trichoderma/vi sinh và đảm bảo thời gian cách ly PHI.', 'Strict adherence to biological IPM, Trichoderma bio-agents, and Pre-Harvest Interval (PHI) safety.'),
-        ],
-        [
-            'desc' => local_mamxanhapp_t('Tiêu chí 4: Chất lượng Nông sản & Hồ sơ Nhật ký Đồng ruộng Điện tử VietGAP', 'Criterion 4: Produce Quality & Electronic VietGAP Field Logbook Completeness'),
-            'l0'   => local_mamxanhapp_t('Chưa đạt (0đ): Thiếu nhật ký canh tác hoặc báo cáo thu hoạch sơ sài, không đủ điều kiện truy xuất.', 'Needs Improvement (0 pts): Incomplete cultivation diary or missing traceability data.'),
-            'l15'  => local_mamxanhapp_t('Đạt yêu cầu (15đ): Có nhật ký canh tác và đánh giá sản lượng đạt yêu cầu cơ bản.', 'Satisfactory (15 pts): Field diary and yield evaluation meet baseline requirements.'),
-            'l25'  => local_mamxanhapp_t('Xuất sắc (25đ): Nhật ký VietGAP điện tử đầy đủ, minh chứng rõ ràng, đủ điều kiện cấp mã QR truy xuất.', 'Excellent (25 pts): Comprehensive electronic VietGAP logbook with clear evidence, ready for QR certification.'),
-            'score'=> 15.0,
-            'rem'  => local_mamxanhapp_t('Nhật ký đồng ruộng điện tử VietGAP ghi chép bài bản; khuyến nghị bổ sung thêm ảnh chụp mặt cắt giá thể sau thu hoạch.', 'Electronic VietGAP field logbook well-maintained; recommend adding post-harvest substrate cross-section photos.'),
-        ],
-    ];
-    foreach ($fallbackcrit as $idx => $fc) {
-        $criteriarows[] = (object)[
-            'index'           => $idx + 1,
             'description'     => $fc['desc'],
             'levels'          => [
                 (object)['id' => 1, 'score' => 0,  'definition' => $fc['l0']],
                 (object)['id' => 2, 'score' => 15, 'definition' => $fc['l15']],
                 (object)['id' => 3, 'score' => 25, 'definition' => $fc['l25']],
             ],
-            'selectedlevelid' => ($fc['score'] == 25.0 ? 3 : 2),
-            'selectedscore'   => $fc['score'],
+            'selectedlevelid' => $lvlid,
+            'selectedscore'   => $sc,
             'maxscore'        => 25.0,
-            'remark'          => $fc['rem'],
+            'remark'          => $rem,
+        ];
+    }
+} else {
+    // Un-graded state: show 0 / 100 and clear pending status instead of fabricating 90/100
+    $isgraded = false;
+    if ($fpsub && (int)$fpsub->checkin_time > 0) {
+        $gradeddate = local_mamxanhapp_t(
+            'Đã điểm danh lúc ' . date('d/m/Y H:i', (int)$fpsub->checkin_time) . ' — Đang chờ CBKT chấm',
+            'Checked in at ' . date('d/m/Y H:i', (int)$fpsub->checkin_time) . ' — Awaiting Instructor grading'
+        );
+    }
+    foreach ($standardcrit as $idx => $fc) {
+        $criteriarows[] = (object)[
+            'index'           => $idx,
+            'description'     => $fc['desc'],
+            'levels'          => [
+                (object)['id' => 1, 'score' => 0,  'definition' => $fc['l0']],
+                (object)['id' => 2, 'score' => 15, 'definition' => $fc['l15']],
+                (object)['id' => 3, 'score' => 25, 'definition' => $fc['l25']],
+            ],
+            'selectedlevelid' => 0,
+            'selectedscore'   => 0.0,
+            'maxscore'        => 25.0,
+            'remark'          => local_mamxanhapp_t('Chưa chấm điểm tiêu chí này.', 'Not graded yet.'),
         ];
     }
 }
@@ -233,10 +233,22 @@ foreach ($criteriarows as $cr) {
     $totalrubricmax += (float)$cr->maxscore;
 }
 if ($overallfeedback === '') {
-    $overallfeedback = local_mamxanhapp_t(
-        'Học viên nắm vững quy trình kỹ thuật canh tác công nghệ cao và tiêu chuẩn Quốc gia VietGAP (TCVN 11892-1:2017). Các thông số thực hành đo kiểm EC/pH, vận hành hệ thống tưới nhỏ giọt bù áp và áp dụng phác đồ sinh học IPM (Trichoderma, bẫy dính sinh học) được ghi chép trung thực, đầy đủ trong Nhật ký đồng ruộng điện tử. Đủ điều kiện công nhận hoàn thành xuất sắc học phần thực hành và cấp Chứng nhận số QR.',
-        'The learner demonstrates strong mastery of high-tech agricultural cultivation protocols and National VietGAP standards (TCVN 11892-1:2017). Practical EC/pH measurements, pressure-compensating drip fertigation, and biological IPM interventions are accurately documented in the electronic field diary. Fully eligible for practical course completion and HMAC-SHA256 QR Certification.'
-    );
+    if (!$isgraded) {
+        $overallfeedback = local_mamxanhapp_t(
+            'Học viên chưa có kết quả chấm điểm Rubric thực hành tại vườn cho học phần này. Vui lòng hoàn thành điểm danh QR + GPS tại vườn thực nghiệm để Cán bộ kỹ thuật chấm điểm 4 tiêu chí.',
+            'No graded practical field rubric evaluation exists for this learner in this course yet. Please complete garden QR + GPS check-in for Instructor 4-criteria evaluation.'
+        );
+    } else if ($totalrubricscore >= 60.0) {
+        $overallfeedback = local_mamxanhapp_t(
+            'Học viên nắm vững quy trình kỹ thuật canh tác công nghệ cao và tiêu chuẩn Quốc gia VietGAP (TCVN 11892-1:2017). Các thông số thực hành đo kiểm EC/pH, vận hành hệ thống tưới nhỏ giọt bù áp và áp dụng phác đồ sinh học IPM được thực hiện chuẩn xác.',
+            'The learner demonstrates strong mastery of high-tech agricultural cultivation protocols and National VietGAP standards (TCVN 11892-1:2017).'
+        );
+    } else {
+        $overallfeedback = local_mamxanhapp_t(
+            'Kết quả thực hành tại vườn chưa đạt ngưỡng yêu cầu tối thiểu (60/100). Học viên cần ôn tập lại quy trình pha dinh dưỡng A-B, hiệu chuẩn thiết bị đo pH/EC và thực hành bổ sung cùng Cán bộ kỹ thuật.',
+            'Practical field evaluation score is below the minimum passing threshold (60/100). Additional hands-on practice with the Extension Officer is required.'
+        );
+    }
 }
 
 $transcripturl = (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $courseid, 'userid' => $targetuserid]))->out(false);
@@ -455,7 +467,7 @@ echo $OUTPUT->header();
         <div><strong><?php echo s(local_mamxanhapp_t('Nông hộ / Vùng trồng:', 'Farm Household / Region:')); ?></strong> <?php echo s($farmname . ' — ' . $region); ?></div>
         <div><strong><?php echo s(local_mamxanhapp_t('Học phần đào tạo:', 'Training Course:')); ?></strong> <?php echo s($course->fullname . ' (' . $course->shortname . ')'); ?></div>
         <div><strong><?php echo s(local_mamxanhapp_t('Hạng mục đánh giá:', 'Evaluated Assignment:')); ?></strong> <?php echo s($assignname); ?></div>
-        <div><strong><?php echo s(local_mamxanhapp_t('Giảng viên chấm:', 'Evaluating Instructor:')); ?></strong> <?php echo s(local_mamxanhapp_t('KS. Trần Văn Hùng (CBKT Khuyến nông)', 'Eng. Tran Van Hung (Extension Officer)')); ?></div>
+        <div><strong><?php echo s(local_mamxanhapp_t('Giảng viên chấm:', 'Evaluating Instructor:')); ?></strong> <?php echo s($gradername); ?></div>
         <div><strong><?php echo s(local_mamxanhapp_t('Thời gian thẩm định:', 'Evaluation Timestamp:')); ?></strong> <?php echo s($gradeddate); ?></div>
     </div>
 
@@ -479,7 +491,7 @@ echo $OUTPUT->header();
                     <?php
                     for ($i = 0; $i < 3; $i++):
                         $lvl = $cr->levels[$i] ?? null;
-                        $isselected = ($lvl && ((int)$lvl->id === (int)$cr->selectedlevelid || (float)$lvl->score === (float)$cr->selectedscore));
+                        $isselected = ($isgraded && $lvl && (int)$lvl->id === (int)$cr->selectedlevelid);
                         $scorelbl = $lvl ? ((int)$lvl->score . ($en ? ' pts' : ' điểm')) : '';
                         $deflbl = $lvl ? trim(strip_tags($lvl->definition)) : '';
                     ?>
@@ -492,7 +504,9 @@ echo $OUTPUT->header();
                     <?php endfor; ?>
                     <td style="background:#F9FAF9;">
                         <div class="fw-bold mb-1" style="color:#234E3E;font-size:0.95rem;">
-                            <?php echo s(local_mamxanhapp_t('Điểm chấm: ', 'Awarded: ') . number_format($cr->selectedscore, 0) . ' / ' . number_format($cr->maxscore, 0)); ?>
+                            <?php echo $isgraded
+                                ? s(local_mamxanhapp_t('Điểm chấm: ', 'Awarded: ') . number_format($cr->selectedscore, 0) . ' / ' . number_format($cr->maxscore, 0))
+                                : s(local_mamxanhapp_t('Chưa chấm (0 / 25)', 'Pending (0 / 25)')); ?>
                         </div>
                         <div class="small text-muted"><?php echo s($cr->remark); ?></div>
                     </td>
@@ -519,8 +533,18 @@ echo $OUTPUT->header();
         <div>
             <strong><?php echo s(local_mamxanhapp_t('CÁN BỘ KỸ THUẬT CHẤM THỰC HÀNH', 'EVALUATING EXTENSION OFFICER')); ?></strong><br>
             <span class="small text-muted"><?php echo s(local_mamxanhapp_t('(Chữ ký số thẩm định Rubric thực địa)', '(Digital signature verifying field rubric)')); ?></span><br>
-            <div class="mx-rubric-stamp"><?php echo s(local_mamxanhapp_t('ĐÃ THẨM ĐỊNH RUBRIC • ĐẠT CHUẨN', 'RUBRIC VERIFIED • PASSED')); ?></div><br>
-            <strong><?php echo s(local_mamxanhapp_t('KS. Trần Văn Hùng — Mã CBKT: CBKT-LD-01', 'Eng. Tran Van Hung — Officer ID: CBKT-LD-01')); ?></strong>
+            <div class="mx-rubric-stamp">
+                <?php
+                if (!$isgraded) {
+                    echo s(local_mamxanhapp_t('ĐANG CHỜ CHẤM THỰC HÀNH', 'AWAITING RUBRIC GRADING'));
+                } else if ($totalrubricscore >= 60.0) {
+                    echo s(local_mamxanhapp_t('ĐÃ THẨM ĐỊNH RUBRIC • ĐẠT CHUẨN', 'RUBRIC VERIFIED • PASSED'));
+                } else {
+                    echo s(local_mamxanhapp_t('ĐÃ CHẤM • CHƯA ĐẠT (< 60/100)', 'GRADED • BELOW THRESHOLD'));
+                }
+                ?>
+            </div><br>
+            <strong><?php echo s($gradername); ?></strong>
         </div>
     </div>
 </div>

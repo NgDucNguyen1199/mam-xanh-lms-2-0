@@ -39,9 +39,9 @@ if ($canmanage && optional_param('all', 0, PARAM_INT) === 1) {
     ", ['uid' => $userid]);
 }
 
-// Build 3-Step Certification Eligibility Checklist across enrolled/visible courses
+// Build 3-Step Certification Eligibility Checklist across enrolled courses
 $mycourses = enrol_get_my_courses(['id', 'fullname', 'shortname', 'visible']);
-if (empty($mycourses)) {
+if (empty($mycourses) && $canmanage) {
     $mycourses = $DB->get_records_select('course', 'id <> :siteid AND visible = 1', ['siteid' => SITEID], 'id ASC', 'id,shortname,fullname,visible');
 }
 
@@ -58,79 +58,23 @@ foreach ($mycourses as $mc) {
         continue;
     }
     $cid = (int)$mc->id;
-
-    // 1. Attendance check (>= 80%)
-    $atts = $DB->get_records('attendance', ['course' => $cid]);
-    $totatt = 0;
-    $presatt = 0;
-    foreach ($atts as $att) {
-        $sesses = $DB->get_records('attendance_sessions', ['attendanceid' => $att->id]);
-        foreach ($sesses as $s) {
-            $totatt++;
-            $log = $DB->get_record('attendance_log', ['sessionid' => $s->id, 'studentid' => $userid]);
-            if ($log) {
-                $st = $DB->get_record('attendance_statuses', ['id' => $log->statusid]);
-                if ($st && (float)$st->grade > 0) {
-                    $presatt++;
-                }
-            } else {
-                $presatt++;
-            }
-        }
-    }
-    $attpct = $totatt > 0 ? round(($presatt / $totatt) * 100.0, 0) : 100;
-    $attok = ($attpct >= 80);
-
-    // 2. Final Quiz check (>= 70%)
-    $quizzes = $DB->get_records('quiz', ['course' => $cid]);
-    $bestq = null;
-    foreach ($quizzes as $q) {
-        if ((float)$q->sumgrades <= 0) {
-            continue;
-        }
-        $attsq = $DB->get_records('quiz_attempts', ['quiz' => $q->id, 'userid' => $userid, 'state' => 'finished'], 'sumgrades DESC', 'id,sumgrades', 0, 1);
-        if (!empty($attsq)) {
-            $top = reset($attsq);
-            $pct = round(((float)$top->sumgrades / (float)$q->sumgrades) * 100.0, 1);
-            if ($bestq === null || $pct > $bestq) {
-                $bestq = $pct;
-            }
-        }
-    }
-    if ($bestq === null && isset($certsbycourse[$cid])) {
-        $bestq = (float)$certsbycourse[$cid]->final_score;
-    }
-    $quizok = ($bestq !== null && $bestq >= 70.0);
-
-    // 3. Practical Capstone Rubric check
-    $assigns = $DB->get_records('assign', ['course' => $cid], 'id ASC');
-    $rubricscore = null;
-    foreach ($assigns as $asg) {
-        $low = core_text::strtolower($asg->name);
-        if (strpos($low, 'thảo luận') === false && strpos($low, 'discussion') === false) {
-            $ag = $DB->get_record('assign_grades', ['assignment' => $asg->id, 'userid' => $userid]);
-            if ($ag && (float)$ag->grade > 0) {
-                $rubricscore = round((float)$ag->grade, 0);
-            }
-        }
-    }
-    if ($rubricscore === null && $quizok) {
-        $rubricscore = 90;
-    }
-    $rubricok = ($rubricscore !== null && $rubricscore >= 60);
-
+    $eval = local_mamxanhcert_evaluate_eligibility($userid, $cid);
     $certrec = $certsbycourse[$cid] ?? null;
+
     $checklistrows[] = (object)[
         'courseid'      => $cid,
         'shortname'     => $mc->shortname,
         'fullname'      => $mc->fullname,
-        'attpct'        => $attpct,
-        'attok'         => $attok,
-        'quizpct'       => $bestq,
-        'quizok'        => $quizok,
-        'rubricscore'   => $rubricscore,
-        'rubricok'      => $rubricok,
-        'allok'         => ($attok && $quizok && $rubricok),
+        'atttaken'      => $eval->atttaken,
+        'attpresent'    => $eval->attpresent,
+        'attpct'        => $eval->attpct,
+        'attok'         => $eval->attok,
+        'quizpct'       => $eval->quizpct,
+        'quizok'        => $eval->quizok,
+        'rubricscore'   => $eval->rubricscore,
+        'hascheckin'    => $eval->hascheckin,
+        'rubricok'      => $eval->rubricok,
+        'allok'         => $eval->eligible,
         'cert'          => $certrec,
         'courseurl'     => (new moodle_url('/course/view.php', ['id' => $cid]))->out(false),
         'transcripturl' => (new moodle_url('/local/mamxanhapp/transcript.php', ['courseid' => $cid]))->out(false),
@@ -201,9 +145,15 @@ echo $OUTPUT->header();
                             <div class="small text-muted"><?php echo s($row->fullname); ?></div>
                         </td>
                         <td>
+                            <?php if ($row->attpct !== null): ?>
                             <span class="badge" style="background:<?php echo $row->attok ? '#EAF2EE' : '#FEF3C7'; ?>;color:<?php echo $row->attok ? '#234E3E' : '#92400E'; ?>;border:1px solid #CBD5E1;">
-                                <?php echo s(($row->attok ? '[ĐẠT] ' : '[CHỜ] ') . $row->attpct . '%'); ?>
+                                <?php echo s(($row->attok ? '[ĐẠT] ' : '[CHƯA ĐẠT] ') . number_format((float)$row->attpct, 0) . '% (' . $row->attpresent . '/' . $row->atttaken . ')'); ?>
                             </span>
+                            <?php else: ?>
+                            <span class="badge" style="background:#F1F5F9;color:#64748B;border:1px solid #CBD5E1;">
+                                <?php echo s(local_mamxanhapp_t('Chưa điểm danh', 'No sessions taken')); ?>
+                            </span>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <?php if ($row->quizpct !== null): ?>
@@ -218,8 +168,12 @@ echo $OUTPUT->header();
                         </td>
                         <td>
                             <?php if ($row->rubricscore !== null): ?>
-                            <span class="badge" style="background:#EAF2EE;color:#234E3E;border:1px solid #CBD5E1;">
-                                <?php echo s('[ĐÃ CHẤM] ' . $row->rubricscore . '/100'); ?>
+                            <span class="badge" style="background:<?php echo $row->rubricok ? '#EAF2EE' : '#FEF3C7'; ?>;color:<?php echo $row->rubricok ? '#234E3E' : '#92400E'; ?>;border:1px solid #CBD5E1;">
+                                <?php echo s(($row->rubricok ? '[ĐẠT] ' : '[CHƯA ĐẠT] ') . number_format((float)$row->rubricscore, 0) . '/100'); ?>
+                            </span>
+                            <?php elseif (!empty($row->hascheckin)): ?>
+                            <span class="badge" style="background:#FFF8E1;color:#92400E;border:1px solid #CBD5E1;">
+                                <?php echo s(local_mamxanhapp_t('Chờ CBKT chấm', 'Awaiting grading')); ?>
                             </span>
                             <?php else: ?>
                             <span class="badge" style="background:#F1F5F9;color:#64748B;border:1px solid #CBD5E1;">

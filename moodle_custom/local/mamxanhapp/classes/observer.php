@@ -78,26 +78,33 @@ class observer {
 
             if ($pct >= 70.0) {
                 $certlib = $CFG->dirroot . '/local/mamxanhcert/lib.php';
+                $iseligible = false;
                 if (file_exists($certlib)) {
                     require_once($certlib);
-                    if (function_exists('local_mamxanhcert_issue_certificate')) {
-                        local_mamxanhcert_issue_certificate($userid, $courseid, $pct);
+                    if (function_exists('local_mamxanhcert_evaluate_eligibility')) {
+                        $eval = local_mamxanhcert_evaluate_eligibility($userid, $courseid);
+                        if ($eval->eligible) {
+                            $iseligible = true;
+                            local_mamxanhcert_issue_certificate($userid, $courseid, $eval->final_score);
+                        }
                     }
                 }
 
-                // Award course badge if present and not yet issued
-                $badges = $DB->get_records('badge', ['courseid' => $courseid, 'status' => 1]);
-                foreach ($badges as $b) {
-                    if (!$DB->record_exists('badge_issued', ['badgeid' => $b->id, 'userid' => $userid])) {
-                        $DB->insert_record('badge_issued', (object)[
-                            'badgeid'    => $b->id,
-                            'userid'     => $userid,
-                            'uniquehash' => sha1($b->id . '|' . $userid . '|' . time()),
-                            'dateissued' => time(),
-                            'dateexpire' => null,
-                            'visible'    => 1,
-                            'issuernotified' => time(),
-                        ]);
+                // Award course badge only when all 3 academic gates are met
+                if ($iseligible) {
+                    $badges = $DB->get_records('badge', ['courseid' => $courseid, 'status' => 1]);
+                    foreach ($badges as $b) {
+                        if (!$DB->record_exists('badge_issued', ['badgeid' => $b->id, 'userid' => $userid])) {
+                            $DB->insert_record('badge_issued', (object)[
+                                'badgeid'        => $b->id,
+                                'userid'         => $userid,
+                                'uniquehash'     => sha1($b->id . '|' . $userid . '|' . time()),
+                                'dateissued'     => time(),
+                                'dateexpire'     => null,
+                                'visible'        => 1,
+                                'issuernotified' => time(),
+                            ]);
+                        }
                     }
                 }
             }

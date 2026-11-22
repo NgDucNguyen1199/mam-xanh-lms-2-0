@@ -62,18 +62,41 @@ $cbktcaps = [
     'moodle/course:manageactivities',
     'moodle/course:view',
     'moodle/course:viewparticipants',
+    'moodle/course:enrolreview',
+    'moodle/course:enrolconfig',
+    'moodle/role:assign',
+    'enrol/manual:enrol',
+    'enrol/manual:manage',
+    'enrol/manual:unenrol',
+    'enrol/self:manage',
     'moodle/grade:viewall',
     'moodle/grade:edit',
     'moodle/cohort:view',
     'moodle/backup:backupcourse',
     'mod/quiz:viewreports',
     'mod/quiz:grade',
+    'mod/attendance:takeattendances',
+    'mod/attendance:manageattendances',
+    'mod/attendance:changeattendances',
+    'mod/attendance:viewreports',
 ];
 
 foreach ($cbktcaps as $cap) {
     if ($DB->record_exists('capabilities', ['name' => $cap])) {
         assign_capability($cap, CAP_ALLOW, $roleid, $syscontext->id, true);
     }
+}
+
+// Allow 'canbokythuat' role to assign 'student' role during manual enrolment
+$studentrole = $DB->get_record('role', ['shortname' => 'student']);
+if ($studentrole) {
+    if (!$DB->record_exists('role_allow_assign', ['roleid' => $roleid, 'allowassign' => $studentrole->id])) {
+        $DB->insert_record('role_allow_assign', (object)['roleid' => $roleid, 'allowassign' => $studentrole->id]);
+    }
+    if (!$DB->record_exists('role_allow_switch', ['roleid' => $roleid, 'allowswitch' => $studentrole->id])) {
+        $DB->insert_record('role_allow_switch', (object)['roleid' => $roleid, 'allowswitch' => $studentrole->id]);
+    }
+    echo " -> [OK] Allowed 'canbokythuat' (ID={$roleid}) to assign & switch to 'student' (ID={$studentrole->id})\n";
 }
 
 // Ensure Student/Authenticated User CANNOT access manage or grade capabilities

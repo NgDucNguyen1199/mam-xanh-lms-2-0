@@ -22,11 +22,11 @@ $regionfilter = optional_param('region', '', PARAM_TEXT);
 $en = local_mamxanhapp_is_en();
 $dbman = $DB->get_manager();
 
-// Load all visible courses (excluding frontpage)
+// Load all visible courses (excluding frontpage and hidden master template)
 $allcourses = get_courses();
 $courses = [];
 foreach ($allcourses as $c) {
-    if ((int)$c->id !== SITEID) {
+    if ((int)$c->id !== SITEID && !empty($c->visible) && $c->shortname !== 'MASTER-AGRITECH-TPL') {
         $courses[$c->id] = $c;
     }
 }
@@ -117,10 +117,10 @@ foreach ($users as $u) {
         continue;
     }
     $pf = $profiles[$uid] ?? null;
-    $reg = ($pf && !empty($pf->region)) ? $pf->region : 'Lâm Đồng';
-    $area = $pf ? (int)$pf->area_m2 : 1500;
-    $crop = ($pf && !empty($pf->main_crop)) ? $pf->main_crop : 'Rau công nghệ cao';
-    $farm = ($pf && !empty($pf->farm_name)) ? $pf->farm_name : ('Nông hộ ' . fullname($u));
+    $reg = ($pf && !empty($pf->region)) ? $pf->region : ($u->city ?: 'Lâm Đồng');
+    $area = $pf ? (int)$pf->area_m2 : 0;
+    $crop = ($pf && !empty($pf->main_crop)) ? $pf->main_crop : 'Chưa khai báo';
+    $farm = ($pf && !empty($pf->farm_name)) ? $pf->farm_name : ('Chưa khai báo (' . fullname($u) . ')');
 
     $totalaream2 += $area;
     if (!isset($regionstats[$reg])) {

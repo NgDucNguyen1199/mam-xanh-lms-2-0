@@ -166,6 +166,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('do_clone', 0, PARAM
             $coursecatgrade = grade_category::fetch_course_category($newcourseid);
             $coursecatgrade->load_grade_item();
 
+            // 3b. Replace inherited source course shortname suffixes in cloned activity titles & grade items
+            $srcshort = trim((string)$sourcecourse->shortname);
+            $searchtokens = array_unique(array_filter([
+                '(' . $srcshort . ')',
+                '- ' . $srcshort,
+                '(CHAMSOC01)',
+                '- CHAMSOC01',
+                '(MASTER-AGRITECH-TPL)',
+                '- MASTER-AGRITECH-TPL',
+            ]));
+            $replacetokens = [
+                '(' . $srcshort . ')'      => '(' . $finalshort . ')',
+                '- ' . $srcshort           => '- ' . $finalshort,
+                '(CHAMSOC01)'              => '(' . $finalshort . ')',
+                '- CHAMSOC01'              => '- ' . $finalshort,
+                '(MASTER-AGRITECH-TPL)'    => '(' . $finalshort . ')',
+                '- MASTER-AGRITECH-TPL'    => '- ' . $finalshort,
+            ];
+            $modtables = ['assign', 'attendance', 'fieldpractice', 'forum', 'h5pactivity', 'page', 'quiz', 'resource', 'scorm'];
+            $dbman = $DB->get_manager();
+            foreach ($modtables as $mtbl) {
+                if (!$dbman->table_exists($mtbl)) {
+                    continue;
+                }
+                $mrows = $DB->get_records($mtbl, ['course' => $newcourseid], '', 'id,name');
+                foreach ($mrows as $mr) {
+                    $newname = strtr((string)$mr->name, $replacetokens);
+                    if ($newname !== (string)$mr->name) {
+                        $mr->name = $newname;
+                        $DB->update_record($mtbl, $mr);
+                    }
+                }
+            }
+
+            // 3c. Ensure attendance modules have a grade_item & normalize Gradebook weights to 10% / 20% / 20% / 25% / 25%
+            if (file_exists($CFG->dirroot . '/mod/attendance/lib.php')) {
+                require_once($CFG->dirroot . '/mod/attendance/lib.php');
+            }
+            $clonedatts = $DB->get_records('attendance', ['course' => $newcourseid]);
+            foreach ($clonedatts as $catt) {
+                if ((int)$catt->grade <= 0) {
+                    $catt->grade = 100;
+                    $DB->update_record('attendance', $catt);
+                }
+                if (function_exists('attendance_grade_item_update')) {
+                    attendance_grade_item_update($catt);
+                }
+            }
+
+            $gitems = $DB->get_records('grade_items', ['courseid' => $newcourseid, 'itemtype' => 'mod']);
+            $buckets = [
+                'attendance'  => [],
+                'discussion'  => [],
+                'interactive' => [],
+                'quiz'        => [],
+                'rubric'      => [],
+                'other'       => [],
+            ];
+            $hasfpitem = false;
+            foreach ($gitems as $gi) {
+                if ($gi->itemmodule === 'fieldpractice') {
+                    $hasfpitem = true;
+                }
+            }
+            foreach ($gitems as $gi) {
+                if (!empty($gi->itemname)) {
+                    $cleanitemname = strtr((string)$gi->itemname, $replacetokens);
+                    if ($cleanitemname !== (string)$gi->itemname) {
+                        $gi->itemname = $cleanitemname;
+                    }
+                }
+                $mod = (string)$gi->itemmodule;
+                $name = (string)$gi->itemname;
+                $isdisc = (bool)preg_match('/th.*o\s+lu.*n|discussion/iu', $name);
+                if ($mod === 'attendance') {
+                    $buckets['attendance'][] = $gi;
+                } else if ($mod === 'assign' && $isdisc) {
+                    $buckets['discussion'][] = $gi;
+                } else if ($mod === 'h5pactivity' || $mod === 'scorm') {
+                    $buckets['interactive'][] = $gi;
+                } else if ($mod === 'quiz') {
+                    $buckets['quiz'][] = $gi;
+                } else if ($mod === 'fieldpractice' || (!$hasfpitem && $mod === 'assign')) {
+                    $buckets['rubric'][] = $gi;
+                } else {
+                    $buckets['other'][] = $gi;
+                }
+            }
+            $bucketweights = [
+                'attendance'  => 0.10,
+                'discussion'  => 0.20,
+                'interactive' => 0.20,
+                'quiz'        => 0.25,
+                'rubric'      => 0.25,
+                'other'       => 0.00,
+            ];
+            foreach ($bucketweights as $bkey => $totalw) {
+                $cnt = count($buckets[$bkey]);
+                if ($cnt <= 0) {
+                    continue;
+                }
+                $peritem = $totalw > 0 ? round($totalw / $cnt, 5) : 0.0;
+                foreach ($buckets[$bkey] as $gi) {
+                    $gi->weightoverride = 1;
+                    $gi->aggregationcoef2 = $peritem;
+                    $DB->update_record('grade_items', $gi);
+                }
+            }
+
             // Ensure Manual + Self + Cohort enrolment & enrol CBKT + Selected Regional Farmers
             $manualplugin = enrol_get_plugin('manual');
             $selfplugin   = enrol_get_plugin('self');

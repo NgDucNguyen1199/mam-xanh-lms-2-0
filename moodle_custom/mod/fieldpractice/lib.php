@@ -196,6 +196,20 @@ function fieldpractice_validate_token(stdClass $fp, string $code): bool {
 }
 
 /**
+ * Compute great-circle Haversine distance in meters between two GPS coordinates.
+ */
+function fieldpractice_haversine_meters(float $lat1, float $lng1, float $lat2, float $lng2): float {
+    $earthradius = 6371000.0;
+    $dlat = deg2rad($lat2 - $lat1);
+    $dlng = deg2rad($lng2 - $lng1);
+    $a = sin($dlat / 2) * sin($dlat / 2)
+       + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+       * sin($dlng / 2) * sin($dlng / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(max(0.0, 1.0 - $a)));
+    return round($earthradius * $c, 2);
+}
+
+/**
  * Save 4-Criteria Rubric Grade and push directly into Moodle Gradebook + Activity Completion.
  */
 function fieldpractice_save_rubric_grade(
@@ -267,6 +281,15 @@ function fieldpractice_save_rubric_grade(
         $cm = get_coursemodule_from_instance('fieldpractice', $fp->id, $fp->course, false, IGNORE_MISSING);
         if ($cm && $completion->is_enabled($cm)) {
             $completion->update_state($cm, COMPLETION_COMPLETE, $userid);
+        }
+    }
+
+    // Re-evaluate 3-gate certificate eligibility for this learner
+    $certlib = $CFG->dirroot . '/local/mamxanhcert/lib.php';
+    if (file_exists($certlib)) {
+        require_once($certlib);
+        if (function_exists('local_mamxanhcert_sync_user_certificates')) {
+            local_mamxanhcert_sync_user_certificates($userid);
         }
     }
 

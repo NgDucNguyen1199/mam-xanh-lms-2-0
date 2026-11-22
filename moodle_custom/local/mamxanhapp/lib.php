@@ -63,21 +63,14 @@ function local_mamxanhapp_user_role_type(int $userid = 0): string {
  */
 function local_mamxanhapp_send_403_and_exit(string $msgvi = '', string $msgen = ''): void {
     global $OUTPUT, $PAGE;
+    static $rendering403 = false;
 
     if (!headers_sent()) {
         header('HTTP/1.1 403 Forbidden');
         http_response_code(403);
     }
 
-    if (!$PAGE->has_set_url()) {
-        $PAGE->set_url(new \moodle_url('/local/mamxanhapp/index.php'));
-    }
-    $PAGE->set_context(\context_system::instance());
-    $PAGE->set_pagelayout('standard');
     $title = local_mamxanhapp_t('403 - Truy cập bị từ chối', '403 - Access Forbidden');
-    $PAGE->set_title($title);
-    $PAGE->set_heading($title);
-
     $roletype = local_mamxanhapp_user_role_type();
     $homeurl = ($roletype === 'cbkt' || $roletype === 'admin')
         ? new \moodle_url('/local/mamxanhapp/manage.php')
@@ -88,13 +81,30 @@ function local_mamxanhapp_send_403_and_exit(string $msgvi = '', string $msgen = 
     $desc = local_mamxanhapp_t($msgvi ?: $defaultvi, $msgen ?: $defaulten);
     $btnlabel = local_mamxanhapp_t('← Quay lại Bảng điều khiển của bạn', '← Return to Your Dashboard');
 
+    $cardhtml = '<div class="mx-forbidden-card" style="max-width:640px;margin:2rem auto;background:#FFF5F5;border:3px solid #C62828;border-radius:24px;padding:2rem;text-align:center;">'
+        . '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;">403</div>'
+        . '<h2 style="color:#B71C1C;font-weight:800;margin-bottom:0.75rem;">' . s($title) . '</h2>'
+        . '<p style="font-size:1.05rem;color:#3E2723;margin-bottom:1.5rem;">' . s($desc) . '</p>'
+        . '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg" style="min-height:48px;border-radius:14px;font-weight:700;background:#234E3E;border-color:#234E3E;">' . s($btnlabel) . '</a>'
+        . '</div>';
+
+    // Guard against re-entrant calls or calls after page header has already started printing.
+    if ($rendering403 || (isset($PAGE) && $PAGE->state >= \moodle_page::STATE_PRINTING_HEADER)) {
+        echo $cardhtml;
+        exit;
+    }
+    $rendering403 = true;
+
+    if (!$PAGE->has_set_url()) {
+        $PAGE->set_url(new \moodle_url('/local/mamxanhapp/index.php'));
+    }
+    $PAGE->set_context(\context_system::instance());
+    $PAGE->set_pagelayout('standard');
+    $PAGE->set_title($title);
+    $PAGE->set_heading($title);
+
     echo $OUTPUT->header();
-    echo '<div class="mx-forbidden-card" style="max-width:640px;margin:2rem auto;background:#FFF5F5;border:3px solid #C62828;border-radius:24px;padding:2rem;text-align:center;">';
-    echo '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;">403</div>';
-    echo '<h2 style="color:#B71C1C;font-weight:800;margin-bottom:0.75rem;">' . s($title) . '</h2>';
-    echo '<p style="font-size:1.05rem;color:#3E2723;margin-bottom:1.5rem;">' . s($desc) . '</p>';
-    echo '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg" style="min-height:48px;border-radius:14px;font-weight:700;background:#234E3E;border-color:#234E3E;">' . s($btnlabel) . '</a>';
-    echo '</div>';
+    echo $cardhtml;
     echo $OUTPUT->footer();
     exit;
 }

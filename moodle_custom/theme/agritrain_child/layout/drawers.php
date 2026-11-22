@@ -40,13 +40,6 @@ $addblockbutton = $OUTPUT->addblockbutton();
 $roletype = function_exists('local_mamxanhapp_user_role_type') ? local_mamxanhapp_user_role_type() : 'farmer';
 $iscbktadmin = ($roletype === 'cbkt' || $roletype === 'admin' || is_siteadmin());
 
-// Block direct student access to course participants list (/user/index.php)
-if (!$iscbktadmin && $reqpath === '/user/index.php') {
-    if (function_exists('local_mamxanhapp_send_403_and_exit')) {
-        local_mamxanhapp_send_403_and_exit();
-    }
-}
-
 if ($PAGE->pagetype === 'my-index' || $issiteindex) {
     $blockdraweropen = false;
     $courseindexopen = false;
@@ -119,6 +112,28 @@ if ($PAGE->has_secondary_navigation()) {
             $pnode->remove();
         }
     }
+    // Replace unsubstituted {$a} placeholder in Vietnamese course secondary nav (e.g. unenrolself)
+    $courselabel = (!empty($COURSE->id) && (int)$COURSE->id !== SITEID)
+        ? format_string($COURSE->shortname ?: $COURSE->fullname)
+        : '';
+    $fixnavnodes = static function($node) use (&$fixnavnodes, $courselabel): void {
+        if (!is_object($node)) {
+            return;
+        }
+        if (!empty($node->text) && is_string($node->text) && strpos($node->text, '{$a}') !== false) {
+            $node->text = trim(str_replace('{$a}', $courselabel, $node->text));
+        }
+        if (!empty($node->shorttext) && is_string($node->shorttext) && strpos($node->shorttext, '{$a}') !== false) {
+            $node->shorttext = trim(str_replace('{$a}', $courselabel, $node->shorttext));
+        }
+        if (!empty($node->children)) {
+            foreach ($node->children as $child) {
+                $fixnavnodes($child);
+            }
+        }
+    };
+    $fixnavnodes($PAGE->secondarynav);
+
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);

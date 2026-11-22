@@ -28,43 +28,67 @@ $msgtype = 'success';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('action', '', PARAM_ALPHA) === 'checkin') {
     require_sesskey();
-    $codeinput = required_param('checkin_code', PARAM_ALPHANUM);
-    $lat = required_param('gps_lat', PARAM_TEXT);
-    $lng = required_param('gps_lng', PARAM_TEXT);
-    $note = optional_param('checkin_note', '', PARAM_TEXT);
+    $codeinput = trim(required_param('checkin_code', PARAM_ALPHANUM));
+    $lat = trim(required_param('gps_lat', PARAM_TEXT));
+    $lng = trim(required_param('gps_lng', PARAM_TEXT));
+    $note = trim(optional_param('checkin_note', '', PARAM_TEXT));
 
-    if (!fieldpractice_validate_token($fp, $codeinput)) {
-        $msg = local_mamxanhapp_t('Mã QR điểm danh đã hết hạn hoặc không khớp. Vui lòng quét mã mới trên màn hình Cán bộ kỹ thuật.', 'Rotating QR code expired or invalid. Please scan the active garden QR code.');
+    $existing = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $userid]);
+    $latvalid = is_numeric($lat) && (float)$lat >= -90.0 && (float)$lat <= 90.0;
+    $lngvalid = is_numeric($lng) && (float)$lng >= -180.0 && (float)$lng <= 180.0;
+    $targetlat = (float)$fp->target_lat;
+    $targetlng = (float)$fp->target_lng;
+    $distmeters = ($latvalid && $lngvalid)
+        ? fieldpractice_haversine_meters($targetlat, $targetlng, (float)$lat, (float)$lng)
+        : 999999.0;
+
+    if ($existing) {
+        if ((int)$existing->graded_time > 0 || $existing->total_grade !== null) {
+            $msg = local_mamxanhapp_t(
+                'Hồ sơ thực hành của bạn đã được Cán bộ kỹ thuật chấm điểm Rubric và khóa bảo mật. Không thể ghi đè điểm danh.',
+                'Your field practice submission has already been graded and locked. Overwriting check-in is not permitted.'
+            );
+        } else {
+            $msg = local_mamxanhapp_t(
+                'Bạn đã hoàn tất điểm danh ca thực hành này lúc ' . date('H:i d/m/Y', (int)$existing->checkin_time) . '. Hệ thống không cho phép ghi đè bản ghi đã nộp.',
+                'You have already checked in for this field practice session. Duplicate check-in overwrite is blocked.'
+            );
+        }
+        $msgtype = 'danger';
+    } else if (!fieldpractice_validate_token($fp, $codeinput)) {
+        $msg = local_mamxanhapp_t('Mã QR điểm danh đã hết hạn hoặc không khớp. Vui lòng quét mã mới trên màn hình Cán bộ kỹ thuật.', 'Rotating QR code expired or invalid. Please scan the active garden QR code from the Instructor.');
+        $msgtype = 'danger';
+    } else if (!$latvalid || !$lngvalid) {
+        $msg = local_mamxanhapp_t('Tọa độ GPS không hợp lệ. Vui lòng bật định vị GPS thực tế tại vườn.', 'Invalid GPS coordinates. Please enable real device location at the garden.');
+        $msgtype = 'danger';
+    } else if ($distmeters > 500.0) {
+        $msg = local_mamxanhapp_t(
+            'Từ chối điểm danh: Vị trí GPS của bạn cách tâm nhà màng thực hành ' . number_format($distmeters, 0) . 'm (vượt quá bán kính Geofence cho phép 500m quanh ' . $fp->location_name . ').',
+            'Check-in rejected: Your GPS position is ' . number_format($distmeters, 0) . 'm away from the practice station (exceeds the 500m Geofence radius).'
+        );
         $msgtype = 'danger';
     } else {
-        $existing = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $userid]);
-        if ($existing) {
-            $existing->checkin_code = strtoupper($codeinput);
-            $existing->gps_lat      = $lat;
-            $existing->gps_lng      = $lng;
-            $existing->checkin_note = $note;
-            $existing->checkin_time = time();
-            $DB->update_record('fieldpractice_sub', $existing);
-        } else {
-            $DB->insert_record('fieldpractice_sub', (object)[
-                'fieldpracticeid' => $fp->id,
-                'userid'          => $userid,
-                'checkin_code'    => strtoupper($codeinput),
-                'gps_lat'         => $lat,
-                'gps_lng'         => $lng,
-                'checkin_note'    => $note,
-                'checkin_time'    => time(),
-                'crit_prep'       => 0,
-                'crit_tech'       => 0,
-                'crit_biosafe'    => 0,
-                'crit_quality'    => 0,
-                'total_grade'     => null,
-                'feedback'        => '',
-                'graderid'        => 0,
-                'graded_time'     => 0,
-            ]);
-        }
-        $msg = local_mamxanhapp_t('Đã điểm danh Thực hành Tại vườn kèm tọa độ GPS thành công!', 'Garden QR & GPS attendance recorded successfully!');
+        $DB->insert_record('fieldpractice_sub', (object)[
+            'fieldpracticeid' => $fp->id,
+            'userid'          => $userid,
+            'checkin_code'    => strtoupper($codeinput),
+            'gps_lat'         => number_format((float)$lat, 6, '.', ''),
+            'gps_lng'         => number_format((float)$lng, 6, '.', ''),
+            'checkin_note'    => $note,
+            'checkin_time'    => time(),
+            'crit_prep'       => 0,
+            'crit_tech'       => 0,
+            'crit_biosafe'    => 0,
+            'crit_quality'    => 0,
+            'total_grade'     => null,
+            'feedback'        => '',
+            'graderid'        => 0,
+            'graded_time'     => 0,
+        ]);
+        $msg = local_mamxanhapp_t(
+            'Đã điểm danh Thực hành Tại vườn kèm tọa độ GPS thành công (Khoảng cách tới tâm vườn: ' . number_format($distmeters, 1) . 'm)!',
+            'Garden QR & GPS attendance recorded successfully (Distance to station center: ' . number_format($distmeters, 1) . 'm)!'
+        );
     }
 }
 
@@ -122,10 +146,11 @@ echo $OUTPUT->header();
                     <?php echo s(local_mamxanhapp_t('Điểm danh Thực hành Bằng QR Xoay vòng & GPS', 'Rotating QR & GPS Garden Check-In')); ?>
                 </h4>
 
+                <?php if ($cangrade): ?>
                 <div class="d-flex align-items-center mb-3" style="gap:16px;background:#F9FAF9;border:1px solid #E6ECE9;padding:14px;border-radius:12px;">
                     <div><?php echo $qrsvg; ?></div>
                     <div>
-                        <div style="font-size:0.84rem;color:#52615B;font-weight:600;"><?php echo s(local_mamxanhapp_t('Mã QR phiên 5 phút hiện tại:', 'Active 5-Min Rotating Code:')); ?></div>
+                        <div style="font-size:0.84rem;color:#52615B;font-weight:600;"><?php echo s(local_mamxanhapp_t('Mã QR phiên 5 phút hiện tại (Chỉ hiển thị cho CBKT):', 'Active 5-Min Rotating Code (Instructor View Only):')); ?></div>
                         <div style="font-size:1.65rem;font-weight:800;letter-spacing:0.12em;color:#234E3E;"><?php echo s($currenttoken); ?></div>
                         <div class="mt-1">
                             <span id="mx-qr-timer-badge" style="display:inline-block;background:#EAF2EE;color:#234E3E;border:1px solid #CFD9D4;padding:3px 10px;border-radius:999px;font-size:0.8rem;font-weight:700;font-variant-numeric:tabular-nums;">
@@ -137,6 +162,14 @@ echo $OUTPUT->header();
                         </div>
                     </div>
                 </div>
+                <?php else: ?>
+                <div class="mb-3" style="background:#F9FAF9;border:1px solid #E6ECE9;padding:12px 14px;border-radius:10px;font-size:0.88rem;color:#334155;">
+                    <?php echo s(local_mamxanhapp_t(
+                        'Hướng dẫn: Quét mã QR xoay vòng 5 phút trên màn hình của Cán bộ kỹ thuật tại vườn và bật định vị GPS (bán kính hợp lệ <= 500m quanh trạm thực nghiệm).',
+                        'Instructions: Scan the 5-minute rotating QR code displayed by the Instructor at the garden and verify your GPS location (within 500m radius).'
+                    )); ?>
+                </div>
+                <?php endif; ?>
 
                 <form method="post" action="<?php echo (new moodle_url('/mod/fieldpractice/view.php', ['id' => $cm->id]))->out(false); ?>">
                     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
@@ -144,20 +177,32 @@ echo $OUTPUT->header();
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_checkin_code"><?php echo s(local_mamxanhapp_t('Mã phiên điểm danh (6 ký tự)', 'Rotating Attendance Code')); ?></label>
-                        <input type="text" id="id_checkin_code" name="checkin_code" class="form-control" required value="<?php echo s($qtoken ?: $currenttoken); ?>" style="min-height:44px;border-radius:8px;font-weight:700;letter-spacing:0.08em;">
+                        <input type="text" id="id_checkin_code" name="checkin_code" class="form-control" required
+                               placeholder="<?php echo s(local_mamxanhapp_t('Nhập mã QR 6 ký tự từ CBKT', 'Enter 6-char QR code from Instructor')); ?>"
+                               value="<?php echo s($qtoken ?: ($mysub ? $mysub->checkin_code : ($cangrade ? $currenttoken : ''))); ?>"
+                               <?php echo $mysub ? 'readonly' : ''; ?>
+                               style="min-height:44px;border-radius:8px;font-weight:700;letter-spacing:0.08em;">
                     </div>
 
                     <div class="row align-items-end">
                         <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lat">GPS Lat</label>
-                            <input type="text" id="id_fp_lat" name="gps_lat" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lat : $fp->target_lat); ?>" style="min-height:44px;border-radius:8px;">
+                            <input type="text" id="id_fp_lat" name="gps_lat" class="form-control" required
+                                   value="<?php echo s($mysub ? $mysub->gps_lat : $fp->target_lat); ?>"
+                                   <?php echo $mysub ? 'readonly' : ''; ?>
+                                   style="min-height:44px;border-radius:8px;">
                         </div>
                         <div class="col-6 col-md-4 mb-3">
                             <label class="form-label fw-bold" for="id_fp_lng">GPS Lng</label>
-                            <input type="text" id="id_fp_lng" name="gps_lng" class="form-control" required value="<?php echo s($mysub ? $mysub->gps_lng : $fp->target_lng); ?>" style="min-height:44px;border-radius:8px;">
+                            <input type="text" id="id_fp_lng" name="gps_lng" class="form-control" required
+                                   value="<?php echo s($mysub ? $mysub->gps_lng : $fp->target_lng); ?>"
+                                   <?php echo $mysub ? 'readonly' : ''; ?>
+                                   style="min-height:44px;border-radius:8px;">
                         </div>
                         <div class="col-12 col-md-4 mb-3">
-                            <button type="button" class="btn btn-secondary w-100" style="min-height:44px;" onclick="mxCaptureGardenGps(<?php echo (float)$fp->target_lat; ?>, <?php echo (float)$fp->target_lng; ?>)">
+                            <button type="button" class="btn btn-secondary w-100" style="min-height:44px;"
+                                    <?php echo $mysub ? 'disabled' : ''; ?>
+                                    onclick="mxCaptureGardenGps(<?php echo (float)$fp->target_lat; ?>, <?php echo (float)$fp->target_lng; ?>)">
                                 <?php echo s(local_mamxanhapp_t('Định vị GPS Vườn', 'Locate Garden GPS')); ?>
                             </button>
                         </div>
@@ -166,12 +211,24 @@ echo $OUTPUT->header();
 
                     <div class="mb-3">
                         <label class="form-label fw-bold" for="id_checkin_note"><?php echo s(local_mamxanhapp_t('Ghi chú ca thực hành / Lô thực nghiệm', 'Field Session Note')); ?></label>
-                        <input type="text" id="id_checkin_note" name="checkin_note" class="form-control" value="<?php echo s($mysub->checkin_note ?? 'Đã có mặt đầy đủ bảo hộ và dụng cụ đo pH/EC'); ?>" style="min-height:44px;border-radius:8px;">
+                        <input type="text" id="id_checkin_note" name="checkin_note" class="form-control"
+                               value="<?php echo s($mysub->checkin_note ?? 'Đã có mặt đầy đủ bảo hộ và dụng cụ đo pH/EC'); ?>"
+                               <?php echo $mysub ? 'readonly' : ''; ?>
+                               style="min-height:44px;border-radius:8px;">
                     </div>
 
+                    <?php if ($mysub): ?>
+                    <div class="p-3 rounded text-center fw-bold" style="background:#EAF2EE;color:#234E3E;border:1px solid #CFD9D4;">
+                        <?php echo s(local_mamxanhapp_t(
+                            'Đã ghi nhận & khóa bản ghi điểm danh lúc ' . date('H:i d/m/Y', (int)$mysub->checkin_time) . ' (Mã: ' . $mysub->checkin_code . ')',
+                            'Check-in locked at ' . date('H:i d/m/Y', (int)$mysub->checkin_time) . ' (Code: ' . $mysub->checkin_code . ')'
+                        )); ?>
+                    </div>
+                    <?php else: ?>
                     <button type="submit" class="btn btn-primary w-100" style="min-height:46px;border-radius:8px;font-weight:600;background:#234E3E;border-color:#234E3E;">
                         <?php echo s(local_mamxanhapp_t('Xác nhận Điểm danh Tại Vườn', 'Confirm Garden Check-In')); ?>
                     </button>
+                    <?php endif; ?>
                 </form>
             </div>
         </div>
@@ -270,32 +327,41 @@ function mxCaptureGardenGps(targetLat, targetLng) {
     var msgEl = document.getElementById('mx-fp-gps-dist');
     var isEn = document.documentElement.lang && document.documentElement.lang.indexOf('en') === 0;
 
-    function applyCoords(lat, lng) {
+    function updateStatus(lat, lng) {
         latEl.value = lat.toFixed(6);
         lngEl.value = lng.toFixed(6);
         var dist = mxHaversineMeters(targetLat, targetLng, lat, lng);
-        msgEl.textContent = isEn
-            ? ('Verified GPS lock (' + dist.toFixed(1) + 'm from greenhouse center — Within 150m Geofence)')
-            : ('Đã khóa tọa độ GPS thực địa (Cách tâm nhà màng ' + dist.toFixed(1) + 'm — Hợp lệ trong bán kính 150m)');
+        if (dist <= 500) {
+            msgEl.style.color = '#234E3E';
+            msgEl.textContent = isEn
+                ? ('Verified GPS lock (' + dist.toFixed(1) + 'm from greenhouse center — Within 500m Geofence)')
+                : ('Đã khóa tọa độ GPS thực địa (Cách tâm nhà màng ' + dist.toFixed(1) + 'm — Hợp lệ trong bán kính 500m)');
+        } else {
+            msgEl.style.color = '#C62828';
+            msgEl.textContent = isEn
+                ? ('Warning: Current GPS position is ' + dist.toFixed(0) + 'm away (exceeds 500m Geofence radius).')
+                : ('Cảnh báo: Tọa độ GPS hiện tại cách tâm nhà màng ' + dist.toFixed(0) + 'm (vượt quá bán kính Geofence 500m).');
+        }
     }
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function(pos) {
-                var d = mxHaversineMeters(targetLat, targetLng, pos.coords.latitude, pos.coords.longitude);
-                if (d <= 500) {
-                    applyCoords(pos.coords.latitude, pos.coords.longitude);
-                } else {
-                    applyCoords(targetLat + 0.000025, targetLng + 0.000018);
-                }
+                updateStatus(pos.coords.latitude, pos.coords.longitude);
             },
             function() {
-                applyCoords(targetLat + 0.000025, targetLng + 0.000018);
+                msgEl.style.color = '#B45309';
+                msgEl.textContent = isEn
+                    ? 'Browser geolocation permission denied or unavailable. Please enter actual garden GPS coordinates.'
+                    : 'Không lấy được định vị GPS từ thiết bị. Vui lòng bật quyền vị trí (Location) hoặc kiểm tra tọa độ thực địa tại vườn.';
             },
-            { timeout: 2500 }
+            { timeout: 3500 }
         );
     } else {
-        applyCoords(targetLat + 0.000025, targetLng + 0.000018);
+        msgEl.style.color = '#B45309';
+        msgEl.textContent = isEn
+            ? 'Geolocation API is not supported on this browser.'
+            : 'Trình duyệt không hỗ trợ API định vị GPS.';
     }
 }
 </script>

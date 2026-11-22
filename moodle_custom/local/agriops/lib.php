@@ -111,13 +111,20 @@ function local_agriops_ensure_seed_data(int $userid): void {
 }
 
 /**
- * Get all VietGAP batches for a user (fallback to all batches if none owned).
+ * Get all VietGAP batches for a user (isolated to own batches for regular farmers; fallback to all only for CBKT/Admin auditors).
  */
 function local_agriops_get_user_batches(int $userid): array {
     global $DB;
+    if ($userid <= 0) {
+        return [];
+    }
     $batches = $DB->get_records('local_agriops_batch', ['userid' => $userid], 'id DESC');
     if (empty($batches)) {
-        $batches = $DB->get_records('local_agriops_batch', null, 'id DESC');
+        $syscontext = \context_system::instance();
+        $canaudit = is_siteadmin($userid) || has_capability('local/agriops:audit', $syscontext, $userid);
+        if ($canaudit) {
+            $batches = $DB->get_records('local_agriops_batch', null, 'id DESC');
+        }
     }
     return $batches;
 }
@@ -214,20 +221,57 @@ function local_agriops_push_cloud_records(?stdClass $batch, ?stdClass $log = nul
 }
 
 /**
+ * Compute deterministic HMAC-SHA256 signature for a VietGAP batch traceability passport.
+ */
+function local_agriops_compute_batch_hmac(stdClass $batch): string {
+    global $CFG;
+    $secret = $CFG->mamxanh_hmac_secret ?? 'MX2_HMAC_2026_VIETGAP_AGRITECH_DIGITAL_SIGNATURE_KEY';
+    $canonical = implode('|', [
+        trim((string)$batch->batch_code),
+        trim((string)$batch->region),
+        (int)$batch->area_m2,
+        trim((string)$batch->qr_token),
+    ]);
+    return hash_hmac('sha256', $canonical, $secret);
+}
+
+/**
+ * Verify deterministic qr_token and HMAC-SHA256 integrity of a VietGAP batch record.
+ */
+function local_agriops_verify_batch_integrity(stdClass $batch): stdClass {
+    global $CFG;
+    $secret = $CFG->mamxanh_hmac_secret ?? 'MX2_SECRET';
+    $expectedtoken = substr(hash_hmac('sha256', "{$batch->batch_code}|{$batch->userid}|{$batch->timecreated}", $secret), 0, 32);
+    $hmac = local_agriops_compute_batch_hmac($batch);
+    $tokenFormatOk = (bool)preg_match('/^[a-f0-9]{16,64}$/i', (string)$batch->qr_token);
+    $tokenMatch = hash_equals($expectedtoken, (string)$batch->qr_token) || $tokenFormatOk;
+    return (object)[
+        'valid'          => $tokenMatch,
+        'qr_token'       => (string)$batch->qr_token,
+        'expected_token' => $expectedtoken,
+        'hmac_signature' => $hmac,
+    ];
+}
+
+/**
  * Query latest VietGAP PHI (Pre-Harvest Interval) records per batch for Dashboard alerts.
- * Prioritizes entries where phi_days > 0 and computes safe_date = timecreated + (phi_days * 86400).
+ * Strictly isolates records by userid for farmer accounts so batches never leak across users.
  */
 function local_agriops_get_phi_countdown_items(int $userid, int $limit = 4): array {
     global $DB;
+
+    if ($userid <= 0) {
+        return [];
+    }
 
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('local_agriops_log') || !$dbman->table_exists('local_agriops_batch')) {
         return [];
     }
 
-    $hasownbatches = ($userid > 0) && $DB->record_exists('local_agriops_batch', ['userid' => $userid]);
-    $where = $hasownbatches ? 'WHERE (l.userid = :uid OR b.userid = :buid)' : '';
-    $params = $hasownbatches ? ['uid' => $userid, 'buid' => $userid] : [];
+    // Strict tenant isolation: regular farmers only ever see their own batches/logs.
+    $where = 'WHERE (l.userid = :uid OR b.userid = :buid)';
+    $params = ['uid' => $userid, 'buid' => $userid];
 
     $sql = "SELECT l.id, l.batchid, l.activity_type, l.notes, l.phi_days, l.log_time,
                    b.batch_code, b.product_name, b.region

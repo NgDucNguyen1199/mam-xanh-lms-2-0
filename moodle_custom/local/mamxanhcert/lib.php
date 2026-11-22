@@ -82,8 +82,10 @@ function local_mamxanhcert_issue_certificate(int $userid, int $courseid, float $
 
     $existing = $DB->get_record('local_mamxanhcert', ['userid' => $userid, 'courseid' => $courseid]);
     if ($existing) {
-        if ($score > (float)$existing->final_score) {
-            $existing->final_score = round($score, 2);
+        $newscore = round($score, 2);
+        if (abs($newscore - (float)$existing->final_score) >= 0.01 || ($existing->status ?? '') !== 'valid') {
+            $existing->final_score = $newscore;
+            $existing->status = 'valid';
             $existing->hmac_signature = local_mamxanhcert_compute_hmac(
                 $existing->cert_code,
                 (int)$existing->userid,
@@ -128,25 +130,155 @@ function local_mamxanhcert_issue_certificate(int $userid, int $courseid, float $
 }
 
 /**
- * Scan finished Quiz attempts >= 70% for a user and ensure digital certificates exist.
+ * Single Source of Truth: Evaluate 3 mandatory academic gates for certificate eligibility:
+ * 1) Real Attendance on actually taken sessions >= 80%
+ * 2) Final Quiz attempt >= 70%
+ * 3) Practical Field Rubric (mdl_fieldpractice_sub, or non-discussion assign_grades if no fieldpractice exists) >= 60/100
+ */
+function local_mamxanhcert_evaluate_eligibility(int $userid, int $courseid): stdClass {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    // 1. Attendance check (>= 80% on sessions that have actually been taken)
+    $atts = $DB->get_records('attendance', ['course' => $courseid], 'id ASC');
+    $totatt = 0;
+    $presatt = 0;
+    foreach ($atts as $att) {
+        $sesses = $DB->get_records('attendance_sessions', ['attendanceid' => $att->id], 'sessdate ASC');
+        foreach ($sesses as $s) {
+            $istaken = ((int)($s->lasttaken ?? 0) > 0) || $DB->record_exists('attendance_log', ['sessionid' => $s->id]);
+            if (!$istaken) {
+                continue;
+            }
+            $totatt++;
+            $log = $DB->get_record('attendance_log', ['sessionid' => $s->id, 'studentid' => $userid]);
+            if ($log) {
+                $st = $DB->get_record('attendance_statuses', ['id' => $log->statusid]);
+                if ($st && (float)$st->grade > 0) {
+                    $presatt++;
+                }
+            }
+        }
+    }
+    $attpct = $totatt > 0 ? round(($presatt / $totatt) * 100.0, 1) : null;
+    $attok = ($attpct !== null && $attpct >= 80.0);
+
+    // 2. Final Quiz check (>= 70% on finished quiz_attempts)
+    $quizzes = $DB->get_records('quiz', ['course' => $courseid], 'id ASC');
+    $bestq = null;
+    foreach ($quizzes as $q) {
+        if ((float)$q->sumgrades <= 0) {
+            continue;
+        }
+        $attsq = $DB->get_records('quiz_attempts', [
+            'quiz'   => $q->id,
+            'userid' => $userid,
+            'state'  => 'finished',
+        ], 'sumgrades DESC', 'id,sumgrades', 0, 1);
+        if (!empty($attsq)) {
+            $top = reset($attsq);
+            $pct = min(100.0, round(((float)$top->sumgrades / (float)$q->sumgrades) * 100.0, 1));
+            if ($bestq === null || $pct > $bestq) {
+                $bestq = $pct;
+            }
+        }
+    }
+    $quizok = ($bestq !== null && $bestq >= 70.0);
+
+    // 3. Practical Field Rubric check (>= 60/100 from mdl_fieldpractice_sub)
+    $rubricscore = null;
+    $rubricsub = null;
+    $hascheckin = false;
+    $hasfp = false;
+    if ($dbman->table_exists('fieldpractice') && $dbman->table_exists('fieldpractice_sub')) {
+        $fps = $DB->get_records('fieldpractice', ['course' => $courseid], 'id ASC');
+        if (!empty($fps)) {
+            $hasfp = true;
+            foreach ($fps as $fp) {
+                $sub = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $userid]);
+                if ($sub) {
+                    $hascheckin = true;
+                    if ($sub->total_grade !== null && ((int)$sub->graded_time > 0 || (float)$sub->total_grade > 0)) {
+                        $sc = min(100.0, round((float)$sub->total_grade, 1));
+                        if ($rubricscore === null || $sc > $rubricscore) {
+                            $rubricscore = $sc;
+                            $rubricsub = $sub;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (!$hasfp && $rubricscore === null) {
+        $assigns = $DB->get_records('assign', ['course' => $courseid], 'id ASC');
+        foreach ($assigns as $asg) {
+            $low = \core_text::strtolower($asg->name);
+            if (strpos($low, 'thảo luận') === false && strpos($low, 'discussion') === false) {
+                $ag = $DB->get_record('assign_grades', ['assignment' => $asg->id, 'userid' => $userid]);
+                if ($ag && $ag->grade !== null && (float)$ag->grade > 0) {
+                    $maxg = (float)$asg->grade > 0 ? (float)$asg->grade : 100.0;
+                    $sc = min(100.0, round(((float)$ag->grade / $maxg) * 100.0, 1));
+                    if ($rubricscore === null || $sc > $rubricscore) {
+                        $rubricscore = $sc;
+                    }
+                }
+            }
+        }
+    }
+    $rubricok = ($rubricscore !== null && $rubricscore >= 60.0);
+
+    $eligible = ($attok && $quizok && $rubricok);
+    $finalscore = 0.0;
+    if ($eligible) {
+        $finalscore = round(($attpct * 0.20) + ($bestq * 0.40) + ($rubricscore * 0.40), 2);
+    }
+
+    return (object)[
+        'userid'      => $userid,
+        'courseid'    => $courseid,
+        'atttaken'    => $totatt,
+        'attpresent'  => $presatt,
+        'attpct'      => $attpct,
+        'attok'       => $attok,
+        'quizpct'     => $bestq,
+        'quizok'      => $quizok,
+        'rubricscore' => $rubricscore,
+        'rubricsub'   => $rubricsub,
+        'hascheckin'  => $hascheckin,
+        'rubricok'    => $rubricok,
+        'eligible'    => $eligible,
+        'final_score' => $finalscore,
+    ];
+}
+
+/**
+ * Evaluate all courses for a user against the 3-gate eligibility rules and synchronize digital certificates.
  */
 function local_mamxanhcert_sync_user_certificates(int $userid): void {
     global $DB;
 
-    $sql = "SELECT qa.id, qa.sumgrades, q.course, q.sumgrades AS maxgrades
-              FROM {quiz_attempts} qa
-              JOIN {quiz} q ON q.id = qa.quiz
-             WHERE qa.userid = :uid AND qa.state = 'finished' AND q.sumgrades > 0";
-    $rows = $DB->get_records_sql($sql, ['uid' => $userid]);
-    $bestbycourse = [];
-    foreach ($rows as $r) {
-        $pct = round(((float)$r->sumgrades / (float)$r->maxgrades) * 100.0, 2);
-        $cid = (int)$r->course;
-        if ($pct >= 70.0 && (!isset($bestbycourse[$cid]) || $pct > $bestbycourse[$cid])) {
-            $bestbycourse[$cid] = $pct;
-        }
+    if ($userid <= 0) {
+        return;
     }
-    foreach ($bestbycourse as $cid => $pct) {
-        local_mamxanhcert_issue_certificate($userid, $cid, $pct);
+
+    $courses = $DB->get_records_select(
+        'course',
+        'id <> :siteid AND shortname <> :tpl',
+        ['siteid' => SITEID, 'tpl' => 'MASTER-AGRITECH-TPL'],
+        'id ASC',
+        'id,shortname,visible'
+    );
+
+    foreach ($courses as $c) {
+        $cid = (int)$c->id;
+        $eval = local_mamxanhcert_evaluate_eligibility($userid, $cid);
+        if ($eval->eligible) {
+            local_mamxanhcert_issue_certificate($userid, $cid, $eval->final_score);
+        } else {
+            if ($DB->record_exists('local_mamxanhcert', ['userid' => $userid, 'courseid' => $cid])) {
+                $DB->delete_records('local_mamxanhcert', ['userid' => $userid, 'courseid' => $cid]);
+            }
+        }
     }
 }

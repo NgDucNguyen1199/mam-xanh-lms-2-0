@@ -2,6 +2,9 @@
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
+if (file_exists($CFG->dirroot . '/local/mamxanhcert/lib.php')) {
+    require_once($CFG->dirroot . '/local/mamxanhcert/lib.php');
+}
 
 local_mamxanhapp_handle_lang_switch();
 require_login();
@@ -70,14 +73,23 @@ $PAGE->set_heading(local_mamxanhapp_t('Bảng điểm Học thuật Tổng hợp
 
 // Load farmer household profile
 $profile = $DB->get_record('local_farmerprofile', ['userid' => $targetuserid]);
-$farmname = $profile ? $profile->farm_name : local_mamxanhapp_t('Nông hộ Công nghệ cao Lâm Đồng', 'Lam Dong Smart Farm Household');
-$region = $profile ? $profile->region : 'Lâm Đồng';
+$farmname = ($profile && !empty($profile->farm_name))
+    ? $profile->farm_name
+    : local_mamxanhapp_t('Chưa khai báo hồ sơ nông hộ', 'Farm profile not configured');
+$region = ($profile && !empty($profile->region)) ? $profile->region : ($learner->city ?: 'Lâm Đồng');
 if ($en) {
     $rmap = ['Lâm Đồng' => 'Lam Dong', 'Đắk Lắk' => 'Dak Lak', 'Đồng Nai' => 'Dong Nai'];
     $region = $rmap[$region] ?? $region;
 }
-$aream2 = $profile ? (int)$profile->area_m2 : 2500;
-$certstd = $profile ? $profile->cert_standard : 'VietGAP TCVN 11892-1:2017';
+$aream2 = $profile ? (int)$profile->area_m2 : 0;
+$certstd = ($profile && !empty($profile->cert_standard)) ? $profile->cert_standard : 'VietGAP TCVN 11892-1:2017';
+
+if (function_exists('local_mamxanhcert_sync_user_certificates')) {
+    local_mamxanhcert_sync_user_certificates($targetuserid);
+}
+$eligibility = function_exists('local_mamxanhcert_evaluate_eligibility')
+    ? local_mamxanhcert_evaluate_eligibility($targetuserid, $courseid)
+    : null;
 
 // =========================================================================
 // COMPONENT 1: ATTENDANCE (Điểm danh Lý thuyết & Thực hành) — Weight: 10%
@@ -89,9 +101,14 @@ $attdetails = [];
 
 foreach ($attmodules as $att) {
     $sessions = $DB->get_records('attendance_sessions', ['attendanceid' => $att->id], 'sessdate ASC');
-    $modtotal = count($sessions);
+    $modtaken = 0;
     $modpresent = 0;
     foreach ($sessions as $sess) {
+        $istaken = ((int)($sess->lasttaken ?? 0) > 0) || $DB->record_exists('attendance_log', ['sessionid' => $sess->id]);
+        if (!$istaken) {
+            continue;
+        }
+        $modtaken++;
         $attsessionscount++;
         $log = $DB->get_record('attendance_log', ['sessionid' => $sess->id, 'studentid' => $targetuserid]);
         if ($log) {
@@ -100,21 +117,17 @@ foreach ($attmodules as $att) {
                 $modpresent++;
                 $attpresentcount++;
             }
-        } else {
-            // Default present for seeded active sessions
-            $modpresent++;
-            $attpresentcount++;
         }
     }
-    if ($modtotal > 0) {
-        $attdetails[] = format_string($att->name) . ': ' . $modpresent . '/' . $modtotal . ($en ? ' sessions' : ' buổi');
+    if ($modtaken > 0) {
+        $attdetails[] = format_string($att->name) . ': ' . $modpresent . '/' . $modtaken . ($en ? ' taken sessions' : ' buổi đã điểm danh');
     }
 }
-$attpct = $attsessionscount > 0 ? round(($attpresentcount / $attsessionscount) * 100.0, 1) : 100.0;
+$attpct = $attsessionscount > 0 ? round(($attpresentcount / $attsessionscount) * 100.0, 1) : 0.0;
 $attscore10 = round($attpct / 10.0, 2);
 $attdetailstr = !empty($attdetails)
     ? implode(' • ', $attdetails)
-    : local_mamxanhapp_t('Điểm danh Lý thuyết (3/3 buổi) • Điểm danh Thực hành (3/3 buổi)', 'Theory Attendance (3/3 sessions) • Practical Attendance (3/3 sessions)');
+    : local_mamxanhapp_t('Chưa có buổi điểm danh nào được thực hiện', 'No attendance sessions taken yet');
 
 // =========================================================================
 // COMPONENT 2: DISCUSSION ASSIGNMENTS (2 Bài Thảo luận) — Weight: 20%
@@ -130,19 +143,22 @@ foreach ($assigns as $asg) {
     if ($isdisc) {
         $ag = $DB->get_record('assign_grades', ['assignment' => $asg->id, 'userid' => $targetuserid]);
         $maxg = (float)$asg->grade > 0 ? (float)$asg->grade : 100.0;
-        $rawg = ($ag && (float)$ag->grade >= 0) ? (float)$ag->grade : ($maxg * 0.88);
-        $pct = min(100.0, round(($rawg / $maxg) * 100.0, 1));
-        $discscores[] = $pct;
-        $discdetails[] = format_string($asg->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+        if ($ag && $ag->grade !== null && (float)$ag->grade >= 0) {
+            $pct = min(100.0, round(((float)$ag->grade / $maxg) * 100.0, 1));
+            $discscores[] = $pct;
+            $discdetails[] = format_string($asg->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+        } else {
+            $discdetails[] = format_string($asg->name) . ' (' . local_mamxanhapp_t('Chưa chấm', 'Not graded') . ')';
+        }
     } else {
         $capstoneassign = $asg;
     }
 }
-$discpct = !empty($discscores) ? round(array_sum($discscores) / count($discscores), 1) : 88.0;
+$discpct = !empty($discscores) ? round(array_sum($discscores) / count($discscores), 1) : 0.0;
 $discscore10 = round($discpct / 10.0, 2);
 $discdetailstr = !empty($discdetails)
     ? implode(' • ', $discdetails)
-    : local_mamxanhapp_t('Thảo luận tại lớp buổi 1 (8.8/10) • Thảo luận tại lớp buổi 2 (9.0/10)', 'In-class Discussion 1 (8.8/10) • In-class Discussion 2 (9.0/10)');
+    : local_mamxanhapp_t('Chưa có điểm bài tập thảo luận', 'No graded discussion assignments yet');
 
 // =========================================================================
 // COMPONENT 3: INTERACTIVE H5P & SCORM 1.2 SIMULATION — Weight: 20%
@@ -154,33 +170,41 @@ $interactdetails = [];
 
 foreach ($h5precs as $h5p) {
     $gi = $DB->get_record('grade_items', ['courseid' => $courseid, 'itemmodule' => 'h5pactivity', 'iteminstance' => $h5p->id]);
-    $pct = 90.0;
+    $pct = null;
     if ($gi) {
         $gg = $DB->get_record('grade_grades', ['itemid' => $gi->id, 'userid' => $targetuserid]);
         if ($gg && $gg->finalgrade !== null && (float)$gi->grademax > 0) {
             $pct = min(100.0, round(((float)$gg->finalgrade / (float)$gi->grademax) * 100.0, 1));
         }
     }
-    $interactscores[] = $pct;
-    $interactdetails[] = 'H5P: ' . format_string($h5p->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+    if ($pct !== null) {
+        $interactscores[] = $pct;
+        $interactdetails[] = 'H5P: ' . format_string($h5p->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+    } else {
+        $interactdetails[] = 'H5P: ' . format_string($h5p->name) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
+    }
 }
 foreach ($scormrecs as $sc) {
     $gi = $DB->get_record('grade_items', ['courseid' => $courseid, 'itemmodule' => 'scorm', 'iteminstance' => $sc->id]);
-    $pct = 92.0;
+    $pct = null;
     if ($gi) {
         $gg = $DB->get_record('grade_grades', ['itemid' => $gi->id, 'userid' => $targetuserid]);
         if ($gg && $gg->finalgrade !== null && (float)$gi->grademax > 0) {
             $pct = min(100.0, round(((float)$gg->finalgrade / (float)$gi->grademax) * 100.0, 1));
         }
     }
-    $interactscores[] = $pct;
-    $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+    if ($pct !== null) {
+        $interactscores[] = $pct;
+        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+    } else {
+        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
+    }
 }
-$interactpct = !empty($interactscores) ? round(array_sum($interactscores) / count($interactscores), 1) : 91.0;
+$interactpct = !empty($interactscores) ? round(array_sum($interactscores) / count($interactscores), 1) : 0.0;
 $interactscore10 = round($interactpct / 10.0, 2);
 $interactdetailstr = !empty($interactdetails)
     ? implode(' • ', $interactdetails)
-    : local_mamxanhapp_t('H5P Chẩn đoán Kỹ thuật (9.0/10) • Mô phỏng SCORM 1.2 (9.2/10)', 'Interactive H5P Diagnostic (9.0/10) • SCORM 1.2 Simulation (9.2/10)');
+    : local_mamxanhapp_t('Chưa hoàn thành học liệu tương tác H5P / SCORM', 'No completed H5P / SCORM activities yet');
 
 // =========================================================================
 // COMPONENT 4: FINAL COMPREHENSIVE QUIZ (mod_quiz) — Weight: 25%
@@ -211,42 +235,58 @@ foreach ($quizzes as $q) {
         }
     }
 }
-if ($quizpct === null) {
-    $quizpct = 86.0;
+$hasquizattempt = ($quizpct !== null);
+if (!$hasquizattempt) {
+    $quizpct = 0.0;
 }
 $quizscore10 = round($quizpct / 10.0, 2);
-$quizdetailstr = $quizname . ' (' . $qcount . ($en ? ' questions • Score: ' : ' câu hỏi • Điểm đạt: ') . $quizscore10 . '/10)';
+$quizdetailstr = $hasquizattempt
+    ? ($quizname . ' (' . $qcount . ($en ? ' questions • Score: ' : ' câu hỏi • Điểm đạt: ') . $quizscore10 . '/10)')
+    : ($quizname . ' (' . $qcount . ($en ? ' questions • Status: Not taken' : ' câu hỏi • Trạng thái: Chưa làm bài') . ')');
 
 // =========================================================================
-// COMPONENT 5: CAPSTONE PRACTICAL RUBRIC (mod_assign / mod_fieldpractice) — Weight: 25%
+// COMPONENT 5: CAPSTONE PRACTICAL RUBRIC (mod_fieldpractice / mod_assign) — Weight: 25%
 // =========================================================================
 $rubricpct = null;
-$rubrictitle = local_mamxanhapp_t('Bài Thu hoạch Thực hành Hiện trường (Rubric 4 tiêu chí)', 'Capstone Practical Field Assessment (4-Criteria Rubric)');
+$rubricsub = null;
+$rubrictitle = local_mamxanhapp_t('Thực hành Tại vườn: Điểm danh QR & Rubric 4 Tiêu chí', 'Field Practice: QR Check-in & 4-Criteria Rubric');
+$hasfpmodule = false;
 
-if ($capstoneassign) {
-    $rubrictitle = format_string($capstoneassign->name);
-    $ag = $DB->get_record('assign_grades', ['assignment' => $capstoneassign->id, 'userid' => $targetuserid]);
-    $maxg = (float)$capstoneassign->grade > 0 ? (float)$capstoneassign->grade : 100.0;
-    if ($ag && (float)$ag->grade >= 0) {
-        $rubricpct = min(100.0, round(((float)$ag->grade / $maxg) * 100.0, 1));
-    }
-}
-if ($rubricpct === null && $DB->get_manager()->table_exists('fieldpractice')) {
+if ($DB->get_manager()->table_exists('fieldpractice') && $DB->get_manager()->table_exists('fieldpractice_sub')) {
     $fps = $DB->get_records('fieldpractice', ['course' => $courseid], 'id ASC');
-    foreach ($fps as $fp) {
-        $sub = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $targetuserid]);
-        if ($sub && (int)$sub->total_grade > 0) {
-            $rubricpct = min(100.0, (float)$sub->total_grade);
+    if (!empty($fps)) {
+        $hasfpmodule = true;
+        foreach ($fps as $fp) {
             $rubrictitle = format_string($fp->name);
-            break;
+            $sub = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $targetuserid]);
+            if ($sub && $sub->total_grade !== null && ((int)$sub->graded_time > 0 || (float)$sub->total_grade > 0)) {
+                $rubricpct = min(100.0, (float)$sub->total_grade);
+                $rubricsub = $sub;
+                break;
+            }
         }
     }
 }
-if ($rubricpct === null) {
-    $rubricpct = 90.0;
+if (!$hasfpmodule && $rubricpct === null && $capstoneassign) {
+    $rubrictitle = format_string($capstoneassign->name);
+    $ag = $DB->get_record('assign_grades', ['assignment' => $capstoneassign->id, 'userid' => $targetuserid]);
+    $maxg = (float)$capstoneassign->grade > 0 ? (float)$capstoneassign->grade : 100.0;
+    if ($ag && $ag->grade !== null && (float)$ag->grade > 0) {
+        $rubricpct = min(100.0, round(((float)$ag->grade / $maxg) * 100.0, 1));
+    }
+}
+$hasrubricgrade = ($rubricpct !== null);
+if (!$hasrubricgrade) {
+    $rubricpct = 0.0;
 }
 $rubricscore10 = round($rubricpct / 10.0, 2);
-$rubricdetailstr = $rubrictitle . ' — ' . local_mamxanhapp_t('Chấm theo Rubric 4 tiêu chí chuẩn VietGAP', 'Graded via 4-Criteria VietGAP Rubric');
+if ($rubricsub) {
+    $rubricdetailstr = $rubrictitle . ' (TC1: ' . (int)$rubricsub->crit_prep . '/25 • TC2: ' . (int)$rubricsub->crit_tech . '/25 • TC3: ' . (int)$rubricsub->crit_biosafe . '/25 • TC4: ' . (int)$rubricsub->crit_quality . '/25)';
+} else if ($hasrubricgrade) {
+    $rubricdetailstr = $rubrictitle . ' — ' . local_mamxanhapp_t('Đã chấm điểm Rubric thực hành', 'Graded via 4-Criteria VietGAP Rubric');
+} else {
+    $rubricdetailstr = $rubrictitle . ' — ' . local_mamxanhapp_t('Chưa chấm điểm Rubric thực hành', 'Practical Rubric not graded yet');
+}
 
 // =========================================================================
 // WEIGHTED TOTAL CALCULATION & CLASSIFICATION
@@ -272,13 +312,33 @@ if ($final10 >= 9.0) {
     $ranklabel = local_mamxanhapp_t('Chưa đạt (Incomplete)', 'Incomplete');
 }
 
-// Certificate record check
-$cert = $DB->get_record('local_mamxanhcert', ['userid' => $targetuserid, 'courseid' => $courseid]);
-$certcode = $cert ? $cert->cert_code : ('MX-2026-' . strtoupper(substr(md5($targetuserid . '-' . $courseid), 0, 8)));
-$certhmac = $cert ? substr($cert->hmac_signature, 0, 24) . '...' : substr(hash_hmac('sha256', $certcode, 'mamxanh_lms_2026'), 0, 24) . '...';
-$verifyurl = (new moodle_url('/local/mamxanhcert/verify.php', ['code' => $certcode]))->out(false);
+// Certificate record check & dynamic instructor/date metadata
+$cert = $DB->get_record('local_mamxanhcert', ['userid' => $targetuserid, 'courseid' => $courseid, 'status' => 'valid']);
+$iseligiblecert = $eligibility ? (bool)$eligibility->eligible : ($cert !== false);
+$certcode = $cert ? $cert->cert_code : '';
+$certhmac = $cert ? (substr($cert->hmac_signature, 0, 24) . '...') : '';
+$verifyurl = $cert ? (new moodle_url('/local/mamxanhcert/verify.php', ['code' => $certcode]))->out(false) : '';
 $feedbackurl = (new moodle_url('/local/mamxanhapp/feedback_sheet.php', ['courseid' => $courseid, 'userid' => $targetuserid]))->out(false);
 $courseurl = (new moodle_url('/course/view.php', ['id' => $courseid]))->out(false);
+
+$reportts = $cert
+    ? (int)$cert->timecreated
+    : (($rubricsub && (int)$rubricsub->graded_time > 0) ? (int)$rubricsub->graded_time : time());
+$reportdatelabel = local_mamxanhapp_t(
+    'Lâm Đồng, ngày ' . date('d', $reportts) . ' tháng ' . date('m', $reportts) . ' năm ' . date('Y', $reportts),
+    'Lam Dong, ' . date('F d, Y', $reportts)
+);
+
+$graderuser = null;
+if ($rubricsub && (int)$rubricsub->graderid > 0) {
+    $graderuser = $DB->get_record('user', ['id' => (int)$rubricsub->graderid, 'deleted' => 0]);
+}
+if (!$graderuser) {
+    $graderuser = $DB->get_record('user', ['username' => 'cbkt_pilot', 'deleted' => 0]);
+}
+$instructorname = $graderuser
+    ? fullname($graderuser)
+    : local_mamxanhapp_t('Kỹ sư Trần Minh Tuấn (CBKT)', 'Eng. Tran Minh Tuan (CBKT)');
 
 echo $OUTPUT->header();
 ?>
@@ -520,7 +580,7 @@ echo $OUTPUT->header();
         <div class="mx-transcript-motto">
             <strong><?php echo s(local_mamxanhapp_t('CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM', 'SOCIALIST REPUBLIC OF VIETNAM')); ?></strong><br>
             <span><?php echo s(local_mamxanhapp_t('Độc lập - Tự do - Hạnh phúc', 'Independence - Freedom - Happiness')); ?></span><br>
-            <em class="small text-muted"><?php echo s(local_mamxanhapp_t('Lâm Đồng, ngày 15 tháng 11 năm 2026', 'Lam Dong, November 15, 2026')); ?></em>
+            <em class="small text-muted"><?php echo s($reportdatelabel); ?></em>
         </div>
     </div>
 
@@ -534,7 +594,7 @@ echo $OUTPUT->header();
     <div class="mx-transcript-meta-grid">
         <div><strong><?php echo s(local_mamxanhapp_t('Họ và tên học viên:', 'Learner Full Name:')); ?></strong> <?php echo s(fullname($learner)); ?></div>
         <div><strong><?php echo s(local_mamxanhapp_t('Mã định danh học viên:', 'Learner Account / ID:')); ?></strong> <code><?php echo s($learner->username); ?></code></div>
-        <div><strong><?php echo s(local_mamxanhapp_t('Đơn vị / Nông hộ:', 'Farm Household:')); ?></strong> <?php echo s($farmname); ?> (<?php echo number_format($aream2); ?> m²)</div>
+        <div><strong><?php echo s(local_mamxanhapp_t('Đơn vị / Nông hộ:', 'Farm Household:')); ?></strong> <?php echo s($farmname); ?><?php echo $aream2 > 0 ? ' (' . number_format($aream2) . ' m²)' : ''; ?></div>
         <div><strong><?php echo s(local_mamxanhapp_t('Vùng canh tác & Tiêu chuẩn:', 'Region & Standard:')); ?></strong> <?php echo s($region . ' • ' . $certstd); ?></div>
     </div>
 
@@ -553,8 +613,8 @@ echo $OUTPUT->header();
         </div>
         <div class="mx-ts-card">
             <div class="mx-ts-card-lbl"><?php echo s(local_mamxanhapp_t('Trạng thái Chứng nhận QR', 'QR Certificate Status')); ?></div>
-            <div class="mx-ts-card-val" style="font-size:1.0rem;">
-                <?php echo s($final10 >= 7.0 ? local_mamxanhapp_t('Đủ điều kiện cấp', 'Eligible & Verified') : local_mamxanhapp_t('Đang hoàn thiện', 'In Progress')); ?>
+            <div class="mx-ts-card-val" style="font-size:1.0rem;color:<?php echo $iseligiblecert ? '#234E3E' : '#B45309'; ?>;">
+                <?php echo s($iseligiblecert ? local_mamxanhapp_t('Đủ điều kiện cấp', 'Eligible & Verified') : local_mamxanhapp_t('Chưa đủ điều kiện', 'Not Yet Eligible')); ?>
             </div>
         </div>
     </div>
@@ -624,8 +684,9 @@ echo $OUTPUT->header();
         </table>
     </div>
 
-    <div class="p-3 rounded mb-3" style="background:#EAF2EE;border:1px solid #E6ECE9;font-size:0.88rem;">
+    <div class="p-3 rounded mb-3" style="background:<?php echo $cert ? '#EAF2EE' : '#FFF8E1'; ?>;border:1px solid #E6ECE9;font-size:0.88rem;">
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:12px;">
+            <?php if ($cert): ?>
             <div>
                 <strong style="color:#234E3E;"><?php echo s(local_mamxanhapp_t('Xác thực Chữ ký Số HMAC-SHA256:', 'HMAC-SHA256 Cryptographic Verification:')); ?></strong>
                 <span class="ms-1"><?php echo s(local_mamxanhapp_t('Mã chứng nhận:', 'Certificate Code:')); ?> <code><?php echo s($certcode); ?></code></span>
@@ -634,6 +695,12 @@ echo $OUTPUT->header();
             <a href="<?php echo $verifyurl; ?>" class="btn btn-sm btn-secondary mx-no-print">
                 <?php echo s(local_mamxanhapp_t('Tra cứu Xác thực QR', 'Verify QR Online')); ?>
             </a>
+            <?php else: ?>
+            <div>
+                <strong style="color:#B45309;"><?php echo s(local_mamxanhapp_t('Trạng thái Sổ cái Chứng nhận Số HMAC-SHA256:', 'HMAC-SHA256 Certificate Ledger Status:')); ?></strong>
+                <span class="ms-1"><?php echo s(local_mamxanhapp_t('Chưa cấp chứng nhận (Cần hoàn thành đủ 03 cổng: Điểm danh ≥ 80%, Trắc nghiệm ≥ 70%, Rubric Thực hành ≥ 60/100)', 'Not yet issued (Requires all 3 gates: Attendance >= 80%, Final Quiz >= 70%, Practical Rubric >= 60/100)')); ?></span>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -651,8 +718,8 @@ echo $OUTPUT->header();
                 <strong><?php echo s(local_mamxanhapp_t('GIẢNG VIÊN / CÁN BỘ KỸ THUẬT', 'INSTRUCTOR / EXTENSION OFFICER')); ?></strong><br>
                 <span class="text-muted small"><?php echo s(local_mamxanhapp_t('(Thẩm định Chuyên môn & Rubric)', '(Technical & Rubric Evaluator)')); ?></span>
             </div>
-            <div class="mx-sig-stamp"><?php echo s(local_mamxanhapp_t('ĐÃ CHẤM & PHÊ DUYỆT', 'GRADED & APPROVED')); ?></div>
-            <div><strong><?php echo s(local_mamxanhapp_t('KS. Trần Văn Hùng (CBKT Lâm Đồng)', 'Eng. Tran Van Hung (Extension Lead)')); ?></strong></div>
+            <div class="mx-sig-stamp"><?php echo s($hasrubricgrade ? local_mamxanhapp_t('ĐÃ CHẤM & PHÊ DUYỆT', 'GRADED & APPROVED') : local_mamxanhapp_t('ĐANG THEO DÕI HỌC TẬP', 'IN EVALUATION')); ?></div>
+            <div><strong><?php echo s($instructorname); ?></strong></div>
         </div>
         <div class="mx-sig-box">
             <div>

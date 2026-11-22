@@ -5,6 +5,9 @@ require_once($CFG->libdir . '/completionlib.php');
 if (file_exists($CFG->dirroot . '/local/agriops/lib.php')) {
     require_once($CFG->dirroot . '/local/agriops/lib.php');
 }
+if (file_exists($CFG->dirroot . '/local/mamxanhcert/lib.php')) {
+    require_once($CFG->dirroot . '/local/mamxanhcert/lib.php');
+}
 
 local_mamxanhapp_handle_lang_switch();
 require_login();
@@ -26,24 +29,25 @@ $dbman = $DB->get_manager();
 $userid = (int)$USER->id;
 $en = local_mamxanhapp_is_en();
 
-// 1. Load Farmer Household Profile
+// 1. Load Farmer Household Profile (do not fabricate 2,500 m2 if unconfigured)
 $profile = null;
 if ($dbman->table_exists('local_farmerprofile')) {
     $profile = $DB->get_record('local_farmerprofile', ['userid' => $userid]);
 }
-$region = $profile && !empty($profile->region) ? $profile->region : 'Lâm Đồng';
-$farmname = $profile && !empty($profile->farm_name)
-    ? $profile->farm_name
-    : local_mamxanhapp_t('Nông hộ Công nghệ cao Mầm Xanh', 'Mam Xanh Smart Farm');
-$aream2 = $profile ? (int)$profile->area_m2 : 2500;
+$hasprofile = ($profile && !empty($profile->farm_name));
+$region = ($profile && !empty($profile->region)) ? $profile->region : ($USER->city ?: 'Lâm Đồng');
+$farmname = $hasprofile ? (string)$profile->farm_name : '';
+$aream2 = $profile ? (int)$profile->area_m2 : 0;
 
-// 2. Load Courses (Enrolled first, fallback to all visible courses excluding SITEID)
-$courses = enrol_get_my_courses(['id', 'fullname', 'shortname', 'summary', 'enablecompletion']);
-if (empty($courses)) {
+$roletype = local_mamxanhapp_user_role_type();
+
+// 2. Load Courses (Strictly enrolled courses for regular farmers; fallback to visible courses only for CBKT/Admin)
+$courses = enrol_get_my_courses(['id', 'fullname', 'shortname', 'summary', 'enablecompletion', 'visible']);
+if (empty($courses) && ($roletype === 'cbkt' || $roletype === 'admin')) {
     $all = get_courses();
     $courses = [];
     foreach ($all as $c) {
-        if ((int)$c->id !== SITEID && !empty($c->visible)) {
+        if ((int)$c->id !== SITEID && !empty($c->visible) && $c->shortname !== 'MASTER-AGRITECH-TPL') {
             $courses[$c->id] = $c;
         }
     }
@@ -64,7 +68,7 @@ usort($courses, static function($a, $b) {
 });
 
 foreach ($courses as $course) {
-    if ((int)$course->id === SITEID) {
+    if ((int)$course->id === SITEID || $course->shortname === 'MASTER-AGRITECH-TPL') {
         continue;
     }
     $modinfo = get_fast_modinfo($course, $userid);
@@ -169,6 +173,9 @@ foreach ($courses as $course) {
 }
 
 // 4. Certificates & VietGAP Batches count
+if (function_exists('local_mamxanhcert_sync_user_certificates')) {
+    local_mamxanhcert_sync_user_certificates($userid);
+}
 $certcount = 0;
 if ($dbman->table_exists('local_mamxanhcert')) {
     $certcount = $DB->count_records('local_mamxanhcert', ['userid' => $userid, 'status' => 'valid']);
@@ -179,7 +186,6 @@ if ($dbman->table_exists('local_agriops_batch')) {
 }
 $avgquiz = !empty($quizscores) ? round(array_sum($quizscores) / count($quizscores), 1) . '%' : '--';
 
-$roletype = local_mamxanhapp_user_role_type();
 $langviurl = (new moodle_url('/local/mamxanhapp/index.php', ['lang' => 'vi']))->out(false);
 $langenurl = (new moodle_url('/local/mamxanhapp/index.php', ['lang' => 'en']))->out(false);
 
@@ -192,14 +198,19 @@ echo $OUTPUT->header();
             <h1 class="mx-page-title"><?php echo s(local_mamxanhapp_t('Khóa học của tôi', 'My courses')); ?></h1>
             <p class="mx-page-sub">
                 <?php echo s(local_mamxanhapp_t('Xin chào, ', 'Welcome, ') . fullname($USER)); ?>
-                <?php if ($farmname !== ''):
+                <?php if ($hasprofile):
                     $regiondisp = $region;
                     if ($en) {
                         $rmap = ['Lâm Đồng' => 'Lam Dong', 'Đắk Lắk' => 'Dak Lak', 'Đồng Nai' => 'Dong Nai'];
                         $regiondisp = $rmap[$region] ?? $region;
                     }
                 ?>
-                    <span class="mx-sep">/</span> <?php echo s($farmname); ?>, <?php echo s($regiondisp); ?> (<?php echo number_format($aream2); ?> m²)
+                    <span class="mx-sep">/</span> <?php echo s($farmname); ?>, <?php echo s($regiondisp); ?><?php echo $aream2 > 0 ? ' (' . number_format($aream2) . ' m²)' : ''; ?>
+                <?php else: ?>
+                    <span class="mx-sep">/</span>
+                    <a href="<?php echo (new moodle_url('/local/farmerprofile/index.php'))->out(false); ?>" style="color:#234E3E;font-weight:600;text-decoration:underline;">
+                        <?php echo s(local_mamxanhapp_t('Chưa khai báo hồ sơ nông trại (Cập nhật ngay)', 'Farm profile not configured (Set up now)')); ?>
+                    </a>
                 <?php endif; ?>
             </p>
         </div>
@@ -224,7 +235,7 @@ echo $OUTPUT->header();
             <span class="mx-summary-label"><?php echo s(local_mamxanhapp_t('Khóa học', 'Courses')); ?></span>
         </div>
         <div class="mx-summary-item">
-            <span class="mx-summary-num"><?php echo $totalcompletedmods . '/' . max(1, $totalmods); ?></span>
+            <span class="mx-summary-num"><?php echo $totalcompletedmods . '/' . $totalmods; ?></span>
             <span class="mx-summary-label"><?php echo s(local_mamxanhapp_t('Hoạt động đã hoàn thành', 'Activities completed')); ?></span>
         </div>
         <div class="mx-summary-item">
@@ -245,6 +256,22 @@ echo $OUTPUT->header();
 
     <section aria-labelledby="mx-courses-heading">
         <h2 id="mx-courses-heading" class="mx-section-title"><?php echo s(local_mamxanhapp_t('Danh sách khóa học', 'Course list')); ?></h2>
+        <?php if (empty($courseitems)): ?>
+        <div class="mx-card p-4 text-center" style="background:#FFFFFF;border:1px solid #E6ECE9;border-radius:12px;">
+            <h4 class="h5 fw-bold mb-2" style="color:#234E3E;">
+                <?php echo s(local_mamxanhapp_t('Bạn chưa ghi danh vào khóa tập huấn nào', 'You are not enrolled in any training courses yet')); ?>
+            </h4>
+            <p class="small text-muted mb-3">
+                <?php echo s(local_mamxanhapp_t(
+                    'Vui lòng liên hệ Cán bộ kỹ thuật phụ trách vùng hoặc truy cập Danh mục Chương trình Tập huấn để tự ghi danh vào lớp học.',
+                    'Please contact your regional Extension Officer or browse the Training Catalog to self-enrol.'
+                )); ?>
+            </p>
+            <a href="<?php echo (new moodle_url('/', ['redirect' => 0]))->out(false); ?>#mx-public-courses" class="btn btn-primary" style="background:#234E3E;border-color:#234E3E;">
+                <?php echo s(local_mamxanhapp_t('Xem Danh mục Chương trình Tập huấn', 'Browse Training Catalog')); ?>
+            </a>
+        </div>
+        <?php else: ?>
         <div class="mx-course-grid">
             <?php foreach ($courseitems as $item): ?>
             <article class="mx-course-tile">
@@ -285,6 +312,7 @@ echo $OUTPUT->header();
             </article>
             <?php endforeach; ?>
         </div>
+        <?php endif; ?>
     </section>
 </div>
 
