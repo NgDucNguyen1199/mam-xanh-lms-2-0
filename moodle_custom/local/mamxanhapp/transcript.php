@@ -120,7 +120,7 @@ foreach ($attmodules as $att) {
         }
     }
     if ($modtaken > 0) {
-        $attdetails[] = format_string($att->name) . ': ' . $modpresent . '/' . $modtaken . ($en ? ' taken sessions' : ' buổi đã điểm danh');
+        $attdetails[] = format_string($att->name, true, ['escape' => false]) . ': ' . $modpresent . '/' . $modtaken . ($en ? ' taken sessions' : ' buổi đã điểm danh');
     }
 }
 $attpct = $attsessionscount > 0 ? round(($attpresentcount / $attsessionscount) * 100.0, 1) : 0.0;
@@ -146,9 +146,9 @@ foreach ($assigns as $asg) {
         if ($ag && $ag->grade !== null && (float)$ag->grade >= 0) {
             $pct = min(100.0, round(((float)$ag->grade / $maxg) * 100.0, 1));
             $discscores[] = $pct;
-            $discdetails[] = format_string($asg->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+            $discdetails[] = format_string($asg->name, true, ['escape' => false]) . ' (' . round($pct / 10.0, 1) . '/10)';
         } else {
-            $discdetails[] = format_string($asg->name) . ' (' . local_mamxanhapp_t('Chưa chấm', 'Not graded') . ')';
+            $discdetails[] = format_string($asg->name, true, ['escape' => false]) . ' (' . local_mamxanhapp_t('Chưa chấm', 'Not graded') . ')';
         }
     } else {
         $capstoneassign = $asg;
@@ -179,9 +179,9 @@ foreach ($h5precs as $h5p) {
     }
     if ($pct !== null) {
         $interactscores[] = $pct;
-        $interactdetails[] = 'H5P: ' . format_string($h5p->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+        $interactdetails[] = 'H5P: ' . format_string($h5p->name, true, ['escape' => false]) . ' (' . round($pct / 10.0, 1) . '/10)';
     } else {
-        $interactdetails[] = 'H5P: ' . format_string($h5p->name) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
+        $interactdetails[] = 'H5P: ' . format_string($h5p->name, true, ['escape' => false]) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
     }
 }
 foreach ($scormrecs as $sc) {
@@ -195,9 +195,9 @@ foreach ($scormrecs as $sc) {
     }
     if ($pct !== null) {
         $interactscores[] = $pct;
-        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name) . ' (' . round($pct / 10.0, 1) . '/10)';
+        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name, true, ['escape' => false]) . ' (' . round($pct / 10.0, 1) . '/10)';
     } else {
-        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
+        $interactdetails[] = 'SCORM 1.2: ' . format_string($sc->name, true, ['escape' => false]) . ' (' . local_mamxanhapp_t('Chưa hoàn thành', 'Not completed') . ')';
     }
 }
 $interactpct = !empty($interactscores) ? round(array_sum($interactscores) / count($interactscores), 1) : 0.0;
@@ -215,7 +215,7 @@ $quizname = local_mamxanhapp_t('Bài Kiểm tra Trắc nghiệm Cuối khóa', '
 $qcount = 10;
 
 foreach ($quizzes as $q) {
-    $quizname = format_string($q->name);
+    $quizname = format_string($q->name, true, ['escape' => false]);
     $slots = $DB->count_records('quiz_slots', ['quizid' => $q->id]);
     if ($slots > 0) {
         $qcount = $slots;
@@ -257,7 +257,7 @@ if ($DB->get_manager()->table_exists('fieldpractice') && $DB->get_manager()->tab
     if (!empty($fps)) {
         $hasfpmodule = true;
         foreach ($fps as $fp) {
-            $rubrictitle = format_string($fp->name);
+            $rubrictitle = format_string($fp->name, true, ['escape' => false]);
             $sub = $DB->get_record('fieldpractice_sub', ['fieldpracticeid' => $fp->id, 'userid' => $targetuserid]);
             if ($sub && $sub->total_grade !== null && ((int)$sub->graded_time > 0 || (float)$sub->total_grade > 0)) {
                 $rubricpct = min(100.0, (float)$sub->total_grade);
@@ -268,7 +268,7 @@ if ($DB->get_manager()->table_exists('fieldpractice') && $DB->get_manager()->tab
     }
 }
 if (!$hasfpmodule && $rubricpct === null && $capstoneassign) {
-    $rubrictitle = format_string($capstoneassign->name);
+    $rubrictitle = format_string($capstoneassign->name, true, ['escape' => false]);
     $ag = $DB->get_record('assign_grades', ['assignment' => $capstoneassign->id, 'userid' => $targetuserid]);
     $maxg = (float)$capstoneassign->grade > 0 ? (float)$capstoneassign->grade : 100.0;
     if ($ag && $ag->grade !== null && (float)$ag->grade > 0) {
@@ -300,21 +300,23 @@ $w5 = round($rubricscore10 * 0.25, 2);
 $final10 = round($w1 + $w2 + $w3 + $w4 + $w5, 2);
 $final100 = round($final10 * 10.0, 1);
 
-if ($final10 >= 9.0) {
-    $ranklabel = local_mamxanhapp_t('Xuất sắc (Distinction - A+)', 'Distinction (Grade A+)');
-} else if ($final10 >= 8.0) {
-    $ranklabel = local_mamxanhapp_t('Giỏi (Very Good - A)', 'Very Good (Grade A)');
-} else if ($final10 >= 7.0) {
-    $ranklabel = local_mamxanhapp_t('Khá (Good - B)', 'Good (Grade B)');
-} else if ($final10 >= 5.0) {
-    $ranklabel = local_mamxanhapp_t('Đạt (Pass - C)', 'Pass (Grade C)');
-} else {
-    $ranklabel = local_mamxanhapp_t('Chưa đạt (Incomplete)', 'Incomplete');
-}
-
 // Certificate record check & dynamic instructor/date metadata
 $cert = $DB->get_record('local_mamxanhcert', ['userid' => $targetuserid, 'courseid' => $courseid, 'status' => 'valid']);
 $iseligiblecert = $eligibility ? (bool)$eligibility->eligible : ($cert !== false);
+
+if ($final10 >= 9.0 && $iseligiblecert) {
+    $ranklabel = local_mamxanhapp_t('Xuất sắc (Distinction - A+)', 'Distinction (Grade A+)');
+} else if ($final10 >= 8.0 && $iseligiblecert) {
+    $ranklabel = local_mamxanhapp_t('Giỏi (Very Good - A)', 'Very Good (Grade A)');
+} else if ($final10 >= 7.0 && $iseligiblecert) {
+    $ranklabel = local_mamxanhapp_t('Khá (Good - B)', 'Good (Grade B)');
+} else if ($final10 >= 5.0) {
+    $ranklabel = $iseligiblecert
+        ? local_mamxanhapp_t('Đạt (Pass - C)', 'Pass (Grade C)')
+        : local_mamxanhapp_t('Đạt GPA — Chờ đủ điều kiện QR', 'GPA Pass — Pending QR Gates');
+} else {
+    $ranklabel = local_mamxanhapp_t('Chưa đạt (Incomplete)', 'Incomplete');
+}
 $certcode = $cert ? $cert->cert_code : '';
 $certhmac = $cert ? (substr($cert->hmac_signature, 0, 24) . '...') : '';
 $verifyurl = $cert ? (new moodle_url('/local/mamxanhcert/verify.php', ['code' => $certcode]))->out(false) : '';
@@ -491,6 +493,18 @@ echo $OUTPUT->header();
     }
     .mx-transcript-motto {
         text-align: left;
+    }
+}
+@media (max-width: 575.98px) {
+    .mx-no-print form,
+    #id_courseid,
+    #id_userid {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    .mx-transcript-sheet {
+        padding: 18px 14px;
     }
 }
 @media print {

@@ -112,9 +112,9 @@ if (!$capstone && !empty($assigns)) {
 }
 
 $assignname = $fpinstance
-    ? format_string($fpinstance->name)
+    ? format_string($fpinstance->name, true, ['escape' => false])
     : ($capstone
-        ? format_string($capstone->name)
+        ? format_string($capstone->name, true, ['escape' => false])
         : local_mamxanhapp_t('Thực hành Tại vườn: Điểm danh QR & Rubric 4 Tiêu chí', 'Field Practice: QR Check-in & 4-Criteria Rubric'));
 
 $rubricname = local_mamxanhapp_t('Rubric Đánh giá Thực hành Hiện trường 4 Tiêu chí Chuẩn VietGAP (Thang 100 điểm)', '4-Criteria VietGAP Practical Field Assessment Rubric (100-Point Scale)');
@@ -368,6 +368,18 @@ echo $OUTPUT->header();
     }
     .mx-rubric-header {
         flex-direction: column;
+    }
+}
+@media (max-width: 575.98px) {
+    .mx-no-print form,
+    #id_rub_courseid,
+    #id_rub_userid {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    .mx-rubric-sheet {
+        padding: 18px 14px;
     }
 }
 @media print {

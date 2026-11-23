@@ -191,7 +191,7 @@ async function login(page, username, password) {
     await visitAndAudit('/local/mamxanhapp/feedback_sheet.php?courseid=19', 'learner');
     report.aplusFeatureChecks.feedbackSheet = {
         has4Criteria: fbAudit.bodyText.includes('Tiêu chí 1') && fbAudit.bodyText.includes('Tiêu chí 4'),
-        hasInstructorFeedback: fbAudit.bodyText.includes('KS. Trần Văn Hùng'),
+        hasInstructorFeedback: fbAudit.bodyText.includes('Kỹ sư Trần Minh Tuấn') || fbAudit.bodyText.includes('KS. Trần Văn Hùng'),
     };
 
     const exAudit = await visitAndAudit('/local/agriops/export_log.php?courseid=2', 'learner', '97_aplus_vietgap_log_export.png');

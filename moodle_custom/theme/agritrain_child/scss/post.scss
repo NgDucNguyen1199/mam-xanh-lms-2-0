@@ -3043,5 +3043,50 @@ body.mx-site-index:not(.editing) {
         justify-content: flex-start;
         text-align: left;
     }
+
+    // Ensure mobile navbar at 375px fits menu toggle, brand, VI|EN, notifications, messages & avatar without right-edge clipping
+    .navbar.fixed-top {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+
+        .navbar-brand {
+            font-size: 0.86rem !important;
+            margin-right: 4px !important;
+            max-width: 118px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        .mx-navbar-lang {
+            gap: 2px !important;
+            margin-right: 2px !important;
+
+            .mx-navbar-lang-link {
+                padding: 4px 5px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        .usermenu .dropdown-toggle {
+            padding: 0 4px !important;
+        }
+    }
 }
+
+// Enforce >= 44x44px touch targets across all interactive controls (Desktop & Mobile)
+.navbar.fixed-top .navbar-toggler,
+.navbar.fixed-top .usermenu .dropdown-toggle,
+.navbar.fixed-top .popover-region-toggle,
+.coursemenubtn,
+.mx-tool-tab,
+.drawer-toggles .btn,
+.btn.icon-no-margin {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
 

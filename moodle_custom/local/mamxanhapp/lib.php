@@ -99,13 +99,31 @@ function local_mamxanhapp_send_403_and_exit(string $msgvi = '', string $msgen = 
         $PAGE->set_url(new \moodle_url('/local/mamxanhapp/index.php'));
     }
     $PAGE->set_context(\context_system::instance());
-    $PAGE->set_pagelayout('standard');
+    $PAGE->set_pagelayout('base');
     $PAGE->set_title($title);
     $PAGE->set_heading($title);
 
-    echo $OUTPUT->header();
-    echo $cardhtml;
-    echo $OUTPUT->footer();
+    $lang = local_mamxanhapp_is_en() ? 'en' : 'vi';
+    $brand = 'Mầm Xanh LMS 2.0';
+    echo '<!DOCTYPE html><html lang="' . $lang . '"><head><meta charset="utf-8">'
+        . '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        . '<title>' . s($title . ' | ' . $brand) . '</title>'
+        . '<style>'
+        . 'body{margin:0;background:#F9FAF9;color:#1C2522;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}'
+        . '.mx-403-nav{background:#FFFFFF;border-bottom:1px solid #E6ECE9;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;}'
+        . '.mx-403-brand{font-weight:700;font-size:1.05rem;color:#1C2522;text-decoration:none;}'
+        . '.mx-403-wrap{max-width:720px;margin:48px auto;padding:0 16px;}'
+        . '.btn-403-back{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 24px;border-radius:14px;font-weight:700;background:#234E3E;color:#FFFFFF;text-decoration:none;border:1px solid #234E3E;}'
+        . '.btn-403-back:hover{background:#1B3D30;color:#FFFFFF;}'
+        . '</style></head><body>'
+        . '<header class="mx-403-nav"><a class="mx-403-brand" href="' . $homeurl->out(false) . '">' . s($brand) . '</a></header>'
+        . '<main id="region-main" class="mx-403-wrap">'
+        . '<div class="mx-forbidden-card" style="max-width:640px;margin:2rem auto;background:#FFF5F5;border:3px solid #C62828;border-radius:24px;padding:2rem;text-align:center;">'
+        . '<div style="font-size:3.2rem;line-height:1;margin-bottom:0.75rem;color:#B71C1C;font-weight:800;">403</div>'
+        . '<h2 style="color:#B71C1C;font-weight:800;margin-bottom:0.75rem;">' . s($title) . '</h2>'
+        . '<p style="font-size:1.05rem;color:#3E2723;margin-bottom:1.5rem;line-height:1.6;">' . s($desc) . '</p>'
+        . '<a href="' . $homeurl->out(false) . '" class="btn btn-success btn-lg btn-403-back" style="min-height:48px;border-radius:14px;font-weight:700;background:#234E3E;border-color:#234E3E;">' . s($btnlabel) . '</a>'
+        . '</div></main></body></html>';
     exit;
 }
 
